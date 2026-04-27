@@ -97,7 +97,9 @@ TEXT:
 ${t}
 
 Reply ONLY with a JSON object, no markdown, no backticks:
-{"corrected":"full corrected text","errors":[{"type":"gram or spell or punct or case","original":"wrong","correction":"right","explanation":"Turkish explanation"}]}
+{"corrected":"full corrected text","errors":[{"type":"gram","original":"wrong","correction":"right","explanation":"Turkish explanation"}]}
+
+Type field rules: use exactly gram for grammar, spell for spelling, punct for punctuation, case for capitalization. No other values allowed.
 
 STRICT RULES for type field:
 - Grammar errors: type must be exactly "gram"
