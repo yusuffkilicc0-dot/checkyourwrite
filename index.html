@@ -202,6 +202,43 @@ function renderResult(r) {
   document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const MAX_DAILY = 15;
+
+function getUsage() {
+  const stored = localStorage.getItem('cyw_usage');
+  if (!stored) return { count: 0, start: null };
+  const data = JSON.parse(stored);
+  if (data.start && Date.now() - data.start > 24 * 60 * 60 * 1000) {
+    localStorage.removeItem('cyw_usage');
+    return { count: 0, start: null };
+  }
+  return data;
+}
+
+function incrementUsage() {
+  const data = getUsage();
+  const updated = { count: data.count + 1, start: data.start || Date.now() };
+  localStorage.setItem('cyw_usage', JSON.stringify(updated));
+  return updated;
+}
+
+function updateUsageBar() {
+  const data = getUsage();
+  const remaining = MAX_DAILY - data.count;
+  const el = document.getElementById('usageCount');
+  const resetEl = document.getElementById('usageReset');
+  el.textContent = remaining + ' / ' + MAX_DAILY + ' hak kaldı';
+  el.className = 'usage-count ' + (remaining > 10 ? 'green' : remaining > 4 ? 'amber' : 'red');
+  if (data.start) {
+    const resetIn = Math.ceil((data.start + 24 * 60 * 60 * 1000 - Date.now()) / (60 * 60 * 1000));
+    resetEl.textContent = resetIn + ' saat sonra yenilenir';
+  } else {
+    resetEl.textContent = '24 saatte 15 hak';
+  }
+}
+
+updateUsageBar();
+setInterval(updateUsageBar, 60000);
 </script>
 </body>
 </html>
