@@ -140,8 +140,10 @@
     </a>
   </div>
 </div>
- 
-<script>
+ <footer style="text-align:center;padding:2rem;font-size:12px;color:var(--muted);font-family:var(--mono);border-top:1px solid var(--border);margin-top:3rem;">
+  checkyourwrite · Duden kuralları · Claude AI · <a href="/privacy.html" style="color:var(--muted);text-decoration:none;">Datenschutz</a> · <a href="/about.html" style="color:var(--muted);text-decoration:none;">Hakkında</a>
+</footer>
+ <script>
 let level = 'B2';
 function setLvl(btn, v) { document.querySelectorAll('.lvl').forEach(b => b.classList.remove('on')); btn.classList.add('on'); level = v; }
 function onType() { document.getElementById('charCount').textContent = document.getElementById('inputText').value.length + ' karakter'; }
