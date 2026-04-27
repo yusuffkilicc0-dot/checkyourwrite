@@ -116,7 +116,12 @@
   <span class="usage-count" id="usageCount">15 / 15 hak kaldı</span>
   <span class="usage-reset" id="usageReset">24 saatte 15 hak</span>
 </div>
- <button class="submit-btn" id="submitBtn" onclick="analyze()">Düzelt →</button>
+ <div style="display:flex;gap:10px;align-items:center;">
+  <button class="submit-btn" id="submitBtn" onclick="analyze()" style="flex:1;">Düzelt →</button>
+  <a href="https://www.youtube.com/@yusufunvloglar%C4%B1" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#ff0000;border-radius:10px;flex-shrink:0;text-decoration:none;">
+    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.6 2.2C19.4 1.5 18.8 0.9 18.1 0.7C16.5 0.3 10 0.3 10 0.3C10 0.3 3.5 0.3 1.9 0.7C1.2 0.9 0.6 1.5 0.4 2.2C0 3.8 0 7 0 7C0 7 0 10.2 0.4 11.8C0.6 12.5 1.2 13.1 1.9 13.3C3.5 13.7 10 13.7 10 13.7C10 13.7 16.5 13.7 18.1 13.3C18.8 13.1 19.4 12.5 19.6 11.8C20 10.2 20 7 20 7C20 7 20 3.8 19.6 2.2Z" fill="white"/><path d="M8 10L13 7L8 4V10Z" fill="#ff0000"/></svg>
+  </a>
+</div>
   <div class="loading-row" id="loadingRow">
     <div class="spinner"></div>
     <span>Metin analiz ediliyor...</span>
@@ -132,22 +137,6 @@
     <div class="err-list" id="errList"></div>
   </div>
 </main>
-<div class="about-section">
-  <div class="about-grid">
-    <div class="about-text">
-      <h2>Bu site hakkında</h2>
-      <p><strong>Türkçe:</strong> CheckYourWrite, Almanca öğrenen Türkçe konuşanlar için tasarlandı. Metninizi yapıştırın, sistem Duden kurallarına göre hatalarınızı analiz eder.</p>
-      <p><strong>Deutsch:</strong> CheckYourWrite wurde für Türkisch sprechende Deutschlernende entwickelt. Fügen Sie Ihren Text ein — das System analysiert Ihre Fehler nach Duden-Regeln.</p>
-      <p class="maker">Yapımcı / Erstellt von: Yusuf Kılıç</p>
-    </div>
-    <a class="yt-card" href="https://www.youtube.com/@yusufunvloglar%C4%B1" target="_blank" rel="noopener">
-      <div class="yt-thumb">
-        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#FF0000"/><path d="M21 29.5L30 24L21 18.5V29.5Z" fill="white"/></svg>
-      </div>
-      <div class="yt-info">
-        <strong>Yusuf'un Vlogları</strong>
-        <p>YouTube kanalımı ziyaret etmek için tıklayın →</p>
-      </div>
     </a>
   </div>
 </div>
