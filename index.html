@@ -175,7 +175,9 @@ if (usage.count >= MAX_DAILY) {
     const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, level }) });
     const result = await res.json();
     if (result.error) { alert('Hata: ' + result.error); return; }
-    renderResult(result);
+    incrementUsage();
+updateUsageBar();
+   renderResult(result);
   } catch(e) { alert('Bir hata oluştu, tekrar dene.'); }
   finally { btn.disabled = false; document.getElementById('loadingRow').style.display = 'none'; }
 }
