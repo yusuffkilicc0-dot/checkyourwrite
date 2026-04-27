@@ -92,7 +92,12 @@
       <button class="clear-btn" onclick="clearText()">Temizle</button>
     </div>
   </div>
-  <button class="submit-btn" id="submitBtn" onclick="analyze()">Düzelt →</button>
+  <div class="usage-bar">
+  <span class="usage-left">Günlük kullanım</span>
+  <span class="usage-count" id="usageCount">15 / 15 hak kaldı</span>
+  <span class="usage-reset" id="usageReset">24 saatte 15 hak</span>
+</div>
+ <button class="submit-btn" id="submitBtn" onclick="analyze()">Düzelt →</button>
   <div class="loading-row" id="loadingRow">
     <div class="spinner"></div>
     <span>Metin analiz ediliyor...</span>
