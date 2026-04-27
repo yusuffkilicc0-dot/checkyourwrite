@@ -2,26 +2,43 @@ const rateLimit = new Map();
 
 function isRateLimited(ip) {
   const now = Date.now();
-  const windowMs = 60 * 1000; // 1 dakika
-  const maxRequests = 5; // dakikada max 5 istek
+  const oneMinute = 60 * 1000;
+  const oneDay = 24 * 60 * 60 * 1000;
+  const maxPerMinute = 2;
+  const maxPerDay = 15;
 
   if (!rateLimit.has(ip)) {
-    rateLimit.set(ip, { count: 1, start: now });
+    rateLimit.set(ip, { minuteCount: 1, minuteStart: now, dayCount: 1, dayStart: now });
     return false;
   }
 
-  const data = rateLimit.get(ip);
+  const d = rateLimit.get(ip);
 
-  if (now - data.start > windowMs) {
-    rateLimit.set(ip, { count: 1, start: now });
-    return false;
+  // 1 dakika sıfırlama
+  if (now - d.minuteStart > oneMinute) {
+    d.minuteCount = 0;
+    d.minuteStart = now;
   }
 
-  if (data.count >= maxRequests) {
-    return true;
+  // 24 saat sıfırlama
+  if (now - d.dayStart > oneDay) {
+    d.dayCount = 0;
+    d.dayStart = now;
   }
 
-  data.count++;
+  // Günlük limit
+  if (d.dayCount >= maxPerDay) {
+    const resetIn = Math.ceil((d.dayStart + oneDay - now) / (60 * 60 * 1000));
+    return { error: `Günlük kullanım limitine ulaştınız (15/15). ${resetIn} saat sonra tekrar kullanabilirsiniz.` };
+  }
+
+  // Dakika limiti
+  if (d.minuteCount >= maxPerMinute) {
+    return { error: 'Çok hızlı istek gönderdiniz. Lütfen 1 dakika bekleyip tekrar deneyin.' };
+  }
+
+  d.minuteCount++;
+  d.dayCount++;
   return false;
 }
 export default async function handler(req, res) {
@@ -30,9 +47,11 @@ export default async function handler(req, res) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'Sunucu hatası: API anahtarı bulunamadı.' });
 
-  const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
-if (isRateLimited(ip)) {
-  return res.status(429).json({ error: 'Çok fazla istek gönderdiniz. Lütfen 1 dakika bekleyip tekrar deneyin.' });
+  const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket?.remoteAddress || 'unknown';
+const limited = isRateLimited(ip);
+if (limited) {
+  return res.status(429).json({ error: limited.error });
+}
 }
   const { text, level } = req.body;
 
