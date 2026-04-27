@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hakkında – CheckYourWrite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f4f0; --surface: #ffffff; --border: #e2e0da;
+    --text: #1a1916; --muted: #8a8880;
+    --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.7; }
+  header { padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .logo { font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--text); text-decoration: none; }
+  .logo span { color: var(--muted); }
+  .back { font-size: 12px; color: var(--muted); text-decoration: none; font-family: var(--mono); }
+  .back:hover { color: var(--text); }
+  main { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem; }
+  h1 { font-size: 22px; font-weight: 400; margin-bottom: 2rem; letter-spacing: -0.02em; }
+  .section { margin-bottom: 2.5rem; }
+  .section h2 { font-size: 13px; font-weight: 500; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.75rem; }
+  .section p { font-size: 15px; color: var(--text); margin-bottom: 0.75rem; }
+  .maker-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .maker-avatar { width: 44px; height: 44px; border-radius: 50%; background: #1a1916; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 14px; color: var(--bg); font-weight: 500; flex-shrink: 0; }
+  .maker-info strong { font-size: 14px; font-weight: 500; display: block; }
+  .maker-info span { font-size: 12px; color: var(--muted); }
+  .yt-link { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; text-decoration: none; color: var(--text); transition: border-color 0.15s; margin-top: 1rem; }
+  .yt-link:hover { border-color: #e00; }
+  .yt-icon { width: 36px; height: 36px; background: #ff0000; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .yt-link-text strong { font-size: 13px; display: block; }
+  .yt-link-text span { font-size: 12px; color: var(--muted); }
+  footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--muted); font-family: var(--mono); border-top: 1px solid var(--border); margin-top: 3rem; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo">check<span>your</span>write</a>
+  <a href="/" class="back">← Ana sayfaya dön</a>
+</header>
+
+<main>
+  <h1>Hakkında</h1>
+
+  <div class="section">
+    <h2>Türkçe</h2>
+    <p>CheckYourWrite, Almanca öğrenen Türkçe konuşanlar için tasarlanmış ücretsiz bir metin düzeltme aracıdır. Metninizi yapıştırın — sistem Duden kurallarına göre gramer, yazım, noktalama ve büyük/küçük harf hatalarınızı analiz eder ve Türkçe açıklamalarla gösterir.</p>
+    <p>Goethe, telc ve TestDaF gibi Almanca sınavlarına hazırlananlar için özellikle faydalıdır.</p>
+  </div>
+
+  <div class="section">
+    <h2>Deutsch</h2>
+    <p>CheckYourWrite ist ein kostenloses Textkorrektur-Tool für Türkischsprachige, die Deutsch lernen. Fügen Sie Ihren Text ein — das System analysiert Grammatik-, Rechtschreib-, Interpunktions- und Groß/Kleinschreibfehler nach Duden-Regeln und erklärt sie auf Türkisch.</p>
+    <p>Besonders nützlich für die Vorbereitung auf Deutschprüfungen wie Goethe, telc und TestDaF.</p>
+  </div>
+
+  <div class="section">
+    <h2>Yapımcı</h2>
+    <div class="maker-card">
+      <div class="maker-avatar">YK</div>
+      <div class="maker-info">
+        <strong>Yusuf Kılıç</strong>
+        <span>CheckYourWrite'ın kurucusu</span>
+      </div>
+    </div>
+    <a class="yt-link" href="https://www.youtube.com/@yusufunvloglar%C4%B1" target="_blank" rel="noopener">
+      <div class="yt-icon">
+        <svg width="18" height="13" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19.6 2.2C19.4 1.5 18.8 0.9 18.1 0.7C16.5 0.3 10 0.3 10 0.3C10 0.3 3.5 0.3 1.9 0.7C1.2 0.9 0.6 1.5 0.4 2.2C0 3.8 0 7 0 7C0 7 0 10.2 0.4 11.8C0.6 12.5 1.2 13.1 1.9 13.3C3.5 13.7 10 13.7 10 13.7C10 13.7 16.5 13.7 18.1 13.3C18.8 13.1 19.4 12.5 19.6 11.8C20 10.2 20 7 20 7C20 7 20 3.8 19.6 2.2Z" fill="white"/>
+          <path d="M8 10L13 7L8 4V10Z" fill="#ff0000"/>
+        </svg>
+      </div>
+      <div class="yt-link-text">
+        <strong>Yusuf'un Vlogları</strong>
+        <span>YouTube kanalını ziyaret et →</span>
+      </div>
+    </a>
+  </div>
+</main>
+
+<footer>
+  checkyourwrite ·
+  <a href="/privacy.html">Datenschutz</a> ·
+  <a href="/about.html">Hakkında</a>
+</footer>
+</body>
+</html>
