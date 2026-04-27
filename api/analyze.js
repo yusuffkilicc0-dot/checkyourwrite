@@ -1,9 +1,39 @@
+const rateLimit = new Map();
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 dakika
+  const maxRequests = 5; // dakikada max 5 istek
+
+  if (!rateLimit.has(ip)) {
+    rateLimit.set(ip, { count: 1, start: now });
+    return false;
+  }
+
+  const data = rateLimit.get(ip);
+
+  if (now - data.start > windowMs) {
+    rateLimit.set(ip, { count: 1, start: now });
+    return false;
+  }
+
+  if (data.count >= maxRequests) {
+    return true;
+  }
+
+  data.count++;
+  return false;
+}
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'Sunucu hatası: API anahtarı bulunamadı.' });
 
+  const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
+if (isRateLimited(ip)) {
+  return res.status(429).json({ error: 'Çok fazla istek gönderdiniz. Lütfen 1 dakika bekleyip tekrar deneyin.' });
+}
   const { text, level } = req.body;
 
   // 1. Boş metin
