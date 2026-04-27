@@ -66,6 +66,25 @@
   .copy-btn:hover { color: var(--text); border-color: #bbb; }
   footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--muted); font-family: var(--mono); }
   @media (max-width: 520px) { header { padding: 1rem; } main { padding: 1.25rem 1rem; } }
+.about-section { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 560px) { .about-grid { grid-template-columns: 1fr; } }
+.about-text h2 { font-size: 16px; font-weight: 500; margin-bottom: 0.75rem; }
+.about-text p { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 0.5rem; }
+.about-text .maker { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 1rem; }
+.yt-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; text-decoration: none; display: block; transition: border-color 0.15s; }
+.yt-card:hover { border-color: #e00; }
+.yt-thumb { width: 100%; aspect-ratio: 16/9; background: #1a1916; display: flex; align-items: center; justify-content: center; }
+.yt-info { padding: 12px 14px; }
+.yt-info p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.yt-info strong { font-size: 13px; color: var(--text); }
+.usage-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.usage-left { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.usage-count { font-family: var(--mono); font-size: 11px; }
+.usage-count.green { color: var(--green); }
+.usage-count.amber { color: var(--amber); }
+.usage-count.red { color: var(--red); }
+.usage-reset { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 </style>
 </head>
 <body>
