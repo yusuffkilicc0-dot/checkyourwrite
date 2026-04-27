@@ -33,7 +33,10 @@
   textarea { width: 100%; height: 200px; padding: 16px; font-family: var(--sans); font-size: 15px; line-height: 1.75; border: none; outline: none; resize: none; background: transparent; color: var(--text); }
   textarea::placeholder { color: #bbb; }
   .input-footer { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-top: 1px solid var(--border); }
+  .input-meta { display: flex; align-items: center; gap: 12px; }
   .char-count { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .word-count { font-family: var(--mono); font-size: 11px; color: var(--muted); padding-left: 12px; border-left: 1px solid var(--border); }
+  .word-count span { color: var(--text); font-weight: 500; }
   .clear-btn { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: var(--sans); }
   .clear-btn:hover { color: var(--text); }
   .submit-btn { width: 100%; padding: 11px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
@@ -50,8 +53,19 @@
   .stat { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 12px; color: var(--muted); }
   .stat-dot { width: 7px; height: 7px; border-radius: 50%; }
   .stat strong { color: var(--text); font-weight: 500; }
+
+  /* Filter tabs */
+  .filter-tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-tab { padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-family: var(--mono); cursor: pointer; background: transparent; color: var(--muted); transition: all 0.12s; display: flex; align-items: center; gap: 5px; }
+  .filter-tab:hover { color: var(--text); border-color: #bbb; }
+  .filter-tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .filter-tab.active .tab-dot { background: var(--bg) !important; }
+  .filter-tab .tab-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .filter-tab .tab-count { font-size: 10px; opacity: 0.7; }
+
   .err-list { display: flex; flex-direction: column; gap: 7px; }
-  .err-item { display: grid; grid-template-columns: 8px 1fr; gap: 12px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px 12px 10px; }
+  .err-item { display: grid; grid-template-columns: 8px 1fr; gap: 12px; align-items: start; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px 12px 10px; transition: opacity 0.15s; }
+  .err-item.hidden { display: none; }
   .err-stripe { width: 3px; height: 100%; border-radius: 3px; min-height: 36px; }
   .stripe-gram { background: var(--red); } .stripe-spell { background: var(--blue); } .stripe-punct { background: var(--amber); } .stripe-case { background: var(--pink); }
   .err-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
@@ -62,29 +76,20 @@
   .err-fix { font-size: 14px; font-weight: 500; font-family: var(--mono); color: var(--text); }
   .err-explain { font-size: 13px; color: var(--muted); line-height: 1.5; }
   .no-errors { background: var(--green-light); border: 1px solid #b7d9c5; border-radius: var(--radius); padding: 14px 16px; font-size: 13px; color: var(--green); font-weight: 500; }
+  .no-filter-results { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; font-size: 13px; color: var(--muted); text-align: center; display: none; }
   .copy-btn { margin-top: 8px; padding: 6px 14px; font-size: 12px; font-family: var(--sans); border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer; }
   .copy-btn:hover { color: var(--text); border-color: #bbb; }
-  footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--muted); font-family: var(--mono); }
+  footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--muted); font-family: var(--mono); border-top: 1px solid var(--border); margin-top: 3rem; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
   @media (max-width: 520px) { header { padding: 1rem; } main { padding: 1.25rem 1rem; } }
-.about-section { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem; }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-@media (max-width: 560px) { .about-grid { grid-template-columns: 1fr; } }
-.about-text h2 { font-size: 16px; font-weight: 500; margin-bottom: 0.75rem; }
-.about-text p { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 0.5rem; }
-.about-text .maker { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 1rem; }
-.yt-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; text-decoration: none; display: block; transition: border-color 0.15s; }
-.yt-card:hover { border-color: #e00; }
-.yt-thumb { width: 100%; aspect-ratio: 16/9; background: #1a1916; display: flex; align-items: center; justify-content: center; }
-.yt-info { padding: 12px 14px; }
-.yt-info p { font-size: 12px; color: var(--muted); margin-top: 3px; }
-.yt-info strong { font-size: 13px; color: var(--text); }
-.usage-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-.usage-left { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-.usage-count { font-family: var(--mono); font-size: 11px; }
-.usage-count.green { color: var(--green); }
-.usage-count.amber { color: var(--amber); }
-.usage-count.red { color: var(--red); }
-.usage-reset { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .usage-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .usage-left { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .usage-count { font-family: var(--mono); font-size: 11px; }
+  .usage-count.green { color: var(--green); }
+  .usage-count.amber { color: var(--amber); }
+  .usage-count.red { color: var(--red); }
+  .usage-reset { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -107,21 +112,24 @@
   <div class="input-box">
     <textarea id="inputText" placeholder="Almanca metninizi buraya yazın veya yapıştırın..." oninput="onType()"></textarea>
     <div class="input-footer">
-      <span class="char-count" id="charCount">0 karakter</span>
+      <div class="input-meta">
+        <span class="char-count" id="charCount">0 karakter</span>
+        <span class="word-count" id="wordCount"><span id="wordNum">0</span> kelime</span>
+      </div>
       <button class="clear-btn" onclick="clearText()">Temizle</button>
     </div>
   </div>
   <div class="usage-bar">
-  <span class="usage-left">Günlük kullanım</span>
-  <span class="usage-count" id="usageCount">15 / 15 hak kaldı</span>
-  <span class="usage-reset" id="usageReset">24 saatte 15 hak</span>
-</div>
- <div style="display:flex;gap:10px;align-items:center;">
-  <button class="submit-btn" id="submitBtn" onclick="analyze()" style="flex:1;">Düzelt →</button>
-  <a href="https://www.youtube.com/@yusufunvloglar%C4%B1" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#ff0000;border-radius:10px;flex-shrink:0;text-decoration:none;">
-    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.6 2.2C19.4 1.5 18.8 0.9 18.1 0.7C16.5 0.3 10 0.3 10 0.3C10 0.3 3.5 0.3 1.9 0.7C1.2 0.9 0.6 1.5 0.4 2.2C0 3.8 0 7 0 7C0 7 0 10.2 0.4 11.8C0.6 12.5 1.2 13.1 1.9 13.3C3.5 13.7 10 13.7 10 13.7C10 13.7 16.5 13.7 18.1 13.3C18.8 13.1 19.4 12.5 19.6 11.8C20 10.2 20 7 20 7C20 7 20 3.8 19.6 2.2Z" fill="white"/><path d="M8 10L13 7L8 4V10Z" fill="#ff0000"/></svg>
-  </a>
-</div>
+    <span class="usage-left">Günlük kullanım</span>
+    <span class="usage-count" id="usageCount">15 / 15 hak kaldı</span>
+    <span class="usage-reset" id="usageReset">24 saatte 15 hak</span>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button class="submit-btn" id="submitBtn" onclick="analyze()" style="flex:1;">Düzelt →</button>
+    <a href="https://www.youtube.com/@yusufunvloglar%C4%B1" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#ff0000;border-radius:10px;flex-shrink:0;text-decoration:none;">
+      <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.6 2.2C19.4 1.5 18.8 0.9 18.1 0.7C16.5 0.3 10 0.3 10 0.3C10 0.3 3.5 0.3 1.9 0.7C1.2 0.9 0.6 1.5 0.4 2.2C0 3.8 0 7 0 7C0 7 0 10.2 0.4 11.8C0.6 12.5 1.2 13.1 1.9 13.3C3.5 13.7 10 13.7 10 13.7C10 13.7 16.5 13.7 18.1 13.3C18.8 13.1 19.4 12.5 19.6 11.8C20 10.2 20 7 20 7C20 7 20 3.8 19.6 2.2Z" fill="white"/><path d="M8 10L13 7L8 4V10Z" fill="#ff0000"/></svg>
+    </a>
+  </div>
   <div class="loading-row" id="loadingRow">
     <div class="spinner"></div>
     <span>Metin analiz ediliyor...</span>
@@ -134,49 +142,110 @@
     <hr class="divider">
     <div class="result-label" style="margin-bottom: 10px;">Hatalar</div>
     <div class="stats-row" id="statsRow"></div>
+    <div class="filter-tabs" id="filterTabs"></div>
     <div class="err-list" id="errList"></div>
+    <div class="no-filter-results" id="noFilterResults">Bu türde hata bulunamadı.</div>
   </div>
 </main>
- <footer style="text-align:center;padding:2rem;font-size:12px;color:var(--muted);font-family:var(--mono);border-top:1px solid var(--border);margin-top:3rem;">
-  checkyourwrite · Duden kuralları · Claude AI · <a href="/privacy.html" style="color:var(--muted);text-decoration:none;">Datenschutz</a> · <a href="/about.html" style="color:var(--muted);text-decoration:none;">Hakkında</a>
+<footer>
+  checkyourwrite · Duden kuralları · Claude AI · <a href="/privacy.html">Datenschutz</a> · <a href="/about.html">Hakkında</a>
 </footer>
-    </a>
-  </div>
-</div>
- <script>
+
+<script>
 let level = 'B2';
-function setLvl(btn, v) { document.querySelectorAll('.lvl').forEach(b => b.classList.remove('on')); btn.classList.add('on'); level = v; }
-function onType() { document.getElementById('charCount').textContent = document.getElementById('inputText').value.length + ' karakter'; }
-function clearText() { document.getElementById('inputText').value = ''; document.getElementById('charCount').textContent = '0 karakter'; document.getElementById('resultSection').style.display = 'none'; }
-function copyText() { navigator.clipboard.writeText(document.getElementById('correctedBox').textContent).then(() => { const btn = document.querySelector('.copy-btn'); btn.textContent = 'Kopyalandı ✓'; setTimeout(() => btn.textContent = 'Kopyala', 1800); }); }
+let activeFilter = 'all';
+
+function setLvl(btn, v) {
+  document.querySelectorAll('.lvl').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  level = v;
+}
+
+function countWords(text) {
+  return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+}
+
+function onType() {
+  const val = document.getElementById('inputText').value;
+  document.getElementById('charCount').textContent = val.length + ' karakter';
+  document.getElementById('wordNum').textContent = countWords(val);
+}
+
+function clearText() {
+  document.getElementById('inputText').value = '';
+  document.getElementById('charCount').textContent = '0 karakter';
+  document.getElementById('wordNum').textContent = '0';
+  document.getElementById('resultSection').style.display = 'none';
+}
+
+function copyText() {
+  navigator.clipboard.writeText(document.getElementById('correctedBox').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Kopyalandı ✓';
+    setTimeout(() => btn.textContent = 'Kopyala', 1800);
+  });
+}
+
 async function analyze() {
   const text = document.getElementById('inputText').value.trim();
- const usage = getUsage();
-if (usage.count >= MAX_DAILY) {
-  const resetIn = Math.ceil((usage.start + 24 * 60 * 60 * 1000 - Date.now()) / (60 * 60 * 1000));
-  alert('Günlük kullanım limitine ulaştınız (15/15). ' + resetIn + ' saat sonra tekrar kullanabilirsiniz.');
-  return;
-}
+  const usage = getUsage();
+  if (usage.count >= MAX_DAILY) {
+    const resetIn = Math.ceil((usage.start + 24 * 60 * 60 * 1000 - Date.now()) / (60 * 60 * 1000));
+    alert('Günlük kullanım limitine ulaştınız (15/15). ' + resetIn + ' saat sonra tekrar kullanabilirsiniz.');
+    return;
+  }
   if (!text) return;
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   document.getElementById('loadingRow').style.display = 'flex';
   document.getElementById('resultSection').style.display = 'none';
   try {
-    const res = await fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, level }) });
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, level })
+    });
     const result = await res.json();
     if (result.error) { alert('Hata: ' + result.error); return; }
     incrementUsage();
-updateUsageBar();
-   renderResult(result);
-  } catch(e) { alert('Bir hata oluştu, tekrar dene.'); }
-  finally { btn.disabled = false; document.getElementById('loadingRow').style.display = 'none'; }
+    updateUsageBar();
+    renderResult(result);
+  } catch(e) {
+    alert('Bir hata oluştu, tekrar dene.');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('loadingRow').style.display = 'none';
+  }
 }
+
+function setFilter(type) {
+  activeFilter = type;
+
+  // Update tab active states
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.type === type);
+  });
+
+  // Show/hide error items
+  const items = document.querySelectorAll('.err-item[data-type]');
+  let visibleCount = 0;
+  items.forEach(item => {
+    const show = type === 'all' || item.dataset.type === type;
+    item.classList.toggle('hidden', !show);
+    if (show) visibleCount++;
+  });
+
+  const noResults = document.getElementById('noFilterResults');
+  noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
 function renderResult(r) {
   document.getElementById('correctedBox').textContent = r.corrected || '';
   const errors = r.errors || [];
   const typeMap = { gram: 'Gramer', spell: 'Yazım', punct: 'Noktalama', case: 'Büyük/Küçük Harf' };
   const dotColors = { gram: '#9b2335', spell: '#1a4d8f', punct: '#7a4f00', case: '#8f1a5a' };
+
+  // Stats row
   const statsRow = document.getElementById('statsRow');
   statsRow.innerHTML = '';
   const counts = { gram: 0, spell: 0, punct: 0, case: 0 };
@@ -187,20 +256,69 @@ function renderResult(r) {
     s.innerHTML = '<div class="stat-dot" style="background:' + dotColors[type] + '"></div><strong>' + count + '</strong> ' + typeMap[type];
     statsRow.appendChild(s);
   });
+
+  // Filter tabs — only show if there are errors
+  const filterTabs = document.getElementById('filterTabs');
+  filterTabs.innerHTML = '';
+  activeFilter = 'all';
+
+  if (errors.length > 0) {
+    // "Tümü" tab
+    const allTab = document.createElement('button');
+    allTab.className = 'filter-tab active';
+    allTab.dataset.type = 'all';
+    allTab.innerHTML = 'Tümü <span class="tab-count">' + errors.length + '</span>';
+    allTab.onclick = () => setFilter('all');
+    filterTabs.appendChild(allTab);
+
+    // Per-type tabs
+    Object.entries(counts).forEach(([type, count]) => {
+      if (count === 0) return;
+      const tab = document.createElement('button');
+      tab.className = 'filter-tab';
+      tab.dataset.type = type;
+      tab.innerHTML = '<div class="tab-dot" style="background:' + dotColors[type] + '"></div>' + typeMap[type] + ' <span class="tab-count">' + count + '</span>';
+      tab.onclick = () => setFilter(type);
+      filterTabs.appendChild(tab);
+    });
+  }
+
+  // Error list
   const errList = document.getElementById('errList');
   errList.innerHTML = '';
-  if (errors.length === 0) { errList.innerHTML = '<div class="no-errors">Hata bulunamadı — metin doğru görünüyor.</div>'; }
-  else {
+  document.getElementById('noFilterResults').style.display = 'none';
+
+  if (errors.length === 0) {
+    errList.innerHTML = '<div class="no-errors">Hata bulunamadı — metin doğru görünüyor.</div>';
+  } else {
     errors.forEach(e => {
-      const div = document.createElement('div'); div.className = 'err-item';
-      div.innerHTML = '<div class="err-stripe stripe-' + e.type + '"></div><div><div class="err-top"><span class="err-type type-' + e.type + '">' + (typeMap[e.type]||e.type) + '</span><span class="err-orig">' + esc(e.original) + '</span><span class="err-arrow">→</span><span class="err-fix">' + esc(e.correction) + '</span></div><div class="err-explain">' + esc(e.explanation) + '</div></div>';
+      const div = document.createElement('div');
+      div.className = 'err-item';
+      div.dataset.type = e.type;
+      div.innerHTML =
+        '<div class="err-stripe stripe-' + e.type + '"></div>' +
+        '<div>' +
+          '<div class="err-top">' +
+            '<span class="err-type type-' + e.type + '">' + (typeMap[e.type] || e.type) + '</span>' +
+            '<span class="err-orig">' + esc(e.original) + '</span>' +
+            '<span class="err-arrow">→</span>' +
+            '<span class="err-fix">' + esc(e.correction) + '</span>' +
+          '</div>' +
+          '<div class="err-explain">' + esc(e.explanation) + '</div>' +
+        '</div>';
       errList.appendChild(div);
     });
   }
+
   document.getElementById('resultSection').style.display = 'block';
   document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function esc(t) {
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Usage tracking
 const MAX_DAILY = 15;
 
 function getUsage() {
@@ -241,3 +359,4 @@ setInterval(updateUsageBar, 60000);
 </script>
 </body>
 </html>
+
