@@ -159,7 +159,13 @@ function onType() { document.getElementById('charCount').textContent = document.
 function clearText() { document.getElementById('inputText').value = ''; document.getElementById('charCount').textContent = '0 karakter'; document.getElementById('resultSection').style.display = 'none'; }
 function copyText() { navigator.clipboard.writeText(document.getElementById('correctedBox').textContent).then(() => { const btn = document.querySelector('.copy-btn'); btn.textContent = 'Kopyalandı ✓'; setTimeout(() => btn.textContent = 'Kopyala', 1800); }); }
 async function analyze() {
-  const text = document.getElementById('inputText').value.trim();
+  const text = const usage = getUsage();
+if (usage.count >= MAX_DAILY) {
+  const resetIn = Math.ceil((usage.start + 24 * 60 * 60 * 1000 - Date.now()) / (60 * 60 * 1000));
+  alert('Günlük kullanım limitine ulaştınız (15/15). ' + resetIn + ' saat sonra tekrar kullanabilirsiniz.');
+  return;
+}
+ document.getElementById('inputText').value.trim();
   if (!text) return;
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
