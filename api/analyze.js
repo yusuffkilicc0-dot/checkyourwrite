@@ -92,8 +92,7 @@ export default async function handler(req, res) {
         max_tokens: 2000,
         messages: [{
           role: 'user',
-          content: `You are a German language teacher checking ${level} level text. Analyze for grammar, spelling, punctuation, and capitalization errors.
-
+          content: `You are a German language teacher checking ${level} level text. Analyze for grammar, spelling, punctuation, and capitalization errors. IMPORTANT: All explanations MUST be written in Turkish language only. Never use German or English in explanations.
 TEXT:
 ${t}
 
