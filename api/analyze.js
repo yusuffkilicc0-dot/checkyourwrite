@@ -13,8 +13,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing text or level' });
   }
 
-  const prompt = `Du bist ein strenger Deutschlehrer auf Niveau ${level}. Analysiere diesen Text nach Duden-Regeln. Text: """${text}""" Antworte NUR mit JSON ohne Backticks: {"corrected":"...","errors":[{"type":"gram|spell|punct|case","original":"...","correction":"...","explanation":"Türkçe açıklama"}]}`;
-
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -25,26 +23,12 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1500,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+        max_tokens: 2000,
+        messages: [{
+          role: 'user',
+          content: `You are a German language teacher. Analyze this ${level} level German text for errors.
 
-    const data = await response.json();
-    
-    if (!response.ok || data.error) {
-      return res.status(500).json({ error: data.error?.message || 'Anthropic API error', detail: data });
-    }
+Text: ${text}
 
-    if (!data.content || !Array.isArray(data.content)) {
-      return res.status(500).json({ error: 'Unexpected API response', detail: data });
-    }
-
-    const raw = data.content.map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
-    const result = JSON.parse(raw);
-    return res.status(200).json(result);
-
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
-  }
-}
+Reply ONLY with valid JSON, no markdown, no backticks:
+{"corrected":"corrected text here","errors":[{"type":"gram","original":"wrong","correction":"right","explanation":"Turkish expl
