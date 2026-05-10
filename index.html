@@ -506,5 +506,86 @@ updateUsageBar();
 setInterval(updateUsageBar, 60000);
 renderHistoryStrip();
 </script>
+ <!-- Premium Modal HTML -->
+<div id="premium-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; display:flex; align-items:center; justify-content:center;">
+  <div style="background:white; padding:40px; border-radius:12px; max-width:500px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+    
+    <h2 style="margin-top:0; color:#333;">🎯 Premium'a Yükselt</h2>
+    <p style="color:#666; font-size:16px;">Sınırsız düzeltme, eşanlamlı öneriler ve daha fazlası</p>
+    
+    <!-- Premium Seçeneği -->
+    <div style="border:1px solid #e0e0e0; padding:20px; border-radius:8px; margin:15px 0; cursor:pointer;" onclick="selectPlan('premium')">
+      <h3 style="margin:0 0 10px;">✨ Premium</h3>
+      <p style="margin:0; font-size:24px; color:#1D9E75; font-weight:bold;">€4.99<span style="font-size:14px;">/ay</span></p>
+      <ul style="margin:10px 0; padding-left:20px; font-size:14px; color:#666;">
+        <li>Sınırsız yazı düzeltme</li>
+        <li>Eşanlamlı kelime önerileri</li>
+        <li>Telaffuz (ses ile dinle)</li>
+        <li>Hata geçmişi</li>
+      </ul>
+      <button style="width:100%; padding:10px; background:#1D9E75; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; font-weight:bold;">Premium'u Seç</button>
+    </div>
+    
+    <!-- Pro Seçeneği -->
+    <div style="border:2px solid #534AB7; padding:20px; border-radius:8px; margin:15px 0; background:#f8f7ff; cursor:pointer;" onclick="selectPlan('pro')">
+      <div style="background:#534AB7; color:white; padding:5px 10px; border-radius:4px; display:inline-block; font-size:12px; margin-bottom:10px;">EN POPÜLER</div>
+      <h3 style="margin:10px 0 10px;">⭐ Pro</h3>
+      <p style="margin:0; font-size:24px; color:#534AB7; font-weight:bold;">€9.99<span style="font-size:14px;">/ay</span></p>
+      <ul style="margin:10px 0; padding-left:20px; font-size:14px; color:#666;">
+        <li>Premium'un tüm özellikleri</li>
+        <li>İlerleme takibi (grafik)</li>
+        <li>Hata öğrenme kartları</li>
+        <li>Kelime listesi (PDF)</li>
+      </ul>
+      <button style="width:100%; padding:10px; background:#534AB7; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; font-weight:bold;">Pro'yu Seç</button>
+    </div>
+    
+    <button onclick="closePremiumModal()" style="width:100%; padding:10px; background:#f0f0f0; color:#333; border:none; border-radius:6px; cursor:pointer; margin-top:20px;">Kapat</button>
+  </div>
+</div>
+
+<!-- Stripe Script -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<!-- Premium JavaScript -->
+<script>
+const STRIPE_PUBLIC_KEY = 'pk_live_51TVevYJ2CzqeTfs9OVBLwVHYd5uuJoorxCLFRZDJU0iy8X76KwQ4Y8fNel0Rmk6pjrTGvJfdagdlwvlYvGpzUziT00WvHhwU4r'; // Senin key!
+
+function showPremiumModal() {
+  document.getElementById('premium-modal').style.display = 'flex';
+}
+
+function closePremiumModal() {
+  document.getElementById('premium-modal').style.display = 'none';
+}
+
+async function selectPlan(planId) {
+  try {
+    const userEmail = prompt('Ödeme için e-mailini gir:');
+    if (!userEmail) return;
+    
+    // Stripe Checkout sayfasına yönlendir
+    const stripe = Stripe(STRIPE_PUBLIC_KEY);
+    
+    // Fiyat ID'leri (Stripe'da oluşturman gerekir)
+    const priceIds = {
+      premium: 'price_1N...', // Stripe'da oluştur
+      pro: 'price_2N...'      // Stripe'da oluştur
+    };
+    
+    const { error } = await stripe.redirectToCheckout({
+      lineItems: [{ price: priceIds[planId], quantity: 1 }],
+      mode: 'subscription',
+      successUrl: 'https://www.checkyourwrite.com/success',
+      cancelUrl: 'https://www.checkyourwrite.com/cancel',
+    });
+
+  } catch (error) {
+    console.error('Hata:', error);
+    alert('Ödeme işleminde hata oluştu.');
+  }
+}
+</script>
+ <button onclick="showPremiumModal()" style="padding:10px 20px; background:#1D9E75; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; margin:10px 0;">🎯 Premium'a Yükselt</button>
 </body>
 </html>
