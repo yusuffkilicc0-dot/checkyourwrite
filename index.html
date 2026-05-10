@@ -589,7 +589,93 @@ if (planId === 'premium') {
     alert('Ödeme işleminde hata oluştu.');
   }
 }
+<script>
+// ============================================
+// Premium Sistemi - localStorage
+// ============================================
+
+const PREMIUM_STORAGE_KEY = 'checkyourwrite_premium_users';
+
+// Sayfa yüklendiğinde çalış
+document.addEventListener('DOMContentLoaded', function() {
+  checkUserPremiumStatus();
+});
+
+// Email'e göre premium kontrolü yap
+function checkUserPremiumStatus() {
+  const storedEmail = localStorage.getItem('checkyourwrite_current_email');
+  
+  if (storedEmail) {
+    const premiumUsers = JSON.parse(localStorage.getItem(PREMIUM_STORAGE_KEY) || '{}');
+    
+    if (premiumUsers[storedEmail] && premiumUsers[storedEmail].premium) {
+      enablePremiumFeatures(storedEmail);
+      console.log('✅ Premium aktif:', storedEmail);
+    } else {
+      disablePremiumFeatures();
+      console.log('❌ Premium yok:', storedEmail);
+    }
+  }
+}
+
+// Premium özellikleri aç
+function enablePremiumFeatures(email) {
+  localStorage.setItem('checkyourwrite_is_premium', 'true');
+  const statusDiv = document.getElementById('premium-status');
+  if (statusDiv) {
+    statusDiv.innerHTML = `<span style="color:green; font-weight:bold;">✅ Premium Aktif (${email})</span>`;
+  }
+}
+
+// Premium özellikleri kapat
+function disablePremiumFeatures() {
+  localStorage.setItem('checkyourwrite_is_premium', 'false');
+  const statusDiv = document.getElementById('premium-status');
+  if (statusDiv) {
+    statusDiv.innerHTML = `<span style="color:red;">⭕ Ücretsiz Plan</span>`;
+  }
+}
+
+// Email soruştur ve kaydet
+function askForEmail() {
+  const email = prompt('Lütfen emailini gir:');
+  
+  if (email && email.includes('@')) {
+    localStorage.setItem('checkyourwrite_current_email', email);
+    checkUserPremiumStatus();
+    return email;
+  } else if (email) {
+    alert('Geçerli bir email gir!');
+    return askForEmail();
+  }
+  return null;
+}
+
+// Çıkış yap
+function logout() {
+  localStorage.removeItem('checkyourwrite_current_email');
+  disablePremiumFeatures();
+  alert('Çıkış yapıldı.');
+  location.reload();
+}
+
+  // Eski kod devam ediyor...
 </script>
  <button onclick="showPremiumModal()" style="padding:10px 20px; background:#1D9E75; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; margin:10px 0;">🎯 Premium'a Yükselt</button>
 </body>
+ <body>
+  <!-- Premium Status & Login/Logout -->
+  <div style="text-align:right; padding:15px; background:#f5f5f5; border-bottom:1px solid #ddd;">
+    <div id="premium-status" style="display:inline-block; margin-right:20px; font-weight:bold;"></div>
+    
+    <button onclick="askForEmail()" style="padding:8px 16px; background:#1D9E75; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">
+      📧 Email Gir
+    </button>
+    
+    <button onclick="logout()" style="padding:8px 16px; background:#999; color:white; border:none; border-radius:6px; cursor:pointer; margin-left:10px; font-weight:bold;">
+      🚪 Çıkış
+    </button>
+  </div>
+
+  <!-- Sayfanın eski içeriği başlıyor -->
 </html>
