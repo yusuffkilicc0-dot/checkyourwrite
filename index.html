@@ -567,8 +567,9 @@ async function selectPlan(planId) {
     const userEmail = prompt('Ödeme için e-mailini gir:');
     if (!userEmail) return;
     
-    // Stripe Checkout sayfasına yönlendir
-    const stripe = Stripe(STRIPE_PUBLIC_KEY);
+   // // Stripe Checkout sayfasına yönlendir
+if (planId === 'premium') {
+  window.location.href = 'https://buy.stripe.com/7sY6oIdY4dfi8Dw8X8c3m01';
     
     // Fiyat ID'leri (Stripe'da oluşturman gerekir)
    const priceIds = {
