@@ -577,7 +577,11 @@ async function selectPlan(planId) {
 };
     };
     
-    window.location.href = `https://checkout.stripe.com/pay/cs_test_...`;
+    if (planId === 'premium') {
+  window.location.href = `https://buy.stripe.com/test/cN29Ai...`; // Premium Checkout Link
+} else if (planId === 'pro') {
+  window.location.href = `https://buy.stripe.com/test/cN29Ai...`; // Pro Checkout Link
+}
 
   } catch (error) {
     console.error('Hata:', error);
