@@ -589,6 +589,26 @@ if (planId === 'premium') {
     alert('Ödeme işleminde hata oluştu.');
   }
 }
+ // ============================================
+  // Premium Daily Limit Güncelleme
+  // ============================================
+  function updateDailyLimit() {
+    const isPremium = localStorage.getItem('checkyourwrite_is_premium') === 'true';
+    const usageCountEl = document.getElementById('usageCount');
+    
+    if (isPremium) {
+      usageCountEl.innerHTML = '∞ Sınırsız düzeltme';
+      usageCountEl.style.color = 'green';
+    } else {
+      usageCountEl.innerHTML = '15 / 15 hak kaldı';
+      usageCountEl.style.color = 'red';
+    }
+  }
+
+  // Sayfa yüklendiğinde çalıştır
+  document.addEventListener('DOMContentLoaded', function() {
+    updateDailyLimit();
+  });
 <script>
 // ============================================
 // Premium Sistemi - localStorage
