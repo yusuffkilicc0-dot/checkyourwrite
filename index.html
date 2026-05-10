@@ -554,7 +554,10 @@ const STRIPE_PUBLIC_KEY = 'pk_live_51TVevYJ2CzqeTfs9OVBLwVHYd5uuJoorxCLFRZDJU0iy
 function showPremiumModal() {
   document.getElementById('premium-modal').style.display = 'flex';
 }
-
+// Sayfa yüklendiğinde modal KAPAIK olsun
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('premium-modal').style.display = 'none'; // KAPAL BAŞLA
+});
 function closePremiumModal() {
   document.getElementById('premium-modal').style.display = 'none';
 }
