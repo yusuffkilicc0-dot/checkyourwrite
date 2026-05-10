@@ -574,12 +574,7 @@ async function selectPlan(planId) {
 };
     };
     
-    const { error } = await stripe.redirectToCheckout({
-      lineItems: [{ price: priceIds[planId], quantity: 1 }],
-      mode: 'subscription',
-      successUrl: 'https://www.checkyourwrite.com/success',
-      cancelUrl: 'https://www.checkyourwrite.com/cancel',
-    });
+    window.location.href = `https://checkout.stripe.com/pay/cs_test_...`;
 
   } catch (error) {
     console.error('Hata:', error);
