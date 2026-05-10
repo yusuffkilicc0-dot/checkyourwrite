@@ -568,9 +568,10 @@ async function selectPlan(planId) {
     const stripe = Stripe(STRIPE_PUBLIC_KEY);
     
     // Fiyat ID'leri (Stripe'da oluşturman gerekir)
-    const priceIds = {
-      premium: 'price_1N...', // Stripe'da oluştur
-      pro: 'price_2N...'      // Stripe'da oluştur
+   const priceIds = {
+  premium: 'price_1TVfjwJ2CzqeTfs9izt8smYC',
+  pro: 'price_1TVfsNJ2CzqeTfs9hCyOzD93'
+};
     };
     
     const { error } = await stripe.redirectToCheckout({
