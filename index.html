@@ -658,8 +658,9 @@ function disablePremiumFeatures() {
 }
 
 // Email soruştur ve kaydet
-function askForEmail() {
-  const email = prompt('Lütfen emailini gir:');
+<button onclick="openEmailModal()">
+  📧 Giriş Yap
+</button>
   
   if (email && email.includes('@')) {
     localStorage.setItem('checkyourwrite_current_email', email);
