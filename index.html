@@ -742,13 +742,14 @@ function logout() {
 function showMainPage() {
   const main = document.querySelector('main');
   main.style.display = 'block';
+ 
+ function showMainPage() {
+  document.querySelector('main').style.display = 'block';
   document.getElementById('resources-page').style.display = 'none';
 }
 
-// Kaynaklar sayfasını göster
 function showResourcesPage() {
-  const main = document.querySelector('main');
-  main.style.display = 'none';
+  document.querySelector('main').style.display = 'none';
   document.getElementById('resources-page').style.display = 'block';
 }
 </script>
