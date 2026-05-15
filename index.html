@@ -707,6 +707,23 @@ function logout() {
 }
 
   // Eski kod devam ediyor...
+// ============================================
+// RESOURCES PAGE FUNCTIONS
+// ============================================
+
+// Ana sayfayı göster
+function showMainPage() {
+  const main = document.querySelector('main');
+  main.style.display = 'block';
+  document.getElementById('resources-page').style.display = 'none';
+}
+
+// Kaynaklar sayfasını göster
+function showResourcesPage() {
+  const main = document.querySelector('main');
+  main.style.display = 'none';
+  document.getElementById('resources-page').style.display = 'block';
+}
 </script>
  <button onclick="showPremiumModal()" style="padding:10px 20px; background:#1D9E75; color:white; border:none; border-radius:6px; cursor:pointer; font-size:16px; margin:10px 0;">🎯 Premium'a Yükselt</button>
 </body>
