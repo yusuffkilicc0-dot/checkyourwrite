@@ -153,6 +153,59 @@
   background: rgba(255,255,255,0.1);
   color: #FFD700;
 }
+.pdf-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:35px;
+}
+
+.pdf-card{
+background:#fff;
+padding:35px;
+border-radius:22px;
+box-shadow:0 10px 35px rgba(0,0,0,.08);
+transition:.3s;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+text-align:center;
+}
+
+.pdf-card:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 45px rgba(0,0,0,.15);
+}
+
+.pdf-icon{
+font-size:58px;
+margin-bottom:20px;
+}
+
+.pdf-card h2{
+font-size:24px;
+margin-bottom:15px;
+}
+
+.pdf-card p{
+color:#666;
+line-height:1.7;
+margin-bottom:28px;
+}
+
+.pdf-btn{
+display:inline-block;
+padding:14px 28px;
+background:#1D9E75;
+color:white;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+transition:.3s;
+}
+
+.pdf-btn:hover{
+background:#157b5e;
+}
 </style>
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
@@ -249,92 +302,115 @@
     <div class="no-filter-results" id="noFilterResults">Bu türde hata bulunamadı.</div>
   </div>
 </main>
- <!-- RESOURCES PAGE -->
-<!-- ============================================ -->
-<div id="resources-page" style="display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
-  
-  <h1 style="text-align: center; color: var(--text); margin-bottom: 40px; font-size: 32px;">📚 YouTube Videolarından PDF'ler</h1>
-  
-  <!-- PDF Kartı -->
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
-    
-    <!-- Ausbildung Rehberi Kartı -->
-    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
-      
-      <div style="text-align: center; margin-bottom: 20px;">
-        <div style="font-size: 48px;">🎓</div>
-      </div>
-      
-      <h2 style="color: var(--text); font-size: 22px; margin-bottom: 15px; text-align: center;">2026'da Ausbildung Yapmak Mantıklı mı?</h2>
-      
-      <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px; text-align: center;">
-        2026 yılında Almanya'da Ausbildung yapmak isteyenler için kapsamlı rehber. Viza, mülakat, CV hazırlığı, maaşlar ve gerçek hayat deneyimleri.
-      </p>
-      
-      <div style="text-align: center; margin-bottom: 20px;">
-        <a href="Ausbildung_Rehberi_2026.pdf" download style="display: inline-block; background: linear-gradient(135deg, #1D9E75 0%, #158B6B 100%); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s;">
-          📥 PDF İndir
-        </a>
-      </div>
-<!-- Yeni PDF Kartı -->
-        <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
+ <!-- ========================= -->
+<!-- RESOURCES PAGE -->
+<!-- ========================= -->
 
-          <div style="text-align: center; margin-bottom: 20px;">
-            <div style="font-size: 48px;">🗺️</div>
-          </div>
+<div id="resources-page" style="display:none;">
 
-          <h2 style="color: var(--text); font-size: 22px; margin-bottom: 15px; text-align: center;">YKS Sonrası Almanya'ya Gelmek</h2>
+<section style="max-width:1200px;margin:auto;padding:70px 20px;">
 
-          <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px; text-align: center;">
-            YKS sonuçlarından vizeye kadar tüm süreci adım adım anlatan yol haritası. Başvuru, belgeler, bloke hesap ve sık yapılan hatalar.
-          </p>
+<div style="text-align:center;margin-bottom:60px;">
 
-          <div style="text-align: center; margin-bottom: 20px;">
-            <a href="YKS_Almanya_Yol_Haritasi.pdf" download style="display: inline-block; background: linear-gradient(135deg, #1D9E75 0%, #15886B 100%); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-              🗂 PDF İndir
-            </a>
-          </div>
-<!-- TELC B1 Schreiben Kartı -->
-            <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
+<h1 style="font-size:38px;margin-bottom:15px;">
+📚 Ücretsiz PDF Kaynakları
+</h1>
 
-              <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 48px;">📝</div>
-              </div>
+<p style="font-size:18px;color:#777;max-width:650px;margin:auto;">
+YouTube videolarında bahsettiğim bütün PDF rehberleri buradan ücretsiz indirebilirsin.
+</p>
 
-              <h2 style="color: var(--text); font-size: 22px; margin-bottom: 15px; text-align: center;">TELC B1 Schreiben Örnek Metin</h2>
+</div>
 
-              <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px; text-align: center;">
-                TELC B1 yazma (Schreiben) bölümü için örnek metin ve püf noktaları. Sınavda neye dikkat etmen gerektiğini gösteren pratik bir rehber.
-              </p>
 
-              <div style="text-align: center; margin-bottom: 20px;">
-                <a href="TELC_B1_Schreiben_Ornek_Metin.pdf" download style="display: inline-block; background: linear-gradient(135deg, #1D9E75 0%, #15886B 100%); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                  📥 PDF İndir
-                </a>
-              </div>
-<!-- TELC B1 Schreiben Kalıpları Kartı -->
-            <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
+<div class="pdf-grid">
 
-              <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 48px;">📚</div>
-              </div>
+<div class="pdf-card">
 
-              <h2 style="color: var(--text); font-size: 22px; margin-bottom: 15px; text-align: center;">TELC B1 Schreiben Kalıpları</h2>
+<div class="pdf-icon">🎓</div>
 
-              <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px; text-align: center;">
-                TELC B1 yazma bölümünde kullanabileceğin hazır cümle kalıpları ve bağlaçlar. Sınavda zaman kazandıracak pratik ifadeler.
-              </p>
+<h2>2026'da Ausbildung Yapmak Mantıklı mı?</h2>
 
-              <div style="text-align: center; margin-bottom: 20px;">
-                <a href="TELC_B1_Schreiben_Kaliplari.pdf" download style="display: inline-block; background: linear-gradient(135deg, #1D9E75 0%, #15886B 100%); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                  📥 PDF İndir
-                </a>
-              </div>
+<p>
+2026 yılında Ausbildung yapmak isteyenler için kapsamlı rehber.
+</p>
 
-            </div>
-            </div>
-        </div>
-<footer>
+<a class="pdf-btn"
+href="Ausbildung_Rehberi_2026.pdf"
+download>
+
+📥 PDF İndir
+
+</a>
+
+</div>
+
+<div class="pdf-card">
+
+<div class="pdf-icon">🗺️</div>
+
+<h2>YKS Sonrası Almanya</h2>
+
+<p>
+YKS sonrası Almanya'ya gelmek isteyenler için yol haritası.
+</p>
+
+<a class="pdf-btn"
+href="YKS_Almanya_Yol_Haritasi.pdf"
+download>
+
+📥 PDF İndir
+
+</a>
+
+</div>
+
+<div class="pdf-card">
+
+<div class="pdf-icon">📝</div>
+
+<h2>TELC B1 Schreiben Örnek Metin</h2>
+
+<p>
+TELC B1 Schreiben bölümü için örnek metin.
+</p>
+
+<a class="pdf-btn"
+href="TELC_B1_Schreiben_Ornek_Metin.pdf"
+download>
+
+📥 PDF İndir
+
+</a>
+
+</div>
+
+<div class="pdf-card">
+
+<div class="pdf-icon">📚</div>
+
+<h2>TELC B1 Schreiben Kalıpları</h2>
+
+<p>
+TELC B1 sınavında kullanabileceğin hazır cümle kalıpları.
+</p>
+
+<a class="pdf-btn"
+href="TELC_B1_Schreiben_Kaliplari.pdf"
+download>
+
+📥 PDF İndir
+
+</a>
+
+</div>>
+
+</div>
+
+</section>
+
+</div>
+ <footer>
   checkyourwrite · Duden kuralları · Claude AI ·
   <a href="/privacy.html">Datenschutz</a> · <a href="/about.html">Hakkında</a>
 </footer>
