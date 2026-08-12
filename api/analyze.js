@@ -92,8 +92,9 @@ export default async function handler(req, res) {
     }
   }
 
+  let isPaid = false;
   if (user) {
-    const isPaid = user.subscription_plan === 'premium' || user.subscription_plan === 'pro';
+    isPaid = user.subscription_plan === 'premium' || user.subscription_plan === 'pro';
     if (!isPaid) {
       const today = todayKey();
       if (user.usage_date !== today) {
@@ -116,29 +117,54 @@ export default async function handler(req, res) {
   }
 
   try {
-    const prompt = `You are a German language teacher evaluating a ${level} level text.
+    const levelExpectations = {
+      A2: 'simple main clauses, basic connectors (und, aber, weil), everyday vocabulary, present + perfect tense',
+      B1: 'subordinate clauses, common connectors (obwohl, damit, trotzdem), broader vocabulary, past tenses, some passive',
+      B2: 'complex sentence structures, varied connectors, nuanced vocabulary, passive voice, Konjunktiv II, nominal style beginnings',
+      C1: 'sophisticated academic style, nominalization, advanced connectors (infolgedessen, demzufolge), precise low-frequency vocabulary, idiomatic usage',
+    };
+    const expectation = levelExpectations[level] || levelExpectations.B2;
 
-Analyze the text for errors. All explanations MUST be in Turkish only.
+    const synonymsField = isPaid
+      ? `,
+  "synonyms": [
+    {"word": "a key word from the text", "alternatives": ["2-3 German synonyms appropriate for ${level} level"]}
+  ]`
+      : '';
+
+    const prompt = `You are a strict German language teacher evaluating a text SPECIFICALLY against CEFR level ${level}.
+
+CRITICAL SCORING RULE: The score must reflect fitness for ${level}, not just grammatical correctness.
+- A grammatically perfect but overly simple text must NOT get a high score at ${level} if it lacks the structures expected at this level.
+- Expected at ${level}: ${expectation}.
+- If the text is correct but written below ${level} complexity, cap the score at 55-70 and explain in scoreFeedback that it is correct but too simple for ${level}.
+- The same text MUST score differently at different levels.
+
+All explanations MUST be in Turkish only. German examples stay in German.
 
 TEXT:
 ${t}
 
 Reply ONLY with valid JSON, no markdown:
 {
-  "corrected": "corrected text here",
-  "score": <integer 0-100>,
-  "scoreLabel": "short Turkish label for the score (e.g. 'Çok İyi', 'Geliştirilmeli', 'Mükemmel')",
-  "scoreFeedback": "1-2 sentence Turkish feedback explaining the score and how to improve",
+  "corrected": "corrected text here (fix errors only, keep the author's structure)",
+  "score": <integer 0-100, calibrated to ${level} as described above>,
+  "scoreLabel": "short Turkish label (e.g. 'Çok İyi', 'Seviye Altı', 'Geliştirilmeli', 'Mükemmel')",
+  "scoreFeedback": "2-3 sentence Turkish feedback: grammar quality AND how well the text matches ${level} expectations",
   "errors": [
     {"type": "gram", "original": "wrong text", "correction": "correct text", "explanation": "Türkçe açıklama"}
-  ]
+  ],
+  "levelSuggestion": {
+    "explanation": "2-3 sentences in Turkish: concretely how to express this content at ${level} level (which structures, connectors, vocabulary to use)",
+    "example": "the same content rewritten in German at proper ${level} level, as a model"
+  }${synonymsField}
 }
 
-Score guide (consider error count, error severity, and text length together):
-- 90-100: Near perfect, 0-1 minor errors
-- 75-89: Good, a few small errors
-- 55-74: Average, several errors that affect clarity
-- 35-54: Weak, many errors
+Score guide within ${level} fitness:
+- 90-100: Error-free AND fully matches ${level} complexity
+- 75-89: Minor errors or slightly below ${level} style
+- 55-74: Correct but too simple for ${level}, OR several errors
+- 35-54: Many errors or far below level
 - 0-34: Needs significant work
 
 Type values: gram=grammar, spell=spelling, punct=punctuation, case=capitalization. Use exactly these values.`;
@@ -152,7 +178,7 @@ Type values: gram=grammar, spell=spelling, punct=punctuation, case=capitalizatio
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2000,
+        max_tokens: 3000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
