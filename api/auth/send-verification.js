@@ -54,14 +54,78 @@ export default async function handler(req, res) {
     await user.save();
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"CheckYourWrite" <${process.env.EMAIL_USER}>`,
       to: normalizedEmail,
-      subject: '✅ CheckYourWrite - Doğrulama Kodu',
+      subject: `${code} — CheckYourWrite doğrulama kodun`,
       html: `
-        <h2>CheckYourWrite - Email Doğrulaması</h2>
-        <p>Doğrulama kodunuz: <strong>${code}</strong></p>
-        <p>Kod 10 dakika içinde geçersiz olacaktır.</p>
-        <p>Hesabını oluşturmadıysanız bu emaili yoksay.</p>
+<!DOCTYPE html>
+<html lang="tr">
+<body style="margin:0; padding:0; background-color:#f5f4f0; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f4f0; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:460px; background-color:#ffffff; border:1px solid #e2e0da; border-radius:12px; overflow:hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding:28px 32px 0 32px;" align="center">
+              <span style="font-family:'Courier New', Courier, monospace; font-size:18px; font-weight:bold; color:#1a1916; letter-spacing:-0.5px;">check<span style="color:#8a8880;">yourwrite</span></span>
+            </td>
+          </tr>
+
+          <!-- Title -->
+          <tr>
+            <td style="padding:28px 32px 8px 32px;" align="center">
+              <span style="font-size:17px; color:#1a1916; font-weight:bold;">Email doğrulama</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:0 32px 24px 32px;" align="center">
+              <span style="font-size:14px; color:#8a8880; line-height:1.6;">Giriş yapmak için aşağıdaki kodu kullan:</span>
+            </td>
+          </tr>
+
+          <!-- Code box -->
+          <tr>
+            <td style="padding:0 32px;" align="center">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="background-color:#f5f4f0; border:1px solid #e2e0da; border-radius:10px;">
+                <tr>
+                  <td style="padding:18px 40px;" align="center">
+                    <span style="font-family:'Courier New', Courier, monospace; font-size:32px; font-weight:bold; letter-spacing:8px; color:#1a1916;">${code}</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Expiry note -->
+          <tr>
+            <td style="padding:20px 32px 8px 32px;" align="center">
+              <span style="font-size:13px; color:#8a8880;">Bu kod <strong style="color:#2d6a4f;">10 dakika</strong> boyunca geçerlidir.</span>
+            </td>
+          </tr>
+
+          <!-- Security note -->
+          <tr>
+            <td style="padding:8px 32px 28px 32px;" align="center">
+              <span style="font-size:12px; color:#b0aea6; line-height:1.6;">Bu isteği sen yapmadıysan bu emaili görmezden gelebilirsin.<br>Hesabında herhangi bir değişiklik yapılmaz.</span>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:16px 32px; border-top:1px solid #e2e0da;" align="center">
+              <span style="font-family:'Courier New', Courier, monospace; font-size:11px; color:#b0aea6;">checkyourwrite.com · Almanca Metin Düzeltici</span>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
       `,
     });
 
