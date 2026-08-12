@@ -67,6 +67,9 @@
   .navbar a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 13.5px;
     padding: 8px 14px; border-radius: 10px; transition: all 0.18s; }
   .navbar a:hover { background: rgba(148,163,197,0.08); color: var(--text); }
+  .navbar a.nav-game { color: var(--accent); border: 1px solid rgba(255,178,36,0.32); }
+  .navbar a.nav-game:hover { background: rgba(255,178,36,0.12); color: var(--accent);
+    border-color: var(--accent); box-shadow: 0 0 16px rgba(255,178,36,0.18); }
 
   /* ── Buton sistemi ── */
   .btn { display: inline-flex; align-items: center; gap: 7px; font-family: var(--display); font-weight: 600;
@@ -369,6 +372,7 @@
     <div class="logo">check<span>yourwrite</span></div>
   </a>
   <nav class="navbar">
+    <a href="/game.html" target="_blank" class="nav-game">🎰 Çeviri Oyunu</a>
     <a href="#" onclick="document.querySelector('main').style.display='none'; document.getElementById('resources-page').style.display='block'; return false;">📚 Kaynaklar</a>
     <button class="btn btn-primary" onclick="showPremiumModal()">✦ Premium</button>
     <span id="premium-status" style="font-size:12px;"></span>
