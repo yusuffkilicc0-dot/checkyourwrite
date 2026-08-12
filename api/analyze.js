@@ -1,5 +1,12 @@
-const ALLOWED_ORIGIN = 'https://www.checkyourwrite.com';
+import { connectDB } from './_lib/db.js';
+import { User, Correction } from './_lib/models.js';
+import { verifyAuth } from './_lib/auth.js';
 
+const ALLOWED_ORIGIN = 'https://www.checkyourwrite.com';
+const FREE_DAILY_LIMIT = 5;
+
+// Anonim (giris yapmamis) kullanicilar icin IP bazli limit.
+// Not: in-memory oldugu icin kesin degil; kesin limit giris yapan kullanicilarda DB ile uygulanir.
 const rateLimit = new Map();
 
 function isRateLimited(ip) {
@@ -17,9 +24,9 @@ function isRateLimited(ip) {
   if (now - d.minuteStart > oneMinute) { d.minuteCount = 0; d.minuteStart = now; }
   if (now - d.dayStart > oneDay) { d.dayCount = 0; d.dayStart = now; }
 
-  if (d.dayCount >= 15) {
+  if (d.dayCount >= FREE_DAILY_LIMIT) {
     const h = Math.ceil((d.dayStart + oneDay - now) / (60 * 60 * 1000));
-    return { error: 'Gunluk kullanim limitine ulastiniz (15/15). ' + h + ' saat sonra tekrar kullanabilirsiniz.' };
+    return { error: 'Gunluk 5 ucretsiz duzeltme hakkin doldu. Sinirsiz duzeltme icin Premium plana gecebilirsin. Ucretsiz haklar ' + h + ' saat sonra yenilenir.', limitReached: true };
   }
 
   if (d.minuteCount >= 2) {
@@ -31,10 +38,14 @@ function isRateLimited(ip) {
   return false;
 }
 
+function todayKey() {
+  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -65,9 +76,44 @@ export default async function handler(req, res) {
   const codeRegex = /<[a-z][\s\S]*?>|function\s*\(|const\s+\w+\s*=|var\s+\w+\s*=|let\s+\w+\s*=/i;
   if (codeRegex.test(t)) return res.status(400).json({ error: 'Metinde programlama kodu tespit edildi. Bu arac yalnizca Almanca metin analizi yapar.' });
 
-  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
-  const limited = isRateLimited(ip);
-  if (limited) return res.status(429).json({ error: limited.error });
+  // ── Kullanici tanima ve limit kontrolu ──
+  // Token varsa kullaniciyi tani; free ise DB'de gunluk 5 limiti uygula, premium/pro ise sinirsiz.
+  // Token yoksa (anonim) IP bazli limit uygulanir.
+  const auth = verifyAuth(req);
+  let user = null;
+
+  if (auth) {
+    try {
+      await connectDB();
+      user = await User.findById(auth.userId);
+    } catch (e) {
+      console.error('analyze DB baglanti hatasi:', e);
+      // DB gecici olarak erisilemezse analiz calismaya devam etsin (limit atlanir, kayit yapilmaz)
+    }
+  }
+
+  if (user) {
+    const isPaid = user.subscription_plan === 'premium' || user.subscription_plan === 'pro';
+    if (!isPaid) {
+      const today = todayKey();
+      if (user.usage_date !== today) {
+        user.usage_date = today;
+        user.usage_count = 0;
+      }
+      if (user.usage_count >= FREE_DAILY_LIMIT) {
+        return res.status(429).json({
+          error: 'Gunluk 5 ucretsiz duzeltme hakkin doldu. Sinirsiz duzeltme icin Premium plana gecebilirsin.',
+          limitReached: true,
+        });
+      }
+      user.usage_count += 1;
+      try { await user.save(); } catch (e) { console.error('usage kaydi hatasi:', e); }
+    }
+  } else {
+    const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+    const limited = isRateLimited(ip);
+    if (limited) return res.status(429).json({ error: limited.error, limitReached: !!limited.limitReached });
+  }
 
   try {
     const prompt = `You are a German language teacher evaluating a ${level} level text.
@@ -120,6 +166,26 @@ Type values: gram=grammar, spell=spelling, punct=punctuation, case=capitalizatio
     let result;
     try { result = JSON.parse(raw); }
     catch { result = { corrected: t, score: null, scoreLabel: null, scoreFeedback: null, errors: [] }; }
+
+    // Giris yapmis kullanicinin duzeltmesini gecmise kaydet (dashboard icin)
+    if (user) {
+      try {
+        await Correction.create({
+          user_id: user._id,
+          original_text: t,
+          corrected_text: result.corrected || t,
+          mistakes: (result.errors || []).map((e) => ({
+            original: e.original,
+            suggested: e.correction,
+            rule: e.explanation,
+          })),
+          language: 'de',
+        });
+      } catch (e) {
+        console.error('correction kaydi hatasi:', e);
+        // Kayit basarisiz olsa bile analiz sonucunu dondurmeye devam et
+      }
+    }
 
     return res.status(200).json(result);
 
