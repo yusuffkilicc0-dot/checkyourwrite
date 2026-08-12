@@ -1,322 +1,397 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hesabım - CheckYourWrite</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    h1 {
-      color: #1D9E75;
-    }
-    
-    .logout-btn {
-      padding: 10px 20px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    
-    .logout-btn:hover {
-      background: #c0392b;
-    }
-    
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .card h3 {
-      color: #1D9E75;
-      margin-bottom: 15px;
-      border-bottom: 2px solid #f0f0f0;
-      padding-bottom: 10px;
-    }
-    
-    .card p {
-      margin: 10px 0;
-      color: #555;
-    }
-    
-    .label {
-      font-weight: bold;
-      color: #333;
-    }
-    
-    .plan-badge {
-      display: inline-block;
-      padding: 5px 15px;
-      background: #1D9E75;
-      color: white;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-    
-    .plan-badge.free {
-      background: #95a5a6;
-    }
-    
-    .plan-badge.premium {
-      background: #1D9E75;
-    }
-    
-    .plan-badge.pro {
-      background: #f39c12;
-    }
-    
-    .table-container {
-      overflow-x: auto;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    table th, table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    
-    table th {
-      background: #f9f9f9;
-      font-weight: bold;
-      color: #333;
-    }
-    
-    table tr:hover {
-      background: #f9f9f9;
-    }
-    
-    .upgrade-btn {
-      padding: 10px 20px;
-      background: #1D9E75;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 10px;
-      margin-top: 15px;
-    }
-    
-    .upgrade-btn:hover {
-      background: #159d6f;
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 30px;
-      color: #1D9E75;
-    }
-    
-    .error {
-      background: #fee;
-      color: #c33;
-      padding: 15px;
-      border-radius: 6px;
-      margin: 20px 0;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hesabım — CheckYourWrite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0A0E17; --bg2: #0E1420;
+    --surface: rgba(21, 27, 42, 0.72); --surface-solid: #151B2A;
+    --border: rgba(148, 163, 197, 0.14); --border-strong: rgba(148, 163, 197, 0.28);
+    --text: #E8ECF6; --muted: #8B94AB; --faint: #5A6379;
+    --accent: #FFB224; --accent-2: #FF8A3D; --violet: #7C5CFF;
+    --green: #4ADE80; --green-soft: rgba(74,222,128,0.12);
+    --red: #F87171; --red-soft: rgba(248,113,113,0.12);
+    --amber: #FBBF24; --amber-soft: rgba(251,191,36,0.12);
+    --blue: #60A5FA; --blue-soft: rgba(96,165,250,0.12);
+    --radius: 14px; --radius-sm: 10px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --display: 'Space Grotesk', sans-serif;
+    --glow-accent: 0 0 24px rgba(255, 178, 36, 0.25);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.65;
+    background: radial-gradient(1200px 800px at 85% -10%, #131C33 0%, transparent 55%),
+                radial-gradient(1000px 700px at -10% 110%, #141126 0%, transparent 55%),
+                linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    background-attachment: fixed;
+  }
+
+  /* ── Arka plan katmanları ── */
+  .bg-grid { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(148,163,197,0.10) 1px, transparent 1px);
+    background-size: 26px 26px;
+    mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 82%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 82%, transparent 100%);
+  }
+  .bg-orb { position: fixed; border-radius: 50%; filter: blur(90px); z-index: 0; pointer-events: none; opacity: 0.5; }
+  .bg-orb.amber { width: 420px; height: 420px; top: -140px; right: -100px;
+    background: radial-gradient(circle, rgba(255,178,36,0.35) 0%, transparent 70%);
+    animation: orbBreathe 11s ease-in-out infinite; }
+  .bg-orb.violet { width: 480px; height: 480px; bottom: -180px; left: -140px;
+    background: radial-gradient(circle, rgba(124,92,255,0.30) 0%, transparent 70%);
+    animation: orbBreathe 14s ease-in-out infinite reverse; }
+  @keyframes orbBreathe { 0%,100% { transform: scale(1) translate(0,0); opacity: .45; } 50% { transform: scale(1.15) translate(-16px, 12px); opacity: .65; } }
+  #glyphField { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  .glyph { position: absolute; bottom: -8%; font-family: var(--display); font-weight: 700;
+    color: rgba(165, 180, 225, 0.055); user-select: none;
+    animation: glyphFloat linear infinite; }
+  @keyframes glyphFloat { to { transform: translateY(-118vh) rotate(14deg); } }
+
+  header, main, footer { position: relative; z-index: 1; }
+
+  /* ── Header ── */
+  header { padding: 0.9rem 2rem; display: flex; align-items: center; gap: 18px;
+    background: rgba(12, 16, 27, 0.65); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+  .logo span { color: var(--accent); }
+  .navbar { display: flex; gap: 8px; margin-left: auto; align-items: center; flex-wrap: wrap; }
+
+  /* ── Buton sistemi ── */
+  .btn { display: inline-flex; align-items: center; gap: 7px; font-family: var(--display); font-weight: 600;
+    font-size: 13.5px; padding: 9px 18px; border-radius: 12px; border: none; cursor: pointer;
+    text-decoration: none; transition: transform 0.18s, box-shadow 0.18s, background 0.18s, border-color 0.18s; }
+  .btn:active { transform: translateY(1px) scale(0.98); }
+  .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%); color: #14100A; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--glow-accent); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border-strong); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); background: rgba(148,163,197,0.06); }
+  .btn-danger-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-danger-ghost:hover { color: var(--red); border-color: var(--red); background: var(--red-soft); }
+
+  /* ── Header plan rozeti ── */
+  .plan-badge-header { font-family: var(--display); font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    color: var(--green); background: var(--green-soft); border: 1px solid rgba(74,222,128,0.35);
+    padding: 4px 10px; border-radius: 8px; }
+
+  /* ── Ana bölüm ── */
+  main { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 2rem; }
+  .intro { margin-bottom: 2rem; }
+  .intro h1 { font-family: var(--display); font-size: clamp(26px, 5vw, 36px); font-weight: 700; letter-spacing: -0.03em;
+    line-height: 1.15; margin-bottom: 8px;
+    background: linear-gradient(100deg, var(--text) 30%, var(--accent) 85%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: introReveal 0.7s cubic-bezier(.2,.8,.3,1) both; }
+  .intro p { font-size: 14px; color: var(--muted); animation: introReveal 0.7s 0.12s cubic-bezier(.2,.8,.3,1) both; }
+  @keyframes introReveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  /* ── Kart grid ── */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px; }
+  .dash-card { background: var(--surface); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
+    animation: cardIn 0.5s cubic-bezier(.2,.8,.3,1) both; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .dash-card h3 { font-family: var(--display); font-size: 14.5px; font-weight: 700; color: var(--text);
+    margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px; }
+  .dash-row { margin-bottom: 14px; }
+  .dash-row:last-child { margin-bottom: 0; }
+  .dash-label { font-family: var(--mono); font-size: 10.5px; color: var(--faint); text-transform: uppercase;
+    letter-spacing: 0.07em; margin-bottom: 4px; }
+  .dash-value { font-size: 14.5px; color: var(--text); font-weight: 500; }
+  .dash-value.big { font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--accent); }
+  .dash-value.mono { font-family: var(--mono); }
+
+  /* ── Plan rozeti (büyük) ── */
+  .plan-chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--display); font-weight: 700;
+    font-size: 12.5px; padding: 5px 13px; border-radius: 8px; letter-spacing: 0.02em; }
+  .plan-chip.free { background: rgba(148,163,197,0.10); color: var(--muted); border: 1px solid var(--border-strong); }
+  .plan-chip.premium { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #14100A; }
+  .plan-chip.pro { background: linear-gradient(135deg, var(--violet), #9F7DFF); color: #fff; }
+
+  .dash-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .dash-actions .btn { flex: 1; justify-content: center; min-width: 120px; }
+
+  /* ── Düzeltme geçmişi ── */
+  .table-container { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  table th, table td { padding: 11px 10px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border); }
+  table th { font-family: var(--mono); font-size: 10.5px; color: var(--faint); text-transform: uppercase;
+    letter-spacing: 0.06em; font-weight: 500; }
+  table td { color: var(--muted); }
+  table td.mistake-count { font-family: var(--mono); font-weight: 700; color: var(--accent); text-align: center; }
+  table tr:hover td { background: rgba(148,163,197,0.04); }
+  table tr:last-child td { border-bottom: none; }
+
+  /* ── Yükleniyor / boş / hata ── */
+  .loading-row { display: flex; align-items: center; gap: 10px; padding: 1.25rem 0; color: var(--muted); font-size: 13px; justify-content: center; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.65s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty-row { text-align: center; color: var(--faint); font-size: 13px; padding: 1.5rem 0; }
+  .error-banner { background: var(--red-soft); border: 1px solid rgba(248,113,113,0.3); border-radius: var(--radius-sm);
+    padding: 13px 16px; font-size: 13px; color: var(--red); margin-bottom: 16px; }
+
+  /* ── Toast bildirimleri ── */
+  #toast-container { position: fixed; top: 74px; right: 20px; z-index: 5000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+  .toast { display: flex; align-items: center; gap: 11px; min-width: 260px; max-width: 380px; padding: 13px 16px;
+    background: var(--surface-solid); border: 1px solid var(--border-strong); border-left-width: 4px; border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45); font-size: 13.5px; color: var(--text); line-height: 1.45;
+    opacity: 0; transform: translateX(30px); transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.21,1.02,.73,1); pointer-events: auto; }
+  .toast.show { opacity: 1; transform: translateX(0); }
+  .toast.hide { opacity: 0; transform: translateX(30px); }
+  .toast-icon { flex-shrink: 0; width: 23px; height: 23px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #0A0E17; }
+  .toast.success { border-left-color: var(--green); }
+  .toast.success .toast-icon { background: var(--green); animation: toastPop 0.4s cubic-bezier(.36,1.6,.5,1); }
+  .toast.error { border-left-color: var(--red); }
+  .toast.error .toast-icon { background: var(--red); animation: toastShake 0.4s; }
+  .toast.info { border-left-color: var(--blue); }
+  .toast.info .toast-icon { background: var(--blue); }
+  @keyframes toastPop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  @keyframes toastShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+  /* ── Footer ── */
+  footer { text-align: center; padding: 2.5rem 1rem 1.6rem; font-size: 11px; color: var(--faint);
+    font-family: var(--mono); margin-top: 2rem; opacity: 0.55; transition: opacity 0.25s; }
+  footer:hover { opacity: 1; }
+  footer a { color: var(--faint); text-decoration: none; }
+  footer a:hover { color: var(--muted); text-decoration: underline; }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    .glyph, .bg-orb { display: none; }
+  }
+  @media (max-width: 640px) {
+    header { padding: 0.8rem 1rem; flex-wrap: wrap; }
+    .navbar { gap: 6px; }
+    .btn { padding: 8px 13px; font-size: 12.5px; }
+    main { padding: 2rem 1rem; }
+    #toast-container { left: 12px; right: 12px; top: 66px; }
+    .toast { min-width: 0; max-width: none; }
+    .bg-orb.amber { width: 260px; height: 260px; }
+    .bg-orb.violet { width: 300px; height: 300px; }
+    .dash-actions .btn { min-width: 100%; }
+  }
+</style>
 </head>
 <body>
 
-<div class="container">
-  
-  <header>
-    <div style="display:flex; align-items:center; gap:20px;">
-      <a href="/index.html" style="text-decoration:none; font-family:'Courier New', monospace; font-size:16px; font-weight:bold; color:#1a1916;">check<span style="color:#8a8880;">yourwrite</span></a>
-      <h1>👤 Hesabım</h1>
-    </div>
-    <div style="display:flex; gap:10px;">
-      <a href="/index.html" style="display:inline-block; padding:10px 20px; background:#1D9E75; color:white; border-radius:6px; text-decoration:none; font-weight:bold;">← Ana Sayfa</a>
-      <button class="logout-btn" onclick="logout()">🚪 Çıkış Yap</button>
-    </div>
-  </header>
-  
-  <div class="grid">
-    
-    <!-- Profil Kartı -->
-    <div class="card">
-      <h3>📋 Profil Bilgisi</h3>
-      <p><span class="label">📧 Email:</span></p>
-      <p id="user-email" style="font-weight:bold; color:#1D9E75;">--</p>
-      
-      <p style="margin-top:15px;"><span class="label">📅 Üye Tarihı:</span></p>
-      <p id="join-date">--</p>
-      
-      <p style="margin-top:15px;"><span class="label">🎯 Plan:</span></p>
-      <p id="current-plan"></p>
-    </div>
-    
-    <!-- Abonelik Kartı -->
-    <div class="card">
-      <h3>💳 Abonelik Yönetimi</h3>
-      <p><span class="label">Mevcut Plan:</span></p>
-      <p id="subscription-plan">--</p>
-      
-      <p style="margin-top:15px;"><span class="label">Sonraki Ödeme:</span></p>
-      <p id="next-payment">--</p>
-      
-      <button class="upgrade-btn" onclick="upgradePlan()">Plan Yükselt</button>
-      <button class="upgrade-btn" style="background:#e74c3c;" onclick="cancelSubscription()">İptal Et</button>
-    </div>
-    
-    <!-- İstatistikler -->
-    <div class="card">
-      <h3>📊 İstatistiklerim</h3>
-      <p><span class="label">Toplam Düzeltme:</span></p>
-      <p id="total-corrections" style="font-size:24px; font-weight:bold; color:#1D9E75;">0</p>
-      
-      <p style="margin-top:15px;"><span class="label">Bu Ay:</span></p>
-      <p id="month-corrections" style="font-size:18px;">0</p>
-    </div>
-    
+<div class="bg-grid"></div>
+<div class="bg-orb amber"></div>
+<div class="bg-orb violet"></div>
+<div id="glyphField"></div>
+
+<header>
+  <a href="/index.html" class="logo">check<span>yourwrite</span></a>
+  <nav class="navbar">
+    <span id="planBadgeHeader"></span>
+    <a href="/index.html" class="btn btn-ghost">← Ana Sayfa</a>
+    <button class="btn btn-danger-ghost" onclick="logout()">Çıkış</button>
+  </nav>
+</header>
+
+<main>
+  <div class="intro">
+    <h1>👤 Hesabım</h1>
+    <p>Profilin, aboneliğin ve düzeltme geçmişin.</p>
   </div>
-  
-  <!-- Düzeltme Geçmişi Tablosu -->
-  <div class="card">
+
+  <div id="error-banner-slot"></div>
+
+  <div class="grid">
+
+    <!-- Profil Kartı -->
+    <div class="dash-card">
+      <h3>📋 Profil Bilgisi</h3>
+      <div class="dash-row">
+        <div class="dash-label">Email</div>
+        <div class="dash-value mono" id="user-email">—</div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-label">Üye Tarihi</div>
+        <div class="dash-value" id="join-date">—</div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-label">Plan</div>
+        <div class="dash-value" id="current-plan">—</div>
+      </div>
+    </div>
+
+    <!-- Abonelik Kartı -->
+    <div class="dash-card">
+      <h3>💳 Abonelik Yönetimi</h3>
+      <div class="dash-row">
+        <div class="dash-label">Mevcut Plan</div>
+        <div class="dash-value" id="subscription-plan">—</div>
+      </div>
+      <div class="dash-actions">
+        <button class="btn btn-primary" onclick="upgradePlan()">✦ Plan Yükselt</button>
+        <button class="btn btn-danger-ghost" onclick="cancelSubscription()">İptal Et</button>
+      </div>
+    </div>
+
+    <!-- İstatistikler -->
+    <div class="dash-card">
+      <h3>📊 İstatistiklerim</h3>
+      <div class="dash-row">
+        <div class="dash-label">Toplam Düzeltme</div>
+        <div class="dash-value big" id="total-corrections">0</div>
+      </div>
+      <div class="dash-row">
+        <div class="dash-label">Bu Ay</div>
+        <div class="dash-value" id="month-corrections">0</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Düzeltme Geçmişi -->
+  <div class="dash-card">
     <h3>📝 Düzeltme Geçmişi (Son 20)</h3>
-    <div class="table-container">
+    <div id="corrections-loading" class="loading-row">
+      <div class="spinner"></div> Yükleniyor…
+    </div>
+    <div class="table-container" id="corrections-table-wrap" style="display:none;">
       <table>
         <thead>
           <tr>
             <th>Tarih</th>
             <th>Orijinal Metin</th>
             <th>Düzeltilmiş Metin</th>
-            <th>Hata Sayısı</th>
+            <th>Hata</th>
           </tr>
         </thead>
-        <tbody id="corrections-list">
-          <tr>
-            <td colspan="4" style="text-align:center; color:#999;">Yükleniyor...</td>
-          </tr>
-        </tbody>
+        <tbody id="corrections-list"></tbody>
       </table>
     </div>
   </div>
-  
-</div>
+
+</main>
+
+<footer>
+  © 2026 checkyourwrite · <a href="/privacy.html">Datenschutz</a> · <a href="/about.html">Hakkında</a>
+</footer>
 
 <script>
+/* ── Toast bildirimleri ── */
+function showToast(message, type) {
+  type = type || 'info';
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const icons = { success: '✓', error: '✕', info: 'i' };
+  toast.innerHTML = '<div class="toast-icon">' + (icons[type] || 'i') + '</div><div>' + message + '</div>';
+  container.appendChild(toast);
+  requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+  const duration = type === 'error' ? 5000 : 3500;
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 350);
+  }, duration);
+}
+
+function planChipHtml(plan) {
+  const labels = { free: 'ÜCRETSİZ', premium: 'PREMIUM', pro: 'PRO' };
+  const cls = (plan === 'premium' || plan === 'pro') ? plan : 'free';
+  return '<span class="plan-chip ' + cls + '">' + (labels[cls] || 'ÜCRETSİZ') + '</span>';
+}
+
 async function loadUserData() {
   const token = localStorage.getItem('checkyourwrite_jwt_token');
-  
+
   if (!token) {
     window.location.href = '/index.html';
     return;
   }
-  
+
   try {
-    // User profili yükle
     const profileRes = await fetch('/api/user/profile', {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': 'Bearer ' + token }
     });
-    
+
     if (!profileRes.ok) throw new Error('Profil yüklenemedi');
-    
+
     const profileData = await profileRes.json();
     const user = profileData.user;
-    
-    // UI'ı doldur
+    const plan = user.subscription_plan || 'free';
+
     document.getElementById('user-email').textContent = user.email;
     document.getElementById('join-date').textContent = new Date(user.created_at).toLocaleDateString('tr-TR');
-    
-    const planBadge = `<span class="plan-badge ${user.subscription_plan}">${user.subscription_plan.toUpperCase()}</span>`;
-    document.getElementById('current-plan').innerHTML = planBadge;
-    document.getElementById('subscription-plan').innerHTML = planBadge;
-    
-    // Düzeltme geçmişi yükle
+    document.getElementById('current-plan').innerHTML = planChipHtml(plan);
+    document.getElementById('subscription-plan').innerHTML = planChipHtml(plan);
+
+    const headerBadge = document.getElementById('planBadgeHeader');
+    if (plan === 'premium' || plan === 'pro') {
+      headerBadge.innerHTML = '<span class="plan-badge-header">' + plan.toUpperCase() + '</span>';
+    } else {
+      headerBadge.innerHTML = '';
+    }
+
+    localStorage.setItem('checkyourwrite_plan', plan);
+
+    // Düzeltme geçmişi
     const correctionsRes = await fetch('/api/user/corrections', {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': 'Bearer ' + token }
     });
-    
+
     if (!correctionsRes.ok) throw new Error('Düzeltmeler yüklenemedi');
-    
+
     const correctionsData = await correctionsRes.json();
     const corrections = correctionsData.corrections || [];
-    
-    // İstatistikleri güncelle
+
     document.getElementById('total-corrections').textContent = corrections.length;
-    
+
     const thisMonth = corrections.filter(c => {
-      const correctionDate = new Date(c.created_at);
+      const d = new Date(c.created_at);
       const now = new Date();
-      return correctionDate.getMonth() === now.getMonth() && correctionDate.getFullYear() === now.getFullYear();
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     }).length;
-    
     document.getElementById('month-corrections').textContent = thisMonth;
-    
-    // Tabloyu doldur
+
+    document.getElementById('corrections-loading').style.display = 'none';
+    document.getElementById('corrections-table-wrap').style.display = 'block';
+
     const tableBody = document.getElementById('corrections-list');
     tableBody.innerHTML = '';
-    
+
     if (corrections.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#999;">Henüz düzeltme yok</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="4" class="empty-row">Henüz düzeltme yok</td></tr>';
     } else {
       corrections.slice(0, 20).forEach(correction => {
         const row = document.createElement('tr');
         const date = new Date(correction.created_at).toLocaleDateString('tr-TR');
-        const original = correction.original_text.substring(0, 30) + (correction.original_text.length > 30 ? '...' : '');
-        const corrected = correction.corrected_text.substring(0, 30) + (correction.corrected_text.length > 30 ? '...' : '');
-        
+        const original = correction.original_text.substring(0, 30) + (correction.original_text.length > 30 ? '…' : '');
+        const corrected = correction.corrected_text.substring(0, 30) + (correction.corrected_text.length > 30 ? '…' : '');
+
         row.innerHTML = `
           <td>${date}</td>
           <td>${original}</td>
           <td>${corrected}</td>
-          <td style="text-align:center; font-weight:bold;">${correction.mistakes.length}</td>
+          <td class="mistake-count">${correction.mistakes.length}</td>
         `;
         tableBody.appendChild(row);
       });
     }
-    
+
   } catch (error) {
     console.error(error);
-    const container = document.querySelector('.container');
-    container.innerHTML = `<div class="error">❌ Veri yüklenirken hata oluştu: ${error.message}</div>` + container.innerHTML;
+    document.getElementById('corrections-loading').style.display = 'none';
+    const slot = document.getElementById('error-banner-slot');
+    slot.innerHTML = '<div class="error-banner">⚠️ Veri yüklenirken hata oluştu: ' + error.message + '</div>';
+    showToast('Veriler yüklenemedi, sayfayı yenilemeyi dene.', 'error');
   }
 }
 
@@ -324,23 +399,43 @@ function logout() {
   if (confirm('Çıkış yapmak istediğine emin misin?')) {
     localStorage.removeItem('checkyourwrite_jwt_token');
     localStorage.removeItem('checkyourwrite_current_email');
+    localStorage.removeItem('checkyourwrite_plan');
     window.location.href = '/index.html';
   }
 }
 
 function upgradePlan() {
-  alert('Plan yükseltme özelliği yakında eklenecek!');
-  // TODO: Premium modal aç
+  // Ana sayfadaki Premium modalını ?plans=1 ile otomatik açar
+  window.location.href = '/index.html?plans=1';
 }
 
 function cancelSubscription() {
   if (confirm('Aboneliğini iptal etmek istediğine emin misin?')) {
-    alert('İptal işlemi yakında eklenecek!');
-    // TODO: Stripe portal aç
+    showToast('İptal işlemi yakında eklenecek. Şimdilik destek için bize ulaş.', 'info');
+    // TODO: Stripe billing portal entegrasyonu
   }
 }
 
-// Sayfa yüklendiğinde
+/* ── Süzülen harfler (arka plan ambiyansı) ── */
+(function initGlyphs() {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const field = document.getElementById('glyphField');
+  if (!field) return;
+  const chars = ['ä','ö','ü','ß','§','„','“',';','é','ẞ','?','!'];
+  const count = window.innerWidth < 640 ? 8 : 14;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('span');
+    s.className = 'glyph';
+    s.textContent = chars[Math.floor(Math.random() * chars.length)];
+    s.style.left = (Math.random() * 96) + '%';
+    s.style.fontSize = (16 + Math.random() * 22) + 'px';
+    const dur = 20 + Math.random() * 22;
+    s.style.animationDuration = dur + 's';
+    s.style.animationDelay = (-Math.random() * dur) + 's';
+    field.appendChild(s);
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', loadUserData);
 </script>
 
