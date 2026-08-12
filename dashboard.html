@@ -16,13 +16,13 @@
     --accent: #FFB224; --accent-2: #FF8A3D; --violet: #7C5CFF;
     --green: #4ADE80; --green-soft: rgba(74,222,128,0.12);
     --red: #F87171; --red-soft: rgba(248,113,113,0.12);
-    --amber: #FBBF24; --amber-soft: rgba(251,191,36,0.12);
     --blue: #60A5FA; --blue-soft: rgba(96,165,250,0.12);
     --radius: 14px; --radius-sm: 10px;
     --mono: 'JetBrains Mono', monospace;
     --sans: 'Inter', sans-serif;
     --display: 'Space Grotesk', sans-serif;
     --glow-accent: 0 0 24px rgba(255, 178, 36, 0.25);
+    --glow-violet: 0 0 24px rgba(124, 92, 255, 0.25);
   }
   html { scroll-behavior: smooth; }
   body {
@@ -32,8 +32,6 @@
                 linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
     background-attachment: fixed;
   }
-
-  /* ── Arka plan katmanları ── */
   .bg-grid { position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background-image: radial-gradient(rgba(148,163,197,0.10) 1px, transparent 1px);
     background-size: 26px 26px;
@@ -47,24 +45,20 @@
   .bg-orb.violet { width: 480px; height: 480px; bottom: -180px; left: -140px;
     background: radial-gradient(circle, rgba(124,92,255,0.30) 0%, transparent 70%);
     animation: orbBreathe 14s ease-in-out infinite reverse; }
-  @keyframes orbBreathe { 0%,100% { transform: scale(1) translate(0,0); opacity: .45; } 50% { transform: scale(1.15) translate(-16px, 12px); opacity: .65; } }
+  @keyframes orbBreathe { 0%,100%{transform:scale(1) translate(0,0);opacity:.45;}50%{transform:scale(1.15) translate(-16px,12px);opacity:.65;} }
   #glyphField { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
   .glyph { position: absolute; bottom: -8%; font-family: var(--display); font-weight: 700;
-    color: rgba(165, 180, 225, 0.055); user-select: none;
-    animation: glyphFloat linear infinite; }
+    color: rgba(165,180,225,0.055); user-select: none; animation: glyphFloat linear infinite; }
   @keyframes glyphFloat { to { transform: translateY(-118vh) rotate(14deg); } }
-
   header, main, footer { position: relative; z-index: 1; }
 
   /* ── Header ── */
   header { padding: 0.9rem 2rem; display: flex; align-items: center; gap: 18px;
-    background: rgba(12, 16, 27, 0.65); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(12,16,27,0.65); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
   .logo { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
   .logo span { color: var(--accent); }
   .navbar { display: flex; gap: 8px; margin-left: auto; align-items: center; flex-wrap: wrap; }
-
-  /* ── Buton sistemi ── */
   .btn { display: inline-flex; align-items: center; gap: 7px; font-family: var(--display); font-weight: 600;
     font-size: 13.5px; padding: 9px 18px; border-radius: 12px; border: none; cursor: pointer;
     text-decoration: none; transition: transform 0.18s, box-shadow 0.18s, background 0.18s, border-color 0.18s; }
@@ -75,29 +69,44 @@
   .btn-ghost:hover { color: var(--text); border-color: var(--muted); background: rgba(148,163,197,0.06); }
   .btn-danger-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
   .btn-danger-ghost:hover { color: var(--red); border-color: var(--red); background: var(--red-soft); }
-
-  /* ── Header plan rozeti ── */
+  .btn-violet { background: linear-gradient(135deg, var(--violet), #9F7DFF); color: #fff; }
+  .btn-violet:hover { transform: translateY(-1px); box-shadow: var(--glow-violet); }
   .plan-badge-header { font-family: var(--display); font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
     color: var(--green); background: var(--green-soft); border: 1px solid rgba(74,222,128,0.35);
     padding: 4px 10px; border-radius: 8px; }
 
   /* ── Ana bölüm ── */
   main { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 2rem; }
-  .intro { margin-bottom: 2rem; }
-  .intro h1 { font-family: var(--display); font-size: clamp(26px, 5vw, 36px); font-weight: 700; letter-spacing: -0.03em;
+  .intro { margin-bottom: 1.8rem; }
+  .intro h1 { font-family: var(--display); font-size: clamp(26px,5vw,36px); font-weight: 700; letter-spacing: -0.03em;
     line-height: 1.15; margin-bottom: 8px;
     background: linear-gradient(100deg, var(--text) 30%, var(--accent) 85%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     animation: introReveal 0.7s cubic-bezier(.2,.8,.3,1) both; }
   .intro p { font-size: 14px; color: var(--muted); animation: introReveal 0.7s 0.12s cubic-bezier(.2,.8,.3,1) both; }
-  @keyframes introReveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes introReveal { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;} }
+
+  /* ── Sekmeler ── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px;
+    background: rgba(148,163,197,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 4px; }
+  .tab { flex: 1; padding: 9px 12px; border: none; border-radius: 9px; font-family: var(--display); font-size: 13px;
+    font-weight: 600; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .tab:hover { color: var(--text); }
+  .tab.active { background: var(--surface-solid); color: var(--text); border: 1px solid var(--border-strong); }
+  .tab.pro-tab.active { background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(159,125,255,0.1));
+    color: #BBA4FF; border-color: rgba(124,92,255,0.4); }
+  .tab-badge { font-size: 9.5px; padding: 2px 6px; border-radius: 5px; font-family: var(--mono); font-weight: 700; }
+  .tab-badge.pro { background: linear-gradient(135deg, var(--violet), #9F7DFF); color: #fff; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
 
   /* ── Kart grid ── */
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 16px; }
   .dash-card { background: var(--surface); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
     animation: cardIn 0.5s cubic-bezier(.2,.8,.3,1) both; }
-  @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes cardIn { from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;} }
   .dash-card h3 { font-family: var(--display); font-size: 14.5px; font-weight: 700; color: var(--text);
     margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 8px; }
@@ -108,37 +117,76 @@
   .dash-value { font-size: 14.5px; color: var(--text); font-weight: 500; }
   .dash-value.big { font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--accent); }
   .dash-value.mono { font-family: var(--mono); }
-
-  /* ── Plan rozeti (büyük) ── */
   .plan-chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--display); font-weight: 700;
     font-size: 12.5px; padding: 5px 13px; border-radius: 8px; letter-spacing: 0.02em; }
   .plan-chip.free { background: rgba(148,163,197,0.10); color: var(--muted); border: 1px solid var(--border-strong); }
   .plan-chip.premium { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #14100A; }
   .plan-chip.pro { background: linear-gradient(135deg, var(--violet), #9F7DFF); color: #fff; }
-
   .dash-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
   .dash-actions .btn { flex: 1; justify-content: center; min-width: 120px; }
 
-  /* ── Düzeltme geçmişi ── */
+  /* ── Tablo ── */
   .table-container { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
   table th, table td { padding: 11px 10px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border); }
-  table th { font-family: var(--mono); font-size: 10.5px; color: var(--faint); text-transform: uppercase;
-    letter-spacing: 0.06em; font-weight: 500; }
+  table th { font-family: var(--mono); font-size: 10.5px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
   table td { color: var(--muted); }
   table td.mistake-count { font-family: var(--mono); font-weight: 700; color: var(--accent); text-align: center; }
   table tr:hover td { background: rgba(148,163,197,0.04); }
   table tr:last-child td { border-bottom: none; }
 
-  /* ── Yükleniyor / boş / hata ── */
+  /* ── Loading / boş / hata ── */
   .loading-row { display: flex; align-items: center; gap: 10px; padding: 1.25rem 0; color: var(--muted); font-size: 13px; justify-content: center; }
   .spinner { width: 16px; height: 16px; border: 2px solid var(--border-strong); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.65s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spin { to{transform:rotate(360deg);} }
   .empty-row { text-align: center; color: var(--faint); font-size: 13px; padding: 1.5rem 0; }
   .error-banner { background: var(--red-soft); border: 1px solid rgba(248,113,113,0.3); border-radius: var(--radius-sm);
     padding: 13px 16px; font-size: 13px; color: var(--red); margin-bottom: 16px; }
 
-  /* ── Toast bildirimleri ── */
+  /* ── PRO: İlerleme Grafiği ── */
+  .chart-wrap { position: relative; width: 100%; height: 180px; margin-top: 8px; }
+  .chart-svg { width: 100%; height: 100%; }
+  .chart-empty { display: flex; align-items: center; justify-content: center; height: 180px;
+    color: var(--faint); font-size: 13px; font-family: var(--sans); }
+  .chart-legend { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── PRO: Flashcard ── */
+  .flashcard-scene { perspective: 900px; width: 100%; max-width: 480px; margin: 0 auto 20px; height: 160px; cursor: pointer; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(.4,0,.2,1); transform-style: preserve-3d; }
+  .flashcard-scene.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px; text-align: center; border: 1px solid var(--border); }
+  .flashcard-front { background: var(--surface); }
+  .flashcard-back { background: linear-gradient(135deg, rgba(124,92,255,0.12), rgba(159,125,255,0.06));
+    border-color: rgba(124,92,255,0.3); transform: rotateY(180deg); }
+  .card-eyebrow { font-family: var(--mono); font-size: 10px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .card-word { font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--text); }
+  .card-word.correct { color: var(--green); }
+  .card-hint { font-size: 12px; color: var(--faint); margin-top: 8px; }
+  .card-rule { font-size: 12.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .flashcard-nav { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .fc-btn { padding: 9px 20px; border-radius: 10px; font-family: var(--display); font-size: 13px; font-weight: 600;
+    border: 1px solid var(--border-strong); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .fc-btn:hover { color: var(--text); border-color: var(--muted); }
+  .fc-btn.green { border-color: rgba(74,222,128,0.4); color: var(--green); }
+  .fc-btn.green:hover { background: var(--green-soft); }
+  .fc-btn.red { border-color: rgba(248,113,113,0.4); color: var(--red); }
+  .fc-btn.red:hover { background: var(--red-soft); }
+  .fc-progress { font-family: var(--mono); font-size: 11.5px; color: var(--faint); }
+
+  /* ── PRO: Paywall overlay (Pro olmayanlar için) ── */
+  .pro-lock { position: relative; }
+  .pro-lock-overlay { position: absolute; inset: 0; z-index: 10; border-radius: var(--radius);
+    background: rgba(10,14,23,0.82); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 24px; }
+  .pro-lock-icon { font-size: 32px; }
+  .pro-lock-title { font-family: var(--display); font-size: 17px; font-weight: 700; color: var(--text); }
+  .pro-lock-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── Toast ── */
   #toast-container { position: fixed; top: 74px; right: 20px; z-index: 5000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
   .toast { display: flex; align-items: center; gap: 11px; min-width: 260px; max-width: 380px; padding: 13px 16px;
     background: var(--surface-solid); border: 1px solid var(--border-strong); border-left-width: 4px; border-radius: 12px;
@@ -148,15 +196,12 @@
   .toast.hide { opacity: 0; transform: translateX(30px); }
   .toast-icon { flex-shrink: 0; width: 23px; height: 23px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #0A0E17; }
   .toast.success { border-left-color: var(--green); }
-  .toast.success .toast-icon { background: var(--green); animation: toastPop 0.4s cubic-bezier(.36,1.6,.5,1); }
+  .toast.success .toast-icon { background: var(--green); }
   .toast.error { border-left-color: var(--red); }
-  .toast.error .toast-icon { background: var(--red); animation: toastShake 0.4s; }
+  .toast.error .toast-icon { background: var(--red); }
   .toast.info { border-left-color: var(--blue); }
   .toast.info .toast-icon { background: var(--blue); }
-  @keyframes toastPop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
-  @keyframes toastShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 
-  /* ── Footer ── */
   footer { text-align: center; padding: 2.5rem 1rem 1.6rem; font-size: 11px; color: var(--faint);
     font-family: var(--mono); margin-top: 2rem; opacity: 0.55; transition: opacity 0.25s; }
   footer:hover { opacity: 1; }
@@ -167,17 +212,17 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
     .glyph, .bg-orb { display: none; }
+    .flashcard-inner { transition: none; }
   }
   @media (max-width: 640px) {
     header { padding: 0.8rem 1rem; flex-wrap: wrap; }
     .navbar { gap: 6px; }
     .btn { padding: 8px 13px; font-size: 12.5px; }
     main { padding: 2rem 1rem; }
+    .tabs { flex-wrap: wrap; }
+    .tab { font-size: 12px; padding: 8px 10px; }
     #toast-container { left: 12px; right: 12px; top: 66px; }
     .toast { min-width: 0; max-width: none; }
-    .bg-orb.amber { width: 260px; height: 260px; }
-    .bg-orb.violet { width: 300px; height: 300px; }
-    .dash-actions .btn { min-width: 100%; }
   }
 </style>
 </head>
@@ -200,76 +245,196 @@
 <main>
   <div class="intro">
     <h1>👤 Hesabım</h1>
-    <p>Profilin, aboneliğin ve düzeltme geçmişin.</p>
+    <p>Profilin, aboneliğin ve ilerleme istatistiklerin.</p>
   </div>
 
   <div id="error-banner-slot"></div>
 
-  <div class="grid">
-
-    <!-- Profil Kartı -->
-    <div class="dash-card">
-      <h3>📋 Profil Bilgisi</h3>
-      <div class="dash-row">
-        <div class="dash-label">Email</div>
-        <div class="dash-value mono" id="user-email">—</div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-label">Üye Tarihi</div>
-        <div class="dash-value" id="join-date">—</div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-label">Plan</div>
-        <div class="dash-value" id="current-plan">—</div>
-      </div>
-    </div>
-
-    <!-- Abonelik Kartı -->
-    <div class="dash-card">
-      <h3>💳 Abonelik Yönetimi</h3>
-      <div class="dash-row">
-        <div class="dash-label">Mevcut Plan</div>
-        <div class="dash-value" id="subscription-plan">—</div>
-      </div>
-      <div class="dash-actions">
-        <button class="btn btn-primary" onclick="upgradePlan()">✦ Plan Yükselt</button>
-        <button class="btn btn-danger-ghost" onclick="cancelSubscription()">İptal Et</button>
-      </div>
-    </div>
-
-    <!-- İstatistikler -->
-    <div class="dash-card">
-      <h3>📊 İstatistiklerim</h3>
-      <div class="dash-row">
-        <div class="dash-label">Toplam Düzeltme</div>
-        <div class="dash-value big" id="total-corrections">0</div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-label">Bu Ay</div>
-        <div class="dash-value" id="month-corrections">0</div>
-      </div>
-    </div>
-
+  <!-- Sekmeler -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('genel')">📋 Genel</button>
+    <button class="tab" onclick="switchTab('gecmis')">📝 Geçmiş</button>
+    <button class="tab pro-tab" onclick="switchTab('pro')">
+      📊 İlerleme <span class="tab-badge pro">PRO</span>
+    </button>
+    <button class="tab pro-tab" onclick="switchTab('kartlar')">
+      🃏 Kartlar <span class="tab-badge pro">PRO</span>
+    </button>
+    <button class="tab pro-tab" onclick="switchTab('kelimeler')">
+      📄 PDF <span class="tab-badge pro">PRO</span>
+    </button>
   </div>
 
-  <!-- Düzeltme Geçmişi -->
-  <div class="dash-card">
-    <h3>📝 Düzeltme Geçmişi (Son 20)</h3>
-    <div id="corrections-loading" class="loading-row">
-      <div class="spinner"></div> Yükleniyor…
+  <!-- ── GENEL ── -->
+  <div id="tab-genel" class="tab-panel active">
+    <div class="grid">
+      <div class="dash-card">
+        <h3>📋 Profil Bilgisi</h3>
+        <div class="dash-row">
+          <div class="dash-label">Email</div>
+          <div class="dash-value mono" id="user-email">—</div>
+        </div>
+        <div class="dash-row">
+          <div class="dash-label">Üye Tarihi</div>
+          <div class="dash-value" id="join-date">—</div>
+        </div>
+        <div class="dash-row">
+          <div class="dash-label">Plan</div>
+          <div class="dash-value" id="current-plan">—</div>
+        </div>
+      </div>
+      <div class="dash-card">
+        <h3>💳 Abonelik</h3>
+        <div class="dash-row">
+          <div class="dash-label">Mevcut Plan</div>
+          <div class="dash-value" id="subscription-plan">—</div>
+        </div>
+        <div class="dash-actions">
+          <button class="btn btn-primary" onclick="upgradePlan()">✦ Plan Yükselt</button>
+          <button class="btn btn-danger-ghost" onclick="cancelSubscription()">İptal Et</button>
+        </div>
+      </div>
+      <div class="dash-card">
+        <h3>📊 İstatistikler</h3>
+        <div class="dash-row">
+          <div class="dash-label">Toplam Düzeltme</div>
+          <div class="dash-value big" id="total-corrections">0</div>
+        </div>
+        <div class="dash-row">
+          <div class="dash-label">Bu Ay</div>
+          <div class="dash-value" id="month-corrections">0</div>
+        </div>
+        <div class="dash-row">
+          <div class="dash-label">Toplam Hata</div>
+          <div class="dash-value" id="total-mistakes">0</div>
+        </div>
+      </div>
     </div>
-    <div class="table-container" id="corrections-table-wrap" style="display:none;">
-      <table>
-        <thead>
-          <tr>
-            <th>Tarih</th>
-            <th>Orijinal Metin</th>
-            <th>Düzeltilmiş Metin</th>
-            <th>Hata</th>
-          </tr>
-        </thead>
-        <tbody id="corrections-list"></tbody>
-      </table>
+  </div>
+
+  <!-- ── GEÇMİŞ ── -->
+  <div id="tab-gecmis" class="tab-panel">
+    <div class="dash-card">
+      <h3>📝 Düzeltme Geçmişi (Son 20)</h3>
+      <div id="corrections-loading" class="loading-row">
+        <div class="spinner"></div> Yükleniyor…
+      </div>
+      <div class="table-container" id="corrections-table-wrap" style="display:none;">
+        <table>
+          <thead>
+            <tr><th>Tarih</th><th>Orijinal</th><th>Düzeltilmiş</th><th style="text-align:center;">Hata</th></tr>
+          </thead>
+          <tbody id="corrections-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRO: İLERLEME ── -->
+  <div id="tab-pro" class="tab-panel">
+    <div class="dash-card pro-lock" id="pro-chart-card">
+      <h3>📈 Puan Trendi (Son 30 Düzeltme)</h3>
+      <div id="chart-loading" class="loading-row"><div class="spinner"></div> Hesaplanıyor…</div>
+      <div id="chart-container" style="display:none;">
+        <div class="chart-wrap">
+          <svg class="chart-svg" id="trendSvg" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Puan / düzeltme</div>
+          <div class="legend-dot" style="background:var(--violet);border-radius:50%;width:8px;height:8px;"></div>
+          <span style="font-size:11.5px;color:var(--muted);font-family:var(--mono);">Ortalama</span>
+        </div>
+      </div>
+      <div id="chart-empty" class="chart-empty" style="display:none;">En az 3 düzeltme yaptıktan sonra grafik oluşur.</div>
+      <!-- Pro kilidi -->
+      <div class="pro-lock-overlay" id="pro-lock-chart" style="display:none;">
+        <div class="pro-lock-icon">🔒</div>
+        <div class="pro-lock-title">Pro özelliği</div>
+        <div class="pro-lock-sub">İlerleme grafiği Pro planında açılır.</div>
+        <button class="btn btn-violet" onclick="upgradePlan()">Pro'ya Geç · €9.99/ay</button>
+      </div>
+    </div>
+
+    <div class="dash-card" id="pro-breakdown-card" style="margin-top:16px; position:relative;">
+      <h3>🔍 Hata Türü Dağılımı</h3>
+      <div id="breakdown-container"></div>
+      <div class="pro-lock-overlay" id="pro-lock-breakdown" style="display:none;">
+        <div class="pro-lock-icon">🔒</div>
+        <div class="pro-lock-title">Pro özelliği</div>
+        <div class="pro-lock-sub">Hata analizi Pro planında açılır.</div>
+        <button class="btn btn-violet" onclick="upgradePlan()">Pro'ya Geç · €9.99/ay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRO: FLASHCARD ── -->
+  <div id="tab-kartlar" class="tab-panel">
+    <div class="dash-card" style="position:relative;">
+      <h3>🃏 Hata Öğrenme Kartları</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Yaptığın hatalar flashcard formatında. Kartı çevir, kendin değerlendir.</p>
+
+      <div id="fc-loading" class="loading-row"><div class="spinner"></div> Kartlar hazırlanıyor…</div>
+
+      <div id="fc-content" style="display:none;">
+        <div class="flashcard-scene" id="flashcardScene" onclick="flipCard()">
+          <div class="flashcard-inner" id="flashcardInner">
+            <div class="flashcard-face flashcard-front">
+              <div class="card-eyebrow">Hatalı yazım</div>
+              <div class="card-word" id="fc-wrong">—</div>
+              <div class="card-hint">Kartı çevir →</div>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <div class="card-eyebrow">Doğrusu</div>
+              <div class="card-word correct" id="fc-correct">—</div>
+              <div class="card-rule" id="fc-rule">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="flashcard-nav">
+          <button class="fc-btn red" onclick="fcAnswer(false)">✕ Bilmedim</button>
+          <span class="fc-progress" id="fc-progress">0 / 0</span>
+          <button class="fc-btn green" onclick="fcAnswer(true)">✓ Bildim</button>
+        </div>
+        <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--faint);" id="fc-session-info"></div>
+      </div>
+
+      <div id="fc-empty" style="display:none;" class="empty-row">Düzeltme geçmişinde henüz hata yok. Birkaç metin düzelt!</div>
+      <div id="fc-done" style="display:none;text-align:center;padding:2rem 0;">
+        <div style="font-size:32px;margin-bottom:12px;">🎉</div>
+        <div style="font-family:var(--display);font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px;">Oturum bitti!</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:18px;" id="fc-summary"></div>
+        <button class="btn btn-primary" onclick="restartCards()">Tekrar Başla</button>
+      </div>
+
+      <!-- Pro kilidi -->
+      <div class="pro-lock-overlay" id="pro-lock-cards" style="display:none;">
+        <div class="pro-lock-icon">🔒</div>
+        <div class="pro-lock-title">Pro özelliği</div>
+        <div class="pro-lock-sub">Hata öğrenme kartları Pro planında açılır.</div>
+        <button class="btn btn-violet" onclick="upgradePlan()">Pro'ya Geç · €9.99/ay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRO: KELİME LİSTESİ PDF ── -->
+  <div id="tab-kelimeler" class="tab-panel">
+    <div class="dash-card" style="position:relative;">
+      <h3>📄 Kelime Listesi — PDF İndir</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Düzeltmelerinden derlenen tüm hatalı kelimeler, doğruları ve kurallarıyla birlikte PDF olarak indir.</p>
+      <div id="pdf-loading" class="loading-row"><div class="spinner"></div> Liste hazırlanıyor…</div>
+      <div id="pdf-content" style="display:none;">
+        <div id="pdf-stats" style="font-size:13px;color:var(--muted);margin-bottom:18px;"></div>
+        <div id="pdf-preview" style="max-height:260px;overflow-y:auto;margin-bottom:18px;"></div>
+        <button class="btn btn-violet" onclick="downloadPDF()" id="pdf-download-btn">⬇ PDF İndir</button>
+      </div>
+      <div id="pdf-empty" style="display:none;" class="empty-row">Henüz kelime listesi oluşturacak yeterli hata yok.</div>
+      <!-- Pro kilidi -->
+      <div class="pro-lock-overlay" id="pro-lock-pdf" style="display:none;">
+        <div class="pro-lock-icon">🔒</div>
+        <div class="pro-lock-title">Pro özelliği</div>
+        <div class="pro-lock-sub">Kelime listesi PDF'i Pro planında açılır.</div>
+        <button class="btn btn-violet" onclick="upgradePlan()">Pro'ya Geç · €9.99/ay</button>
+      </div>
     </div>
   </div>
 
@@ -280,7 +445,14 @@
 </footer>
 
 <script>
-/* ── Toast bildirimleri ── */
+/* ================================================================
+   DASHBOARD v2 — Genel + Geçmiş + Pro (İlerleme / Kartlar / PDF)
+   ================================================================ */
+
+let globalPlan = 'free';
+let allCorrections = [];
+
+/* ── Toast ── */
 function showToast(message, type) {
   type = type || 'info';
   let container = document.getElementById('toast-container');
@@ -295,106 +467,341 @@ function showToast(message, type) {
   toast.innerHTML = '<div class="toast-icon">' + (icons[type] || 'i') + '</div><div>' + message + '</div>';
   container.appendChild(toast);
   requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
-  const duration = type === 'error' ? 5000 : 3500;
-  setTimeout(() => {
-    toast.classList.remove('show');
-    toast.classList.add('hide');
-    setTimeout(() => toast.remove(), 350);
-  }, duration);
+  setTimeout(() => { toast.classList.remove('show'); toast.classList.add('hide'); setTimeout(() => toast.remove(), 350); }, type === 'error' ? 5000 : 3500);
 }
 
+/* ── Sekme geçişi ── */
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const names = ['genel','gecmis','pro','kartlar','kelimeler'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+/* ── Plan chip HTML ── */
 function planChipHtml(plan) {
   const labels = { free: 'ÜCRETSİZ', premium: 'PREMIUM', pro: 'PRO' };
   const cls = (plan === 'premium' || plan === 'pro') ? plan : 'free';
   return '<span class="plan-chip ' + cls + '">' + (labels[cls] || 'ÜCRETSİZ') + '</span>';
 }
 
+/* ── Veri yükleme ── */
 async function loadUserData() {
   const token = localStorage.getItem('checkyourwrite_jwt_token');
-
-  if (!token) {
-    window.location.href = '/index.html';
-    return;
-  }
+  if (!token) { window.location.href = '/index.html'; return; }
 
   try {
-    const profileRes = await fetch('/api/user/profile', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
+    const [profileRes, correctionsRes] = await Promise.all([
+      fetch('/api/user/profile', { headers: { 'Authorization': 'Bearer ' + token } }),
+      fetch('/api/user/corrections', { headers: { 'Authorization': 'Bearer ' + token } })
+    ]);
 
     if (!profileRes.ok) throw new Error('Profil yüklenemedi');
-
     const profileData = await profileRes.json();
     const user = profileData.user;
-    const plan = user.subscription_plan || 'free';
+    globalPlan = user.subscription_plan || 'free';
+    const isPro = globalPlan === 'pro';
 
+    // Header rozeti
+    const headerBadge = document.getElementById('planBadgeHeader');
+    if (globalPlan === 'premium' || isPro) {
+      headerBadge.innerHTML = '<span class="plan-badge-header">' + globalPlan.toUpperCase() + '</span>';
+    }
+    localStorage.setItem('checkyourwrite_plan', globalPlan);
+
+    // Genel sekme
     document.getElementById('user-email').textContent = user.email;
     document.getElementById('join-date').textContent = new Date(user.created_at).toLocaleDateString('tr-TR');
-    document.getElementById('current-plan').innerHTML = planChipHtml(plan);
-    document.getElementById('subscription-plan').innerHTML = planChipHtml(plan);
+    document.getElementById('current-plan').innerHTML = planChipHtml(globalPlan);
+    document.getElementById('subscription-plan').innerHTML = planChipHtml(globalPlan);
 
-    const headerBadge = document.getElementById('planBadgeHeader');
-    if (plan === 'premium' || plan === 'pro') {
-      headerBadge.innerHTML = '<span class="plan-badge-header">' + plan.toUpperCase() + '</span>';
-    } else {
-      headerBadge.innerHTML = '';
+    // Düzeltmeler
+    if (correctionsRes.ok) {
+      const cData = await correctionsRes.json();
+      allCorrections = cData.corrections || [];
     }
 
-    localStorage.setItem('checkyourwrite_plan', plan);
-
-    // Düzeltme geçmişi
-    const correctionsRes = await fetch('/api/user/corrections', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-
-    if (!correctionsRes.ok) throw new Error('Düzeltmeler yüklenemedi');
-
-    const correctionsData = await correctionsRes.json();
-    const corrections = correctionsData.corrections || [];
-
-    document.getElementById('total-corrections').textContent = corrections.length;
-
-    const thisMonth = corrections.filter(c => {
-      const d = new Date(c.created_at);
-      const now = new Date();
+    const thisMonth = allCorrections.filter(c => {
+      const d = new Date(c.created_at), now = new Date();
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     }).length;
-    document.getElementById('month-corrections').textContent = thisMonth;
+    const totalMistakes = allCorrections.reduce((s, c) => s + (c.mistakes ? c.mistakes.length : 0), 0);
 
+    document.getElementById('total-corrections').textContent = allCorrections.length;
+    document.getElementById('month-corrections').textContent = thisMonth;
+    document.getElementById('total-mistakes').textContent = totalMistakes;
+
+    // Geçmiş tablosu
     document.getElementById('corrections-loading').style.display = 'none';
     document.getElementById('corrections-table-wrap').style.display = 'block';
-
-    const tableBody = document.getElementById('corrections-list');
-    tableBody.innerHTML = '';
-
-    if (corrections.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="4" class="empty-row">Henüz düzeltme yok</td></tr>';
+    const tbody = document.getElementById('corrections-list');
+    if (allCorrections.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Henüz düzeltme yok</td></tr>';
     } else {
-      corrections.slice(0, 20).forEach(correction => {
+      allCorrections.slice(0, 20).forEach(c => {
         const row = document.createElement('tr');
-        const date = new Date(correction.created_at).toLocaleDateString('tr-TR');
-        const original = correction.original_text.substring(0, 30) + (correction.original_text.length > 30 ? '…' : '');
-        const corrected = correction.corrected_text.substring(0, 30) + (correction.corrected_text.length > 30 ? '…' : '');
-
-        row.innerHTML = `
-          <td>${date}</td>
-          <td>${original}</td>
-          <td>${corrected}</td>
-          <td class="mistake-count">${correction.mistakes.length}</td>
-        `;
-        tableBody.appendChild(row);
+        const orig = c.original_text.substring(0, 30) + (c.original_text.length > 30 ? '…' : '');
+        const corr = c.corrected_text.substring(0, 30) + (c.corrected_text.length > 30 ? '…' : '');
+        row.innerHTML = '<td>' + new Date(c.created_at).toLocaleDateString('tr-TR') + '</td><td>' + orig + '</td><td>' + corr + '</td><td class="mistake-count">' + (c.mistakes ? c.mistakes.length : 0) + '</td>';
+        tbody.appendChild(row);
       });
     }
+
+    // Pro özelliklerini yükle
+    loadProChart(isPro);
+    loadFlashcards(isPro);
+    loadPdfList(isPro);
 
   } catch (error) {
     console.error(error);
     document.getElementById('corrections-loading').style.display = 'none';
-    const slot = document.getElementById('error-banner-slot');
-    slot.innerHTML = '<div class="error-banner">⚠️ Veri yüklenirken hata oluştu: ' + error.message + '</div>';
-    showToast('Veriler yüklenemedi, sayfayı yenilemeyi dene.', 'error');
+    document.getElementById('error-banner-slot').innerHTML = '<div class="error-banner">⚠️ ' + error.message + '</div>';
+    showToast('Veriler yüklenemedi.', 'error');
   }
 }
 
+/* ================================================================
+   PRO: İLERLEME GRAFİĞİ
+   ================================================================ */
+function loadProChart(isPro) {
+  document.getElementById('chart-loading').style.display = 'none';
+  if (!isPro) {
+    document.getElementById('pro-lock-chart').style.display = 'flex';
+    document.getElementById('pro-lock-breakdown').style.display = 'flex';
+    document.getElementById('chart-container').style.display = 'none';
+    return;
+  }
+
+  // Puan hesapla: (1 - hataSayısı/kelimeSayısı) * 100, en az 0
+  const data = allCorrections.slice(0, 30).reverse().map((c, i) => {
+    const words = (c.original_text || '').split(/\s+/).filter(Boolean).length || 1;
+    const mistakes = c.mistakes ? c.mistakes.length : 0;
+    const score = Math.max(0, Math.round((1 - mistakes / words) * 100));
+    return { i, score, date: new Date(c.created_at).toLocaleDateString('tr-TR') };
+  });
+
+  if (data.length < 3) {
+    document.getElementById('chart-empty').style.display = 'flex';
+    return;
+  }
+
+  document.getElementById('chart-container').style.display = 'block';
+  const avg = Math.round(data.reduce((s, d) => s + d.score, 0) / data.length);
+  const svg = document.getElementById('trendSvg');
+  const W = 600, H = 180, pad = { t: 16, r: 16, b: 28, l: 32 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const minS = Math.min(...data.map(d => d.score));
+  const maxS = Math.max(...data.map(d => d.score));
+  const range = maxS - minS || 1;
+
+  function px(d) { return pad.l + (d.i / Math.max(data.length - 1, 1)) * iW; }
+  function py(d) { return pad.t + iH - ((d.score - minS) / range) * iH; }
+
+  // Gradient area fill
+  const pts = data.map(d => px(d) + ',' + py(d)).join(' ');
+  const firstX = px(data[0]), lastX = px(data[data.length - 1]);
+  const bottom = pad.t + iH;
+
+  let html = '<defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFB224" stop-opacity="0.3"/><stop offset="100%" stop-color="#FFB224" stop-opacity="0"/></linearGradient></defs>';
+  // Area
+  html += '<polygon points="' + firstX + ',' + bottom + ' ' + pts + ' ' + lastX + ',' + bottom + '" fill="url(#areaGrad)"/>';
+  // Line
+  html += '<polyline points="' + pts + '" fill="none" stroke="#FFB224" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+  // Avg line
+  const avgY = pad.t + iH - ((avg - minS) / range) * iH;
+  html += '<line x1="' + pad.l + '" y1="' + avgY + '" x2="' + (W - pad.r) + '" y2="' + avgY + '" stroke="#7C5CFF" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.7"/>';
+  html += '<text x="' + (W - pad.r + 2) + '" y="' + (avgY + 4) + '" font-size="9" fill="#7C5CFF" font-family="JetBrains Mono,monospace" opacity="0.85">ort.' + avg + '</text>';
+  // Dots
+  data.forEach(d => {
+    html += '<circle cx="' + px(d) + '" cy="' + py(d) + '" r="3.5" fill="#FFB224" stroke="#0A0E17" stroke-width="1.5"><title>' + d.date + ': ' + d.score + ' puan</title></circle>';
+  });
+  // Y axis labels
+  [minS, avg, maxS].forEach(v => {
+    const y = pad.t + iH - ((v - minS) / range) * iH;
+    html += '<text x="' + (pad.l - 4) + '" y="' + (y + 4) + '" text-anchor="end" font-size="9" fill="#5A6379" font-family="JetBrains Mono,monospace">' + v + '</text>';
+  });
+  svg.innerHTML = html;
+
+  // Hata türü dağılımı
+  const ruleCounts = {};
+  allCorrections.forEach(c => {
+    (c.mistakes || []).forEach(m => {
+      const rule = m.rule || 'Diğer';
+      ruleCounts[rule] = (ruleCounts[rule] || 0) + 1;
+    });
+  });
+  const sorted = Object.entries(ruleCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const totalM = sorted.reduce((s, e) => s + e[1], 0) || 1;
+  const colors = ['#FFB224','#7C5CFF','#4ADE80','#60A5FA','#F87171','#FBBF24'];
+  let bHtml = '';
+  sorted.forEach(([rule, count], i) => {
+    const pct = Math.round(count / totalM * 100);
+    bHtml += '<div style="margin-bottom:10px;">' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">' +
+      '<span style="color:var(--muted);">' + rule + '</span>' +
+      '<span style="font-family:var(--mono);color:' + colors[i % colors.length] + ';">' + pct + '%</span></div>' +
+      '<div style="height:6px;background:rgba(148,163,197,0.1);border-radius:3px;">' +
+      '<div style="height:6px;width:' + pct + '%;background:' + colors[i % colors.length] + ';border-radius:3px;transition:width 0.8s ease;"></div>' +
+      '</div></div>';
+  });
+  document.getElementById('breakdown-container').innerHTML = bHtml || '<div class="empty-row">Henüz hata verisi yok.</div>';
+}
+
+/* ================================================================
+   PRO: FLASHCARD
+   ================================================================ */
+let fcCards = [], fcIndex = 0, fcCorrect = 0, fcWrong = 0;
+
+function loadFlashcards(isPro) {
+  document.getElementById('fc-loading').style.display = 'none';
+  if (!isPro) { document.getElementById('pro-lock-cards').style.display = 'flex'; return; }
+
+  // Tüm hatalardan benzersiz kart listesi oluştur
+  const seen = new Set();
+  const cards = [];
+  allCorrections.forEach(c => {
+    (c.mistakes || []).forEach(m => {
+      const key = (m.original || '') + '→' + (m.suggested || '');
+      if (!seen.has(key) && m.original && m.suggested) {
+        seen.add(key);
+        cards.push({ wrong: m.original, correct: m.suggested, rule: m.rule || '' });
+      }
+    });
+  });
+
+  // Karıştır
+  fcCards = cards.sort(() => Math.random() - 0.5);
+  fcIndex = 0; fcCorrect = 0; fcWrong = 0;
+
+  if (fcCards.length === 0) { document.getElementById('fc-empty').style.display = 'block'; return; }
+  document.getElementById('fc-content').style.display = 'block';
+  renderCard();
+}
+
+function renderCard() {
+  if (fcIndex >= fcCards.length) { showFcDone(); return; }
+  const c = fcCards[fcIndex];
+  document.getElementById('fc-wrong').textContent = c.wrong;
+  document.getElementById('fc-correct').textContent = c.correct;
+  document.getElementById('fc-rule').textContent = c.rule ? '📌 ' + c.rule : '';
+  document.getElementById('fc-progress').textContent = (fcIndex + 1) + ' / ' + fcCards.length;
+  document.getElementById('fc-session-info').textContent = '✓ ' + fcCorrect + '  ✕ ' + fcWrong;
+  // Kartı ön yüze döndür
+  document.getElementById('flashcardScene').classList.remove('flipped');
+}
+
+function flipCard() { document.getElementById('flashcardScene').classList.toggle('flipped'); }
+
+function fcAnswer(knew) {
+  if (knew) fcCorrect++; else fcWrong++;
+  fcIndex++;
+  renderCard();
+}
+
+function showFcDone() {
+  document.getElementById('fc-content').style.display = 'none';
+  document.getElementById('fc-done').style.display = 'block';
+  const pct = Math.round(fcCorrect / fcCards.length * 100);
+  document.getElementById('fc-summary').textContent = fcCards.length + ' karttan ' + fcCorrect + ' tanesini bildin (' + pct + '%). ';
+}
+
+function restartCards() {
+  fcCards = fcCards.sort(() => Math.random() - 0.5);
+  fcIndex = 0; fcCorrect = 0; fcWrong = 0;
+  document.getElementById('fc-done').style.display = 'none';
+  document.getElementById('fc-content').style.display = 'block';
+  renderCard();
+}
+
+/* ================================================================
+   PRO: KELİME LİSTESİ PDF
+   ================================================================ */
+let pdfWords = [];
+
+function loadPdfList(isPro) {
+  document.getElementById('pdf-loading').style.display = 'none';
+  if (!isPro) { document.getElementById('pro-lock-pdf').style.display = 'flex'; return; }
+
+  const seen = new Set();
+  pdfWords = [];
+  allCorrections.forEach(c => {
+    (c.mistakes || []).forEach(m => {
+      const key = (m.original || '') + '→' + (m.suggested || '');
+      if (!seen.has(key) && m.original && m.suggested) {
+        seen.add(key);
+        pdfWords.push({ wrong: m.original, correct: m.suggested, rule: m.rule || '—' });
+      }
+    });
+  });
+
+  if (pdfWords.length === 0) { document.getElementById('pdf-empty').style.display = 'block'; return; }
+
+  document.getElementById('pdf-content').style.display = 'block';
+  document.getElementById('pdf-stats').textContent = pdfWords.length + ' benzersiz hata bulundu.';
+
+  // Önizleme tablo
+  let rows = '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
+    '<thead><tr>' +
+    '<th style="text-align:left;padding:8px 6px;font-family:var(--mono);font-size:10px;color:var(--faint);border-bottom:1px solid var(--border);">HATALI</th>' +
+    '<th style="text-align:left;padding:8px 6px;font-family:var(--mono);font-size:10px;color:var(--faint);border-bottom:1px solid var(--border);">DOĞRUSU</th>' +
+    '<th style="text-align:left;padding:8px 6px;font-family:var(--mono);font-size:10px;color:var(--faint);border-bottom:1px solid var(--border);">KURAL</th>' +
+    '</tr></thead><tbody>';
+  pdfWords.slice(0, 20).forEach(w => {
+    rows += '<tr><td style="padding:7px 6px;color:var(--red);border-bottom:1px solid var(--border);">' + w.wrong + '</td>' +
+      '<td style="padding:7px 6px;color:var(--green);border-bottom:1px solid var(--border);">' + w.correct + '</td>' +
+      '<td style="padding:7px 6px;color:var(--muted);border-bottom:1px solid var(--border);font-size:12px;">' + w.rule + '</td></tr>';
+  });
+  if (pdfWords.length > 20) rows += '<tr><td colspan="3" style="padding:8px 6px;color:var(--faint);font-size:12px;">… ve ' + (pdfWords.length - 20) + ' kelime daha (PDF\'de hepsi var)</td></tr>';
+  rows += '</tbody></table>';
+  document.getElementById('pdf-preview').innerHTML = rows;
+}
+
+function downloadPDF() {
+  // Tarayıcı Print API ile basit PDF oluşturma (dış kütüphane gerektirmez)
+  const btn = document.getElementById('pdf-download-btn');
+  btn.disabled = true;
+  btn.textContent = 'Hazırlanıyor…';
+
+  const email = document.getElementById('user-email').textContent || 'checkyourwrite';
+  const date = new Date().toLocaleDateString('tr-TR');
+
+  let rows = pdfWords.map((w, i) =>
+    '<tr style="page-break-inside:avoid;">' +
+    '<td style="padding:10px 12px;border-bottom:1px solid #e2e0da;color:#333;font-size:13px;">' + (i+1) + '. ' + w.wrong + '</td>' +
+    '<td style="padding:10px 12px;border-bottom:1px solid #e2e0da;color:#2d6a4f;font-weight:600;font-size:13px;">' + w.correct + '</td>' +
+    '<td style="padding:10px 12px;border-bottom:1px solid #e2e0da;color:#666;font-size:12px;">' + w.rule + '</td>' +
+    '</tr>'
+  ).join('');
+
+  const printContent = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>CheckYourWrite — Kelime Listesi</title>
+<style>
+  body{font-family:Arial,sans-serif;margin:32px;color:#1a1916;}
+  h1{font-size:20px;margin-bottom:4px;color:#1a1916;}
+  .sub{font-size:12px;color:#888;margin-bottom:24px;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{background:#f5f4f0;padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#666;border-bottom:2px solid #e2e0da;}
+  @media print{body{margin:20px;} .no-print{display:none;}}
+</style></head><body>
+<h1>Kelime Listesi</h1>
+<div class="sub">checkyourwrite.com &nbsp;·&nbsp; ${email} &nbsp;·&nbsp; ${date} &nbsp;·&nbsp; ${pdfWords.length} kelime</div>
+<table><thead><tr><th>Hatalı Yazım</th><th>Doğrusu</th><th>Kural</th></tr></thead>
+<tbody>${rows}</tbody></table>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(printContent);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); }, 400);
+
+  btn.disabled = false;
+  btn.textContent = '⬇ PDF İndir';
+}
+
+/* ── Diğer ── */
 function logout() {
   if (confirm('Çıkış yapmak istediğine emin misin?')) {
     localStorage.removeItem('checkyourwrite_jwt_token');
@@ -403,25 +810,19 @@ function logout() {
     window.location.href = '/index.html';
   }
 }
-
-function upgradePlan() {
-  // Ana sayfadaki Premium modalını ?plans=1 ile otomatik açar
-  window.location.href = '/index.html?plans=1';
-}
-
+function upgradePlan() { window.location.href = '/index.html?plans=1'; }
 function cancelSubscription() {
   if (confirm('Aboneliğini iptal etmek istediğine emin misin?')) {
-    showToast('İptal işlemi yakında eklenecek. Şimdilik destek için bize ulaş.', 'info');
-    // TODO: Stripe billing portal entegrasyonu
+    showToast('Şimdilik destek için bize ulaş.', 'info');
   }
 }
 
-/* ── Süzülen harfler (arka plan ambiyansı) ── */
-(function initGlyphs() {
+/* ── Süzülen harfler ── */
+(function() {
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const field = document.getElementById('glyphField');
   if (!field) return;
-  const chars = ['ä','ö','ü','ß','§','„','“',';','é','ẞ','?','!'];
+  const chars = ['ä','ö','ü','ß','§','„','"',';','é','ẞ','?','!'];
   const count = window.innerWidth < 640 ? 8 : 14;
   for (let i = 0; i < count; i++) {
     const s = document.createElement('span');
@@ -438,6 +839,5 @@ function cancelSubscription() {
 
 document.addEventListener('DOMContentLoaded', loadUserData);
 </script>
-
 </body>
 </html>
