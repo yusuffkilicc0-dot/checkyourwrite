@@ -289,6 +289,18 @@
   .plan-card.pro .plan-cta { background: linear-gradient(135deg, var(--violet), #9F7DFF); color: #fff; }
   .plan-card.pro .plan-cta:hover { box-shadow: 0 0 24px rgba(124,92,255,0.35); }
 
+  /* ── Header plan rozeti & aktif plan ── */
+  .plan-badge-header { font-family: var(--display); font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    color: var(--green); background: var(--green-soft); border: 1px solid rgba(74,222,128,0.35);
+    padding: 4px 10px; border-radius: 8px; }
+  .plan-card.active-plan { border-color: rgba(74,222,128,0.5) !important; background: rgba(74,222,128,0.05); opacity: 0.92; }
+  .plan-card.active-plan:hover { transform: none; box-shadow: none; }
+  .active-plan-badge { display: inline-block; background: var(--green); color: #0A0E17;
+    padding: 3px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em;
+    margin-bottom: 10px; font-family: var(--display); }
+  .plan-card.active-plan .plan-cta { background: rgba(74,222,128,0.15) !important; color: var(--green) !important;
+    cursor: default; box-shadow: none !important; }
+
   /* ── Toast bildirimleri ── */
   #toast-container { position: fixed; top: 74px; right: 20px; z-index: 5000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
   .toast { display: flex; align-items: center; gap: 11px; min-width: 260px; max-width: 380px; padding: 13px 16px;
@@ -1514,6 +1526,33 @@ async function selectPlan(planId) {
 // Plan Sistemi - backend'den gerçek plan bilgisi
 // ============================================
 
+// Plan modalında kullanıcının aktif planını işaretle
+function markActivePlanInModal(plan) {
+  document.querySelectorAll('.plan-card').forEach(card => {
+    const isThis = card.classList.contains(plan);
+    card.classList.toggle('active-plan', isThis);
+    let badge = card.querySelector('.active-plan-badge');
+    const cta = card.querySelector('.plan-cta');
+    if (isThis) {
+      if (!badge) {
+        badge = document.createElement('div');
+        badge.className = 'active-plan-badge';
+        badge.textContent = '✓ AKTİF PLAN';
+        card.insertBefore(badge, card.firstChild);
+      }
+      if (cta) { cta.textContent = 'Mevcut Planın'; cta.disabled = true; }
+      card.style.pointerEvents = 'none';
+    } else {
+      if (badge) badge.remove();
+      if (cta) {
+        cta.disabled = false;
+        cta.textContent = card.classList.contains('pro') ? "Pro'yu Seç" : "Premium'u Seç";
+      }
+      card.style.pointerEvents = '';
+    }
+  });
+}
+
 // Arayüzü plana göre güncelle (free / premium / pro)
 function applyPlanToUI(plan) {
   const isPaid = plan === 'premium' || plan === 'pro';
@@ -1538,15 +1577,15 @@ function applyPlanToUI(plan) {
 
   const statusDiv = document.getElementById('premium-status');
   if (statusDiv) {
-    const email = localStorage.getItem('checkyourwrite_current_email') || '';
     if (isPaid) {
-      statusDiv.innerHTML = '<span style="color:green; font-weight:bold;">✅ ' + plan.toUpperCase() + ' Aktif (' + email + ')</span>';
-    } else if (email) {
-      statusDiv.innerHTML = '<span style="color:#555;">👤 ' + email + ' · Ücretsiz Plan</span>';
+      statusDiv.innerHTML = '<span class="plan-badge-header">' + plan.toUpperCase() + '</span>';
     } else {
       statusDiv.innerHTML = '';
     }
   }
+
+  // Plan modalında aktif plan rozetini işle
+  markActivePlanInModal(plan);
 }
 
 // Giriş yapılmışsa backend'den güncel planı çek
