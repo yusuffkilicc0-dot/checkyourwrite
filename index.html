@@ -1718,21 +1718,30 @@ function closeEmailModal() {
 
 async function submitEmail() {
   const email = document.getElementById('email-input').value.trim();
-  
+  const btn = document.getElementById('email-submit-btn');
+
   if (!email || !email.includes('@')) {
     showToast('Geçerli bir email gir.', 'error');
     return;
   }
-  
+
+  // Çift tıklama koruması: buton zaten çalışıyorsa yeni istek gönderme.
+  // (Aksi halde hızlı çift basış aynı email için birden fazla kayıt tetikleyebiliyordu.)
+  if (btn.dataset.loading === '1') return;
+  btn.dataset.loading = '1';
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = 'Gönderiliyor…';
+
   try {
     const response = await fetch('/api/auth/send-verification', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email })
     });
-    
+
     const data = await response.json();
-    
+
     if (data.success) {
       document.getElementById('email-submit-btn').style.display = 'none';
       document.getElementById('verify-code-btn').style.display = 'block';
@@ -1744,6 +1753,12 @@ async function submitEmail() {
   } catch (error) {
     console.error('Hata:', error);
     showToast('Email gönderilemedi, tekrar dene.', 'error');
+  } finally {
+    // Butonu tekrar kullanılabilir yap (kod gönderildiyse zaten gizlendi;
+    // hata olduysa kullanıcı yeniden deneyebilsin diye eski haline döndür).
+    btn.dataset.loading = '';
+    btn.disabled = false;
+    btn.textContent = originalText;
   }
 }
 
