@@ -204,6 +204,27 @@
   .copy-btn { margin-top: 4px; padding: 7px 16px; font-size: 12.5px; font-family: var(--sans); border: 1px solid var(--border-strong); border-radius: 9px; background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
   .copy-btn:hover { color: var(--text); border-color: var(--muted); background: rgba(148,163,197,0.06); }
 
+  /* ── Seviye önerisi & eşanlamlılar ── */
+  .level-sug-box { background: var(--surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: 17px 18px; }
+  .level-sug-explain { font-size: 13.5px; color: var(--muted); line-height: 1.65; margin-bottom: 13px; }
+  .level-sug-example-label { font-family: var(--mono); font-size: 10.5px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 7px; }
+  .level-sug-example { font-size: 14.5px; color: var(--text); line-height: 1.8; background: rgba(255,178,36,0.06);
+    border: 1px solid rgba(255,178,36,0.18); border-radius: 10px; padding: 13px 15px; }
+  .premium-tag { font-family: var(--display); font-size: 10px; font-weight: 700; color: #14100A;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); padding: 2px 8px; border-radius: 6px;
+    text-transform: none; letter-spacing: 0; vertical-align: middle; margin-left: 4px; }
+  .syn-list { display: flex; flex-direction: column; gap: 8px; }
+  .syn-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; }
+  .syn-word { font-family: var(--mono); font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .syn-arrow { color: var(--faint); font-size: 12px; }
+  .syn-chip { font-size: 12.5px; color: var(--accent); background: rgba(255,178,36,0.08);
+    border: 1px solid rgba(255,178,36,0.22); border-radius: 20px; padding: 3px 11px; }
+  .listen-btn { color: var(--accent); border-color: rgba(255,178,36,0.35); }
+  .listen-btn:hover { border-color: var(--accent); background: rgba(255,178,36,0.08); color: var(--accent); }
+  .listen-btn.speaking { background: rgba(255,178,36,0.14); }
+
   /* ── Kullanım barı ── */
   .usage-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 9px 14px;
     background: rgba(148,163,197,0.04); border: 1px solid var(--border); border-radius: var(--radius-sm); }
@@ -363,7 +384,6 @@
     <button class="lvl" onclick="setLvl(this,'B1')">B1</button>
     <button class="lvl on" onclick="setLvl(this,'B2')">B2</button>
     <button class="lvl" onclick="setLvl(this,'C1')">C1</button>
-    <button class="lvl" onclick="setLvl(this,'C2')">C2</button>
   </div>
   <div class="input-box">
     <textarea id="inputText" placeholder="Almanca metninizi buraya yazın veya yapıştırın..." oninput="onType()"></textarea>
@@ -415,7 +435,28 @@
 
     <div class="result-label">Düzeltilmiş metin</div>
     <div class="corrected-box" id="correctedBox"></div>
-    <button class="copy-btn" onclick="copyText()">Kopyala</button>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="copy-btn" onclick="copyText()">Kopyala</button>
+      <button class="copy-btn listen-btn" id="listenBtn" onclick="speakCorrected()" style="display:none;">🔊 Dinle</button>
+    </div>
+
+    <!-- Seviyene göre geliştirme -->
+    <div id="levelSugSection" style="display:none;">
+      <hr class="divider">
+      <div class="result-label">Seviyene göre geliştirme · <span id="levelSugLevel"></span></div>
+      <div class="level-sug-box">
+        <div class="level-sug-explain" id="levelSugExplain"></div>
+        <div class="level-sug-example-label">Örnek yeniden yazım:</div>
+        <div class="level-sug-example" id="levelSugExample"></div>
+      </div>
+    </div>
+
+    <!-- Eşanlamlı öneriler (Premium) -->
+    <div id="synonymsSection" style="display:none;">
+      <hr class="divider">
+      <div class="result-label">Eşanlamlı öneriler <span class="premium-tag">✦ Premium</span></div>
+      <div class="syn-list" id="synList"></div>
+    </div>
     <hr class="divider">
     <div class="result-label" style="margin-bottom:10px;">Hatalar</div>
     <div class="stats-row" id="statsRow"></div>
@@ -1039,6 +1080,42 @@ function clearText() {
   document.getElementById('wordNum').textContent = '0';
   document.getElementById('resultSection').style.display = 'none';
 }
+/* ── Almanca sesli okuma (Premium) ── */
+let speakingNow = false;
+function speakCorrected() {
+  const btn = document.getElementById('listenBtn');
+  const text = document.getElementById('correctedBox').textContent.trim();
+  if (!text) return;
+  if (!('speechSynthesis' in window)) {
+    showToast('Tarayıcın sesli okumayı desteklemiyor.', 'error');
+    return;
+  }
+  if (speakingNow) {
+    window.speechSynthesis.cancel();
+    speakingNow = false;
+    btn.classList.remove('speaking');
+    btn.textContent = '🔊 Dinle';
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'de-DE';
+  u.rate = 0.92;
+  const voices = window.speechSynthesis.getVoices();
+  const deVoice = voices.find(v => v.lang && v.lang.startsWith('de'));
+  if (deVoice) u.voice = deVoice;
+  u.onend = u.onerror = () => {
+    speakingNow = false;
+    btn.classList.remove('speaking');
+    btn.textContent = '🔊 Dinle';
+  };
+  speakingNow = true;
+  btn.classList.add('speaking');
+  btn.textContent = '⏸ Durdur';
+  window.speechSynthesis.speak(u);
+}
+// Bazı tarayıcılar sesleri gecikmeli yükler
+if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); }
+
 function copyText() {
   navigator.clipboard.writeText(document.getElementById('correctedBox').textContent).then(() => {
     const btn = document.querySelector('.copy-btn');
@@ -1149,6 +1226,39 @@ function renderResult(r) {
   renderScore(r.score ?? null, r.scoreLabel ?? null, r.scoreFeedback ?? null, level);
 
   document.getElementById('correctedBox').textContent = r.corrected || '';
+
+  // Seviyene göre geliştirme
+  const sugSection = document.getElementById('levelSugSection');
+  if (r.levelSuggestion && r.levelSuggestion.explanation) {
+    document.getElementById('levelSugLevel').textContent = level;
+    document.getElementById('levelSugExplain').textContent = r.levelSuggestion.explanation;
+    document.getElementById('levelSugExample').textContent = r.levelSuggestion.example || '';
+    sugSection.style.display = 'block';
+  } else {
+    sugSection.style.display = 'none';
+  }
+
+  // Eşanlamlı öneriler (backend sadece premium/pro icin gonderir)
+  const synSection = document.getElementById('synonymsSection');
+  const synList = document.getElementById('synList');
+  if (Array.isArray(r.synonyms) && r.synonyms.length > 0) {
+    synList.innerHTML = '';
+    r.synonyms.forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'syn-row';
+      const chips = (s.alternatives || []).map(a => '<span class="syn-chip">' + esc(a) + '</span>').join('');
+      row.innerHTML = '<span class="syn-word">' + esc(s.word) + '</span><span class="syn-arrow">→</span>' + chips;
+      synList.appendChild(row);
+    });
+    synSection.style.display = 'block';
+  } else {
+    synSection.style.display = 'none';
+  }
+
+  // Dinle butonu: sadece ücretli planlarda görünür
+  const planNow = localStorage.getItem('checkyourwrite_plan') || 'free';
+  document.getElementById('listenBtn').style.display =
+    (planNow === 'premium' || planNow === 'pro') ? 'inline-block' : 'none';
   const errors = r.errors || [];
   const typeMap = { gram: 'Gramer', spell: 'Yazım', punct: 'Noktalama', case: 'Büyük/Küçük Harf' };
   const dotColors = { gram: '#F87171', spell: '#60A5FA', punct: '#FBBF24', case: '#F472B6' };
