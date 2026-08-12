@@ -38,20 +38,47 @@ export default async function handler(req, res) {
     const code = generateCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 dakika
 
-    let user = await User.findOne({ email: normalizedEmail });
-
-    if (!user) {
-      user = new User({
-        email: normalizedEmail,
-        verification_token: code,
-        verification_token_expires: expiresAt,
-      });
-    } else {
-      user.verification_token = code;
-      user.verification_token_expires = expiresAt;
+    // ── Atomik upsert ──
+    // findOne + new + save yerine tek atomik işlem kullanıyoruz. Böylece
+    // "Kod Gönder"e hızlı iki kez basılıp iki istek yarışsa bile, MongoDB
+    // email üzerinde tek kayıt tutar (çift-kayıt race condition çözümü).
+    // $setOnInsert: sadece YENİ kayıt oluşurken uygulanır (mevcut planı/tarihi ezmez).
+    try {
+      await User.findOneAndUpdate(
+        { email: normalizedEmail },
+        {
+          $set: {
+            verification_token: code,
+            verification_token_expires: expiresAt,
+          },
+          $setOnInsert: {
+            email: normalizedEmail,
+          },
+        },
+        {
+          upsert: true,
+          new: true,
+          setDefaultsOnInsert: true,
+        }
+      );
+    } catch (err) {
+      // Nadir yarış durumunda iki istek aynı anda insert etmeye çalışırsa
+      // biri E11000 duplicate key hatası alır. Bu aslında "istenen sonuç"
+      // (kayıt zaten var); ikinci bir update ile kodu güncelleyip devam ediyoruz.
+      if (err && err.code === 11000) {
+        await User.updateOne(
+          { email: normalizedEmail },
+          {
+            $set: {
+              verification_token: code,
+              verification_token_expires: expiresAt,
+            },
+          }
+        );
+      } else {
+        throw err;
+      }
     }
-
-    await user.save();
 
     await transporter.sendMail({
       from: `"CheckYourWrite" <${process.env.EMAIL_USER}>`,
