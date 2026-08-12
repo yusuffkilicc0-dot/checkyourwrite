@@ -153,7 +153,9 @@
   .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 
   /* ── PRO: Flashcard ── */
-  .flashcard-scene { perspective: 900px; width: 100%; max-width: 480px; margin: 0 auto 20px; height: 160px; cursor: pointer; }
+  .flashcard-scene { perspective: 900px; width: 100%; max-width: 480px; margin: 0 auto 20px; height: 210px; cursor: pointer; }
+  .card-context { font-size: 13px; color: var(--muted); line-height: 1.55; margin-bottom: 12px;
+    font-style: italic; max-width: 380px; }
   .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(.4,0,.2,1); transform-style: preserve-3d; }
   .flashcard-scene.flipped .flashcard-inner { transform: rotateY(180deg); }
   .flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
@@ -379,7 +381,8 @@
         <div class="flashcard-scene" id="flashcardScene" onclick="flipCard()">
           <div class="flashcard-inner" id="flashcardInner">
             <div class="flashcard-face flashcard-front">
-              <div class="card-eyebrow">Hatalı yazım</div>
+              <div class="card-eyebrow">Bu cümlede hata nerede?</div>
+              <div class="card-context" id="fc-context"></div>
               <div class="card-word" id="fc-wrong">—</div>
               <div class="card-hint">Kartı çevir →</div>
             </div>
@@ -650,6 +653,86 @@ function loadProChart(isPro) {
 }
 
 /* ================================================================
+   KART ÜRETİMİ — ortak akıllı filtre (hem flashcard hem PDF kullanır)
+   ----------------------------------------------------------------
+   Amaç: "ich → Ich" gibi öğretici olmayan kartları elemek.
+   Büyük-harf hatalarının iki türü var:
+     1) Cümle başı büyük harfi (ich → Ich) → Türkçede de aynı, ELENİR.
+     2) İsim büyük harfi (arbeit → Arbeit) → Almancaya özgü kural, TUTULUR
+        ama bağlam cümlesi + kural açıklamasıyla gösterilir.
+   ================================================================ */
+
+// Bir kelimenin cümle başında mı yoksa cümle içinde mi geçtiğini bulur.
+function isAtSentenceStart(text, word) {
+  if (!text || !word) return false;
+  // Kelimeyi regex'e güvenli hale getir
+  const esc = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Metnin başında VEYA . ! ? sonrası geliyorsa cümle başıdır.
+  const re = new RegExp('(^|[.!?]\\s+)' + esc + '\\b', 'i');
+  return re.test(text.trim());
+}
+
+// Hatanın geçtiği cümleyi çıkarır (bağlam göstermek için).
+function extractSentence(text, word) {
+  if (!text || !word) return '';
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  const lower = word.toLowerCase();
+  const found = sentences.find(s => s.toLowerCase().includes(lower));
+  const sentence = (found || text).trim();
+  // Çok uzunsa kırp
+  return sentence.length > 120 ? sentence.substring(0, 117) + '…' : sentence;
+}
+
+// Tüm düzeltmelerden temizlenmiş, benzersiz kart listesi üretir.
+function buildCards() {
+  const seen = new Set();
+  const cards = [];
+
+  allCorrections.forEach(c => {
+    const sourceText = c.original_text || '';
+    (c.mistakes || []).forEach(m => {
+      const wrong = (m.original || '').trim();
+      const correct = (m.suggested || '').trim();
+      if (!wrong || !correct) return;
+      if (wrong === correct) return; // fark yok
+
+      // Sadece büyük/küçük harf farkı mı?
+      const isCapsOnly = wrong.toLowerCase() === correct.toLowerCase();
+
+      if (isCapsOnly) {
+        // Cümle başındaysa öğretici değil → ele.
+        if (isAtSentenceStart(sourceText, wrong)) return;
+        // Cümle içiyse: Almanca isim büyük harf kuralı → değerli kart.
+      }
+
+      // Noktalama-only farkları da ele (ör. "gehen" → "gehen,")
+      const stripPunct = s => s.replace(/[.,;:!?"'()\-–—]/g, '').trim();
+      if (stripPunct(wrong) === stripPunct(correct)) return;
+
+      const key = wrong.toLowerCase() + '→' + correct.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+
+      // Kural metni: caps hatasıysa net bir açıklama koy.
+      let rule = m.rule || '';
+      if (isCapsOnly && !rule) {
+        rule = 'Almancada tüm isimler (Nomen) büyük harfle başlar.';
+      }
+
+      cards.push({
+        wrong: wrong,
+        correct: correct,
+        rule: rule || '—',
+        context: extractSentence(sourceText, wrong),
+        isCaps: isCapsOnly
+      });
+    });
+  });
+
+  return cards;
+}
+
+/* ================================================================
    PRO: FLASHCARD
    ================================================================ */
 let fcCards = [], fcIndex = 0, fcCorrect = 0, fcWrong = 0;
@@ -658,21 +741,7 @@ function loadFlashcards(isPro) {
   document.getElementById('fc-loading').style.display = 'none';
   if (!isPro) { document.getElementById('pro-lock-cards').style.display = 'flex'; return; }
 
-  // Tüm hatalardan benzersiz kart listesi oluştur
-  const seen = new Set();
-  const cards = [];
-  allCorrections.forEach(c => {
-    (c.mistakes || []).forEach(m => {
-      const key = (m.original || '') + '→' + (m.suggested || '');
-      if (!seen.has(key) && m.original && m.suggested) {
-        seen.add(key);
-        cards.push({ wrong: m.original, correct: m.suggested, rule: m.rule || '' });
-      }
-    });
-  });
-
-  // Karıştır
-  fcCards = cards.sort(() => Math.random() - 0.5);
+  fcCards = buildCards().sort(() => Math.random() - 0.5);
   fcIndex = 0; fcCorrect = 0; fcWrong = 0;
 
   if (fcCards.length === 0) { document.getElementById('fc-empty').style.display = 'block'; return; }
@@ -683,12 +752,27 @@ function loadFlashcards(isPro) {
 function renderCard() {
   if (fcIndex >= fcCards.length) { showFcDone(); return; }
   const c = fcCards[fcIndex];
+
   document.getElementById('fc-wrong').textContent = c.wrong;
   document.getElementById('fc-correct').textContent = c.correct;
-  document.getElementById('fc-rule').textContent = c.rule ? '📌 ' + c.rule : '';
+
+  // Ön yüzde bağlam cümlesi: hatalı kelime vurgulanmış halde
+  const ctxEl = document.getElementById('fc-context');
+  if (c.context) {
+    const esc = c.wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const highlighted = c.context.replace(
+      new RegExp('\\b' + esc + '\\b'),
+      '<span style="color:var(--red);border-bottom:2px solid var(--red);">' + c.wrong + '</span>'
+    );
+    ctxEl.innerHTML = highlighted;
+    ctxEl.style.display = 'block';
+  } else {
+    ctxEl.style.display = 'none';
+  }
+
+  document.getElementById('fc-rule').textContent = c.rule && c.rule !== '—' ? '📌 ' + c.rule : '';
   document.getElementById('fc-progress').textContent = (fcIndex + 1) + ' / ' + fcCards.length;
   document.getElementById('fc-session-info').textContent = '✓ ' + fcCorrect + '  ✕ ' + fcWrong;
-  // Kartı ön yüze döndür
   document.getElementById('flashcardScene').classList.remove('flipped');
 }
 
@@ -724,17 +808,8 @@ function loadPdfList(isPro) {
   document.getElementById('pdf-loading').style.display = 'none';
   if (!isPro) { document.getElementById('pro-lock-pdf').style.display = 'flex'; return; }
 
-  const seen = new Set();
-  pdfWords = [];
-  allCorrections.forEach(c => {
-    (c.mistakes || []).forEach(m => {
-      const key = (m.original || '') + '→' + (m.suggested || '');
-      if (!seen.has(key) && m.original && m.suggested) {
-        seen.add(key);
-        pdfWords.push({ wrong: m.original, correct: m.suggested, rule: m.rule || '—' });
-      }
-    });
-  });
+  // Flashcard ile aynı akıllı filtreyi kullan (anlamsız caps hataları elenir).
+  pdfWords = buildCards();
 
   if (pdfWords.length === 0) { document.getElementById('pdf-empty').style.display = 'block'; return; }
 
