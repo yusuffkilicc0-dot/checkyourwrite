@@ -26,6 +26,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
       margin-bottom: 30px;
       background: white;
       padding: 20px;
@@ -165,8 +167,14 @@
 <div class="container">
   
   <header>
-    <h1>👤 Hesabım</h1>
-    <button class="logout-btn" onclick="logout()">🚪 Çıkış Yap</button>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <a href="/index.html" style="text-decoration:none; font-family:'Courier New', monospace; font-size:16px; font-weight:bold; color:#1a1916;">check<span style="color:#8a8880;">yourwrite</span></a>
+      <h1>👤 Hesabım</h1>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <a href="/index.html" style="display:inline-block; padding:10px 20px; background:#1D9E75; color:white; border-radius:6px; text-decoration:none; font-weight:bold;">← Ana Sayfa</a>
+      <button class="logout-btn" onclick="logout()">🚪 Çıkış Yap</button>
+    </div>
   </header>
   
   <div class="grid">
