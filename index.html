@@ -906,8 +906,10 @@ function copyText() {
 /* ── Analyze ── */
 async function analyze() {
   const text = document.getElementById('inputText').value.trim();
+  const plan = localStorage.getItem('checkyourwrite_plan') || 'free';
+  const isPaid = plan === 'premium' || plan === 'pro';
   const usage = getUsage();
-  if (usage.count >= MAX_DAILY) {
+  if (!isPaid && usage.count >= MAX_DAILY) {
     const resetIn = Math.ceil((usage.start + 24*60*60*1000 - Date.now()) / (60*60*1000));
     alert('Günlük kullanım limitine ulaştınız (15/15). ' + resetIn + ' saat sonra tekrar kullanabilirsiniz.');
     return;
@@ -925,8 +927,7 @@ async function analyze() {
     });
     const result = await res.json();
     if (result.error) { alert('Hata: ' + result.error); return; }
-    incrementUsage();
-    updateUsageBar();
+    if (!isPaid) { incrementUsage(); updateUsageBar(); }
     saveHistory({
       text, level,
       score: result.score ?? null,
@@ -1127,6 +1128,8 @@ function incrementUsage() {
   return updated;
 }
 function updateUsageBar() {
+  const plan = localStorage.getItem('checkyourwrite_plan') || 'free';
+  if (plan === 'premium' || plan === 'pro') return; // ücretli planda sayaç gösterme
   const data = getUsage();
   const remaining = MAX_DAILY - data.count;
   const el = document.getElementById('usageCount');
@@ -1192,12 +1195,11 @@ renderHistoryStrip();
 const STRIPE_PUBLIC_KEY = 'pk_live_51TVevYJ2CzqeTfs9OVBLwVHYd5uuJoorxCLFRZDJU0iy8X76KwQ4Y8fNel0Rmk6pjrTGvJfdagdlwvlYvGpzUziT00WvHhwU4r'; // Senin key!
 
 function showPremiumModal() {
- // ❌ COMMENT YAP - Modal otomatik açılmasın
-// document.getElementById('premium-modal').style.display = 'flex';
+  document.getElementById('premium-modal').style.display = 'flex';
 }
-// Sayfa yüklendiğinde modal KAPAIK olsun
+// Sayfa yüklendiğinde modal kapalı olsun
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('premium-modal').style.display = 'none'; // KAPAL BAŞLA
+  document.getElementById('premium-modal').style.display = 'none';
 });
 function closePremiumModal() {
   document.getElementById('premium-modal').style.display = 'none';
@@ -1205,9 +1207,16 @@ function closePremiumModal() {
 
 async function selectPlan(planId) {
   try {
-    const userEmail = prompt('Ödeme için e-mailini gir:');
-    if (!userEmail) return;
-    
+    // Ödeme yapmadan önce giriş şart - webhook, ödemeyi email ile eşleştirir.
+    // Kayıtlı hesap yoksa ödeme hiçbir hesaba bağlanamaz.
+    const email = localStorage.getItem('checkyourwrite_current_email');
+    if (!email) {
+      closePremiumModal();
+      alert('Ödeme yapmadan önce email ile giriş yapmalısın. Ödemen hesabına otomatik tanımlanacak.\n\nÖnemli: Stripe ödeme sayfasında da AYNI email adresini kullan.');
+      openEmailModal();
+      return;
+    }
+
     // Stripe Checkout sayfasına yönlendir
     if (planId === 'premium') {
       window.location.href = 'https://buy.stripe.com/7sY6oIdY4dfi8Dw8X8c3m01';
@@ -1219,71 +1228,62 @@ async function selectPlan(planId) {
     alert('Ödeme işleminde hata oluştu.');
   }
 }
- // ============================================
-  // Premium Daily Limit Güncelleme
-  // ============================================
-  function updateDailyLimit() {
-    const isPremium = localStorage.getItem('checkyourwrite_is_premium') === 'true';
-    const usageCountEl = document.getElementById('usageCount');
-    
-    if (isPremium) {
-      usageCountEl.innerHTML = '∞ Sınırsız düzeltme';
-      usageCountEl.style.color = 'green';
-    } else {
-      usageCountEl.innerHTML = '15 / 15 hak kaldı';
-      usageCountEl.style.color = 'red';
-    }
+
+// ============================================
+// Plan Sistemi - backend'den gerçek plan bilgisi
+// ============================================
+
+// Arayüzü plana göre güncelle (free / premium / pro)
+function applyPlanToUI(plan) {
+  const isPaid = plan === 'premium' || plan === 'pro';
+  localStorage.setItem('checkyourwrite_plan', plan || 'free');
+
+  const usageCountEl = document.getElementById('usageCount');
+  const usageResetEl = document.getElementById('usageReset');
+  if (isPaid && usageCountEl) {
+    usageCountEl.textContent = '∞ Sınırsız düzeltme';
+    usageCountEl.className = 'usage-count green';
+    if (usageResetEl) usageResetEl.textContent = plan.toUpperCase() + ' plan';
   }
 
-  // Sayfa yüklendiğinde çalıştır
-  document.addEventListener('DOMContentLoaded', function() {
-    updateDailyLimit();
-  });
-// ============================================
-// Premium Sistemi - localStorage
-// ============================================
+  const statusDiv = document.getElementById('premium-status');
+  if (statusDiv) {
+    const email = localStorage.getItem('checkyourwrite_current_email') || '';
+    if (isPaid) {
+      statusDiv.innerHTML = '<span style="color:green; font-weight:bold;">✅ ' + plan.toUpperCase() + ' Aktif (' + email + ')</span>';
+    } else if (email) {
+      statusDiv.innerHTML = '<span style="color:#555;">👤 ' + email + ' · Ücretsiz Plan</span>';
+    } else {
+      statusDiv.innerHTML = '';
+    }
+  }
+}
 
-const PREMIUM_STORAGE_KEY = 'checkyourwrite_premium_users';
+// Giriş yapılmışsa backend'den güncel planı çek
+async function refreshPlanFromServer() {
+  const token = localStorage.getItem('checkyourwrite_jwt_token');
+  if (!token) { applyPlanToUI('free'); return; }
 
-// Sayfa yüklendiğinde çalış
+  try {
+    const res = await fetch('/api/user/profile', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) {
+      // Token süresi dolmuş olabilir - sessizce free'ye dön
+      applyPlanToUI('free');
+      return;
+    }
+    const data = await res.json();
+    applyPlanToUI(data.user?.subscription_plan || 'free');
+  } catch {
+    applyPlanToUI(localStorage.getItem('checkyourwrite_plan') || 'free');
+  }
+}
+
+// Sayfa yüklendiğinde planı kontrol et
 document.addEventListener('DOMContentLoaded', function() {
-  checkUserPremiumStatus();
+  refreshPlanFromServer();
 });
-
-// Email'e göre premium kontrolü yap
-function checkUserPremiumStatus() {
-  const storedEmail = localStorage.getItem('checkyourwrite_current_email');
-  
-  if (storedEmail) {
-    const premiumUsers = JSON.parse(localStorage.getItem(PREMIUM_STORAGE_KEY) || '{}');
-    
-    if (premiumUsers[storedEmail] && premiumUsers[storedEmail].premium) {
-      enablePremiumFeatures(storedEmail);
-      console.log('✅ Premium aktif:', storedEmail);
-    } else {
-      disablePremiumFeatures();
-      console.log('❌ Premium yok:', storedEmail);
-    }
-  }
-}
-
-// Premium özellikleri aç
-function enablePremiumFeatures(email) {
-  localStorage.setItem('checkyourwrite_is_premium', 'true');
-  const statusDiv = document.getElementById('premium-status');
-  if (statusDiv) {
-    statusDiv.innerHTML = `<span style="color:green; font-weight:bold;">✅ Premium Aktif (${email})</span>`;
-  }
-}
-
-// Premium özellikleri kapat
-function disablePremiumFeatures() {
-  localStorage.setItem('checkyourwrite_is_premium', 'false');
-  const statusDiv = document.getElementById('premium-status');
-  if (statusDiv) {
-    statusDiv.innerHTML = `<span style="color:red;">⭕ Ücretsiz Plan</span>`;
-  }
-}
 
 // Giriş butonuna basılınca email modal'ını aç
 function askForEmail() {
@@ -1293,7 +1293,8 @@ function askForEmail() {
 // Çıkış yap
 function logout() {
   localStorage.removeItem('checkyourwrite_current_email');
-  disablePremiumFeatures();
+  localStorage.removeItem('checkyourwrite_jwt_token');
+  localStorage.removeItem('checkyourwrite_plan');
   alert('Çıkış yapıldı.');
   location.reload();
 }
@@ -1455,6 +1456,7 @@ async function verifyCode() {
       // Token localStorage'a kaydet
       localStorage.setItem('checkyourwrite_jwt_token', data.token);
       localStorage.setItem('checkyourwrite_current_email', email);
+      localStorage.setItem('checkyourwrite_plan', data.plan || 'free');
       
       closeEmailModal();
       alert('✅ Giriş başarılı!');
