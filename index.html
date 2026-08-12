@@ -1627,6 +1627,17 @@ function logout() {
   location.reload();
 }
 
+// URL üzerinden otomatik Premium modalı açma (dashboard'daki "Plan Yükselt" -> /index.html?plans=1)
+document.addEventListener('DOMContentLoaded', function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('plans') === '1') {
+    showPremiumModal();
+    // Adres çubuğunu temizle ki sayfa yenilenince/geri tuşunda modal tekrar açılmasın
+    const cleanUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
+});
+
   // Eski kod devam ediyor...
 // ============================================
 // RESOURCES PAGE FUNCTIONS
