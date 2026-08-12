@@ -130,6 +130,24 @@
   .usage-reset { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
   footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--muted); font-family: var(--mono); border-top: 1px solid var(--border); margin-top: 3rem; }
+
+  /* ── Toast bildirimleri ── */
+  #toast-container { position: fixed; top: 20px; right: 20px; z-index: 5000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+  .toast { display: flex; align-items: center; gap: 10px; min-width: 260px; max-width: 380px; padding: 13px 16px; background: var(--surface); border: 1px solid var(--border); border-left-width: 4px; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); font-size: 13.5px; color: var(--text); line-height: 1.45; opacity: 0; transform: translateX(30px); transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.21,1.02,.73,1); pointer-events: auto; }
+  .toast.show { opacity: 1; transform: translateX(0); }
+  .toast.hide { opacity: 0; transform: translateX(30px); }
+  .toast-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #fff; }
+  .toast.success { border-left-color: #2d6a4f; }
+  .toast.success .toast-icon { background: #2d6a4f; animation: toastPop 0.4s cubic-bezier(.36,1.6,.5,1); }
+  .toast.error { border-left-color: #9b2335; }
+  .toast.error .toast-icon { background: #9b2335; animation: toastShake 0.4s; }
+  .toast.info { border-left-color: #1a4d8f; }
+  .toast.info .toast-icon { background: #1a4d8f; }
+  @keyframes toastPop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  @keyframes toastShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+  @media (max-width: 520px) { #toast-container { left: 12px; right: 12px; top: 12px; } .toast { min-width: 0; max-width: none; } }
+
   footer a { color: var(--muted); text-decoration: none; }
   footer a:hover { color: var(--text); }
   @media (max-width: 520px) { header { padding: 1rem; } .history-strip { padding: 0 1rem; } main { padding: 1.25rem 1rem; } }
@@ -875,6 +893,29 @@ let activeFilter = 'all';
 const MAX_DAILY = 5;
 const MAX_HISTORY = 5;
 
+/* ── Toast bildirimleri ── */
+function showToast(message, type) {
+  type = type || 'info';
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const icons = { success: '✓', error: '✕', info: 'i' };
+  toast.innerHTML = '<div class="toast-icon">' + (icons[type] || 'i') + '</div><div>' + message + '</div>';
+  container.appendChild(toast);
+  requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+  const duration = type === 'error' ? 5000 : 3500;
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 350);
+  }, duration);
+}
+
 /* ── Level ── */
 function setLvl(btn, v) {
   document.querySelectorAll('.lvl').forEach(b => b.classList.remove('on'));
@@ -911,7 +952,7 @@ async function analyze() {
   const usage = getUsage();
   if (!isPaid && usage.count >= MAX_DAILY) {
     const resetIn = Math.ceil((usage.start + 24*60*60*1000 - Date.now()) / (60*60*1000));
-    alert('Gunluk 5 ucretsiz duzeltme hakkin doldu. Sinirsiz duzeltme icin Premium plana gecebilirsin. Ucretsiz haklar ' + resetIn + ' saat sonra yenilenir.');
+    showToast('Günlük 5 ücretsiz hakkın doldu. ' + resetIn + ' saat sonra yenilenir — sınırsız için Premium\'a göz at.', 'info');
     showPremiumModal();
     return;
   }
@@ -931,7 +972,7 @@ async function analyze() {
     });
     const result = await res.json();
     if (result.error) {
-      alert('Hata: ' + result.error);
+      showToast(result.error, 'error');
       if (result.limitReached) showPremiumModal();
       return;
     }
@@ -945,7 +986,7 @@ async function analyze() {
     });
     renderResult(result);
   } catch(e) {
-    alert('Bir hata oluştu, tekrar dene.');
+    showToast('Bir hata oluştu, tekrar dene.', 'error');
   } finally {
     btn.disabled = false;
     document.getElementById('loadingRow').style.display = 'none';
@@ -1220,7 +1261,7 @@ async function selectPlan(planId) {
     const email = localStorage.getItem('checkyourwrite_current_email');
     if (!email) {
       closePremiumModal();
-      alert('Ödeme yapmadan önce email ile giriş yapmalısın. Ödemen hesabına otomatik tanımlanacak.\n\nÖnemli: Stripe ödeme sayfasında da AYNI email adresini kullan.');
+      showToast('Önce email ile giriş yapmalısın — ödemen hesabına otomatik tanımlanır. Stripe sayfasında aynı emaili kullan.', 'info');
       openEmailModal();
       return;
     }
@@ -1233,7 +1274,7 @@ async function selectPlan(planId) {
     }
   } catch (error) {
     console.error('Hata:', error);
-    alert('Ödeme işleminde hata oluştu.');
+    showToast('Ödeme işleminde hata oluştu.', 'error');
   }
 }
 
@@ -1312,7 +1353,6 @@ function logout() {
   localStorage.removeItem('checkyourwrite_current_email');
   localStorage.removeItem('checkyourwrite_jwt_token');
   localStorage.removeItem('checkyourwrite_plan');
-  alert('Çıkış yapıldı.');
   location.reload();
 }
 
@@ -1428,7 +1468,7 @@ async function submitEmail() {
   const email = document.getElementById('email-input').value.trim();
   
   if (!email || !email.includes('@')) {
-    alert('Geçerli bir email gir!');
+    showToast('Geçerli bir email gir.', 'error');
     return;
   }
   
@@ -1445,13 +1485,13 @@ async function submitEmail() {
       document.getElementById('email-submit-btn').style.display = 'none';
       document.getElementById('verify-code-btn').style.display = 'block';
       document.getElementById('verification-code-div').style.display = 'block';
-      alert('Doğrulama kodu email adresine gönderildi!');
+      showToast('Doğrulama kodu email adresine gönderildi 📬', 'success');
     } else {
-      alert('Hata: ' + data.message);
+      showToast(data.message || 'Bir hata oluştu.', 'error');
     }
   } catch (error) {
     console.error('Hata:', error);
-    alert('Email gönderme hatası!');
+    showToast('Email gönderilemedi, tekrar dene.', 'error');
   }
 }
 
@@ -1460,7 +1500,7 @@ async function verifyCode() {
   const code = document.getElementById('verification-code-input').value.trim();
   
   if (!code || code.length !== 6) {
-    alert('6 haneli kodu gir!');
+    showToast('6 haneli kodu gir.', 'error');
     return;
   }
   
@@ -1480,16 +1520,16 @@ async function verifyCode() {
       localStorage.setItem('checkyourwrite_plan', data.plan || 'free');
       
       closeEmailModal();
-      alert('✅ Giriş başarılı!');
+      showToast('Giriş başarılı! Hoş geldin 🎉', 'success');
       
-      // Ana sayfada kal, arayüzü giriş durumuna göre yenile
-      location.reload();
+      // Toast görünsün, sonra arayüzü giriş durumuna göre yenile
+      setTimeout(() => location.reload(), 1200);
     } else {
-      alert('Kod yanlış: ' + data.message);
+      showToast('Kod yanlış: ' + (data.message || ''), 'error');
     }
   } catch (error) {
     console.error('Hata:', error);
-    alert('Doğrulama hatası!');
+    showToast('Doğrulama sırasında hata oluştu.', 'error');
   }
 }
 </script>
