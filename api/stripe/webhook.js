@@ -14,9 +14,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Stripe Dashboard'daki Payment Link price ID'leri.
 // Fiyat/urun degisirse buradaki ID'leri de guncellemen gerekir.
+// NOT: Eski fiyatlara bagli aktif abone yoktu, o yuzden eski ID'ler kaldirildi.
+// Ileride fiyat degistirirsen ve o sirada AKTIF ABONE varsa, eski ID'leri
+// silme - yenileme odemeleri hala eski price ID ile geliyor.
 const PRICE_TO_PLAN = {
-  price_1TVfjwJ2CzqeTfs9izt8smYC: 'premium',
-  price_1TVfsNJ2CzqeTfs9hCyOzD93: 'pro',
+  price_1U3k5JJ2CzqeTfs9MLJuUfZj: 'premium',
+  price_1U3k5hJ2CzqeTfs9bLaXtA47: 'pro',
 };
 
 function getRawBody(req) {
