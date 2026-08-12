@@ -921,13 +921,20 @@ async function analyze() {
   document.getElementById('loadingRow').style.display = 'flex';
   document.getElementById('resultSection').style.display = 'none';
   try {
+    const token = localStorage.getItem('checkyourwrite_jwt_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
     const res = await fetch('/api/analyze', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ text, level })
     });
     const result = await res.json();
-    if (result.error) { alert('Hata: ' + result.error); return; }
+    if (result.error) {
+      alert('Hata: ' + result.error);
+      if (result.limitReached) showPremiumModal();
+      return;
+    }
     if (!isPaid) { incrementUsage(); updateUsageBar(); }
     saveHistory({
       text, level,
