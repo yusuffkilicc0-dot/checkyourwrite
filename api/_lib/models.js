@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
   verification_token: String,
   verification_token_expires: Date,
   last_login: Date,
+  // Sunucu tarafli gunluk kullanim takibi (free plan limiti icin)
+  usage_date: String, // 'YYYY-MM-DD'
+  usage_count: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const subscriptionSchema = new mongoose.Schema({
