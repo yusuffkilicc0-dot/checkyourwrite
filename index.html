@@ -1456,7 +1456,7 @@ renderHistoryStrip();
     <!-- Premium Seçeneği -->
     <div class="plan-card premium" onclick="selectPlan('premium')">
       <div class="plan-name">✨ Premium</div>
-      <div class="plan-price">€4.99<small>/ay</small></div>
+      <div class="plan-price">€2.99<small>/ay</small></div>
       <ul class="plan-features">
         <li>Sınırsız yazı düzeltme</li>
         <li>Eşanlamlı kelime önerileri</li>
@@ -1470,7 +1470,7 @@ renderHistoryStrip();
     <div class="plan-card pro" onclick="selectPlan('pro')">
       <div class="plan-pop">EN POPÜLER</div>
       <div class="plan-name">⭐ Pro</div>
-      <div class="plan-price">€9.99<small>/ay</small></div>
+      <div class="plan-price">€5.99<small>/ay</small></div>
       <ul class="plan-features">
         <li>Premium'un tüm özellikleri</li>
         <li>İlerleme takibi (grafik)</li>
@@ -1502,24 +1502,43 @@ function closePremiumModal() {
   document.getElementById('premium-modal').style.display = 'none';
 }
 
+// ============================================
+// PLAN FİYATLARI VE ÖDEME LİNKLERİ
+// Fiyat değiştirmek istersen SADECE burayı düzenle.
+// Stripe'ta yeni fiyat oluşturduktan sonra:
+//   1) buradaki link + price ID'yi güncelle
+//   2) api/stripe/webhook.js içindeki PRICE_TO_PLAN'ı güncelle
+//   3) aşağıdaki PLAN_FIYAT yazılarını güncelle
+// ============================================
+const PLAN_LINKS = {
+  premium: 'https://buy.stripe.com/eVq9AU3jqfnqcTMddoc3m02',
+  pro:     'https://buy.stripe.com/3cI3cwcU02AE070ddoc3m03'
+};
+
 async function selectPlan(planId) {
   try {
     // Ödeme yapmadan önce giriş şart - webhook, ödemeyi email ile eşleştirir.
-    // Kayıtlı hesap yoksa ödeme hiçbir hesaba bağlanamaz.
+    // Sadece email değil, JWT de kontrol ediliyor: doğrulanmamış hesapla ödeme yapılmasın.
     const email = localStorage.getItem('checkyourwrite_current_email');
-    if (!email) {
+    const token = localStorage.getItem('checkyourwrite_jwt_token');
+
+    if (!email || !token) {
       closePremiumModal();
-      showToast('Önce email ile giriş yapmalısın — ödemen hesabına otomatik tanımlanır. Stripe sayfasında aynı emaili kullan.', 'info');
+      showToast('Önce email ile giriş yapmalısın — ödemen hesabına otomatik tanımlanır.', 'info');
       openEmailModal();
       return;
     }
 
-    // Stripe Checkout sayfasına yönlendir
-    if (planId === 'premium') {
-      window.location.href = 'https://buy.stripe.com/7sY6oIdY4dfi8Dw8X8c3m01';
-    } else if (planId === 'pro') {
-      window.location.href = 'https://buy.stripe.com/7sYeVe5ry8Z28Dw5KWc3m00';
+    const baseUrl = PLAN_LINKS[planId];
+    if (!baseUrl) {
+      showToast('Bilinmeyen plan seçildi.', 'error');
+      return;
     }
+
+    // Emaili Stripe sayfasına önceden doldur. Böylece kullanıcı yanlışlıkla
+    // başka bir email yazıp ödemenin hesabına tanımlanmamasını engelliyoruz.
+    window.location.href = baseUrl + '?prefilled_email=' + encodeURIComponent(email);
+
   } catch (error) {
     console.error('Hata:', error);
     showToast('Ödeme işleminde hata oluştu.', 'error');
