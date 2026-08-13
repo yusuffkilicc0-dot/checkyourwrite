@@ -105,6 +105,15 @@
 
   /* ── Cevap alanı ── */
   .answer-zone { padding: 0 16px 16px; }
+
+  /* Mod seçici */
+  .mode-toggle { display: flex; gap: 4px; background: rgba(148,163,197,.05); border: 1px solid var(--border);
+    border-radius: 12px; padding: 4px; margin-bottom: 14px; }
+  .mode-btn { flex: 1; padding: 9px; border: none; border-radius: 9px; background: transparent; color: var(--muted);
+    font-family: var(--display); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .mode-btn:hover { color: var(--text); }
+  .mode-btn.on { background: var(--surface-solid); color: var(--text); border: 1px solid var(--border-strong); }
+
   .answer-input { width: 100%; background: rgba(10,14,23,.5); border: 1px solid var(--border-strong);
     border-radius: 12px; padding: 14px 15px; color: var(--text); font-family: var(--sans); font-size: 15.5px;
     line-height: 1.5; resize: none; outline: none; transition: border-color .18s, box-shadow .18s; min-height: 58px; }
@@ -113,6 +122,37 @@
   .answer-input:disabled { opacity: .55; }
   .input-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 7px;
     font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
+
+  /* ── Mikrofon modu ── */
+  .mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 10px 0 6px; }
+  .mic-btn { position: relative; width: 96px; height: 96px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, box-shadow .2s; box-shadow: 0 6px 24px rgba(255,178,36,.3); }
+  .mic-btn:hover { transform: scale(1.04); }
+  .mic-btn:active { transform: scale(0.97); }
+  .mic-icon { font-size: 40px; line-height: 1; z-index: 2; filter: grayscale(0); }
+  .mic-pulse { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
+  /* Kayıt hali: parlar + dalga efekti */
+  .mic-btn.recording { background: linear-gradient(135deg, #F87171, #EF4444); box-shadow: 0 0 0 0 rgba(248,113,113,.6); animation: micGlow 1.4s ease-in-out infinite; }
+  .mic-btn.recording .mic-pulse { animation: micRipple 1.5s ease-out infinite; border: 3px solid rgba(248,113,113,.5); }
+  @keyframes micGlow { 0%,100% { box-shadow: 0 0 24px 4px rgba(248,113,113,.5); } 50% { box-shadow: 0 0 40px 12px rgba(248,113,113,.75); } }
+  @keyframes micRipple { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(1.7); opacity: 0; } }
+  .mic-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .mic-status { font-family: var(--display); font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; min-height: 20px; }
+  .mic-status.live { color: var(--red); }
+  .mic-heard { font-size: 16px; color: var(--text); text-align: center; min-height: 22px; font-style: italic; max-width: 90%; }
+  .mic-unsupported { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.3); border-radius: 12px;
+    padding: 14px 16px; font-size: 13px; color: #FBBF24; line-height: 1.55; text-align: center; }
+
+  /* ── Sonuç: dinle butonu ── */
+  .correct-row { display: flex; align-items: center; gap: 12px; }
+  .correct-row .answer-de { flex: 1; }
+  .listen-btn { flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; border: 1px solid rgba(74,222,128,.4);
+    background: transparent; color: var(--green); font-size: 20px; cursor: pointer; transition: all .15s;
+    display: flex; align-items: center; justify-content: center; }
+  .listen-btn:hover { background: var(--green-soft); border-color: var(--green); }
+  .listen-btn.playing { animation: listenPulse .8s ease-in-out infinite; }
+  @keyframes listenPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
 
   /* ── Sonuç ── */
   .verdict { padding: 0 16px 16px; }
@@ -272,14 +312,37 @@
       </div>
     </div>
 
-    <!-- Cevap yazma -->
+    <!-- Cevap yazma / konuşma -->
     <div class="answer-zone hidden" id="answerZone">
-      <textarea class="answer-input" id="answerInput" rows="2"
-        placeholder="Almancasını buraya yaz…" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
-      <div class="input-meta">
-        <span id="charCount">0 karakter</span>
-        <span>Enter ↵ ile kontrol et</span>
+
+      <!-- Mod seçici: Yazarak / Konuşarak -->
+      <div class="mode-toggle" id="modeToggle">
+        <button class="mode-btn on" id="modeWriteBtn" onclick="setMode('write')">⌨️ Yazarak</button>
+        <button class="mode-btn" id="modeSpeakBtn" onclick="setMode('speak')">🎤 Konuşarak</button>
       </div>
+
+      <!-- YAZMA modu -->
+      <div id="writeMode">
+        <textarea class="answer-input" id="answerInput" rows="2"
+          placeholder="Almancasını buraya yaz…" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
+        <div class="input-meta">
+          <span id="charCount">0 karakter</span>
+          <span>Enter ↵ ile kontrol et</span>
+        </div>
+      </div>
+
+      <!-- KONUŞMA modu -->
+      <div id="speakMode" class="hidden">
+        <div class="mic-wrap">
+          <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+            <span class="mic-icon">🎤</span>
+            <span class="mic-pulse"></span>
+          </button>
+          <div class="mic-status" id="micStatus">Butona bas ve Almancasını söyle</div>
+          <div class="mic-heard" id="micHeard"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Sonuç -->
@@ -297,7 +360,10 @@
       </div>
       <div class="diff-box">
         <div class="diff-title">Doğru çeviri</div>
-        <div class="answer-de" id="correctDe">—</div>
+        <div class="correct-row">
+          <div class="answer-de" id="correctDe">—</div>
+          <button class="listen-btn" id="listenBtn" onclick="speakGerman()" title="Almanca telaffuzu dinle">🔊</button>
+        </div>
       </div>
     </div>
 
@@ -320,7 +386,7 @@
     </div>
   </div>
 
-  <p class="tip" id="tipLine">Cümle çıkınca Almancasını yaz, sistem kelime kelime kontrol etsin 🧠</p>
+  <p class="tip" id="tipLine">Cümle çıkınca Almancasını <b>yaz</b> ya da <b>🎤 konuş</b> — sistem kontrol etsin</p>
 </main>
 
 <!-- Paywall -->
@@ -348,8 +414,12 @@
       <div class="share-meta" id="shMeta">—</div>
       <div class="share-url">checkyourwrite.com</div>
     </div>
-    <button class="modal-cta" onclick="shareResult()">📤 Paylaş / Kopyala</button>
+    <button class="modal-cta" id="shareImgBtn" onclick="shareImage()">📲 Story Görselini Paylaş</button>
+    <button class="modal-2nd" onclick="downloadImage()" style="margin-bottom:9px;">⬇ Görseli İndir</button>
+    <button class="modal-2nd" onclick="shareResult()" style="margin-bottom:9px;">📋 Metin Olarak Kopyala</button>
     <button class="modal-2nd" onclick="closeModal('shareModal')">Kapat</button>
+    <!-- Görsel üretimi için gizli canvas -->
+    <canvas id="shareCanvas" width="1080" height="1920" style="display:none;"></canvas>
   </div>
 </div>
 
@@ -768,13 +838,20 @@ function spin() {
     lights(true);
     document.getElementById('mTag').textContent = '🇹🇷 bunu almancaya çevir';
     document.getElementById('answerZone').classList.remove('hidden');
+    document.getElementById('modeToggle').classList.remove('hidden');
     document.getElementById('checkBtn').classList.remove('hidden');
     document.getElementById('skipBtn').classList.remove('hidden');
     const inp = document.getElementById('answerInput');
     inp.value = ''; inp.disabled = false;
     document.getElementById('charCount').textContent = '0 karakter';
-    if (window.innerWidth > 640) inp.focus();
-    document.getElementById('tipLine').textContent = 'Emin değilsen tahmin et — yanlış cevap da öğretir 💪';
+    // Konuşma modu arayüzünü sıfırla
+    resetMicUI();
+    // Aktif moda göre doğru alanı göster + odakla
+    applyMode();
+    if (mode === 'write' && window.innerWidth > 640) inp.focus();
+    document.getElementById('tipLine').textContent = mode === 'speak'
+      ? 'Mikrofona bas ve Almancasını yüksek sesle söyle 🎤'
+      : 'Emin değilsen tahmin et — yanlış cevap da öğretir 💪';
 
     if (!isPremium) { addPlay(); updatePlays(); }
   }, 2200);
@@ -795,25 +872,217 @@ function norm(s) {
 function words(s) { return norm(s).split(' ').filter(Boolean); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+/* ================================================================
+   SESLİ MOD — mikrofon (ses tanıma) + telaffuz (metin okuma)
+   ================================================================ */
+let mode = 'write';               // 'write' | 'speak'
+let recognition = null;
+let recognizing = false;
+let micSupported = null;          // null = henüz test edilmedi
+
+// Tarayıcı ses tanımayı destekliyor mu?
+function checkMicSupport() {
+  if (micSupported !== null) return micSupported;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  micSupported = !!SR;
+  return micSupported;
+}
+
+// Mod değiştir (Yazarak / Konuşarak)
+function setMode(m) {
+  if (state === 'result') return; // sonuç ekranındayken değiştirme
+  mode = m;
+  document.getElementById('modeWriteBtn').classList.toggle('on', m === 'write');
+  document.getElementById('modeSpeakBtn').classList.toggle('on', m === 'speak');
+  applyMode();
+  if (m === 'write' && window.innerWidth > 640) {
+    const inp = document.getElementById('answerInput');
+    if (inp && !inp.disabled) inp.focus();
+  }
+  document.getElementById('tipLine').textContent = m === 'speak'
+    ? 'Mikrofona bas ve Almancasını yüksek sesle söyle 🎤'
+    : 'Almancasını yaz, sistem kelime kelime kontrol etsin 🧠';
+}
+
+// Aktif moda göre yazma/konuşma alanını göster
+function applyMode() {
+  const writeEl = document.getElementById('writeMode');
+  const speakEl = document.getElementById('speakMode');
+  const checkBtn = document.getElementById('checkBtn');
+  if (mode === 'speak') {
+    writeEl.classList.add('hidden');
+    speakEl.classList.remove('hidden');
+    // Konuşma modunda cevap mikrofonla gelir; "Kontrol Et" butonu gerekmez.
+    if (state === 'prompt') checkBtn.classList.add('hidden');
+    renderMicArea();
+  } else {
+    speakEl.classList.add('hidden');
+    writeEl.classList.remove('hidden');
+    if (state === 'prompt') checkBtn.classList.remove('hidden');
+    stopMic(true); // sessizce durdur
+  }
+}
+
+// Konuşma alanını çiz (destek yoksa uyarı göster)
+function renderMicArea() {
+  const speakEl = document.getElementById('speakMode');
+  if (!checkMicSupport()) {
+    speakEl.innerHTML = '<div class="mic-unsupported">🎤 Tarayıcın sesli çeviriyi desteklemiyor.<br>' +
+      'En iyi deneyim için <b>Chrome</b> kullan ya da yukarıdan <b>⌨️ Yazarak</b> moduna geçip devam edebilirsin.</div>';
+    return;
+  }
+  // Destekliyorsa mikrofon arayüzünü (silinmişse) geri koy
+  if (!document.getElementById('micBtn')) {
+    speakEl.innerHTML = '<div class="mic-wrap">' +
+      '<button class="mic-btn" id="micBtn" onclick="toggleMic()"><span class="mic-icon">🎤</span><span class="mic-pulse"></span></button>' +
+      '<div class="mic-status" id="micStatus">Butona bas ve Almancasını söyle</div>' +
+      '<div class="mic-heard" id="micHeard"></div></div>';
+  }
+  resetMicUI();
+}
+
+function resetMicUI() {
+  const btn = document.getElementById('micBtn');
+  const status = document.getElementById('micStatus');
+  const heard = document.getElementById('micHeard');
+  if (btn) btn.classList.remove('recording');
+  if (status) { status.textContent = 'Butona bas ve Almancasını söyle'; status.classList.remove('live'); }
+  if (heard) heard.textContent = '';
+  recognizing = false;
+}
+
+// Mikrofon aç/kapa
+function toggleMic() {
+  if (state !== 'prompt') return;
+  if (recognizing) { stopMic(); return; }
+  startMic();
+}
+
+function startMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { renderMicArea(); return; }
+
+  recognition = new SR();
+  recognition.lang = 'de-DE';           // Almanca dinle
+  recognition.interimResults = true;    // konuşurken canlı göster
+  recognition.continuous = false;
+  recognition.maxAlternatives = 3;
+
+  let finalTranscript = '';
+
+  recognition.onstart = () => {
+    recognizing = true;
+    const btn = document.getElementById('micBtn');
+    const status = document.getElementById('micStatus');
+    if (btn) btn.classList.add('recording');
+    if (status) { status.textContent = '🔴 Dinliyorum… (bitince tekrar bas)'; status.classList.add('live'); }
+  };
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalTranscript += t;
+      else interim += t;
+    }
+    const heard = document.getElementById('micHeard');
+    if (heard) heard.textContent = '„' + (finalTranscript || interim) + '"';
+  };
+
+  recognition.onerror = (e) => {
+    const status = document.getElementById('micStatus');
+    if (status) {
+      status.classList.remove('live');
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        status.textContent = '⚠️ Mikrofon izni gerekli. Tarayıcı ayarından izin ver.';
+      } else if (e.error === 'no-speech') {
+        status.textContent = 'Ses algılanmadı, tekrar dene 🎤';
+      } else {
+        status.textContent = 'Bir sorun oldu, tekrar dene.';
+      }
+    }
+    const btn = document.getElementById('micBtn');
+    if (btn) btn.classList.remove('recording');
+    recognizing = false;
+  };
+
+  recognition.onend = () => {
+    recognizing = false;
+    const btn = document.getElementById('micBtn');
+    if (btn) btn.classList.remove('recording');
+    const said = finalTranscript.trim();
+    if (said) {
+      // Konuşma bitti + bir şey söylendi → değerlendir
+      evaluate(said, false, 'speak');
+    } else {
+      const status = document.getElementById('micStatus');
+      if (status) { status.textContent = 'Ses algılanmadı, tekrar dene 🎤'; status.classList.remove('live'); }
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch (e) {
+    // Çift start hatası olabilir; sessizce yut
+  }
+}
+
+function stopMic(silent) {
+  if (recognition && recognizing) {
+    try { recognition.stop(); } catch (e) {}
+  }
+  recognizing = false;
+  if (silent) {
+    const btn = document.getElementById('micBtn');
+    if (btn) btn.classList.remove('recording');
+  }
+}
+
+/* ── Telaffuz (metin okuma) — doğru cevabı sesli dinlet ── */
+function speakGerman() {
+  if (!current || !window.speechSynthesis) return;
+  const btn = document.getElementById('listenBtn');
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(current.de);
+    u.lang = 'de-DE';
+    u.rate = 0.92;
+    // Mümkünse Almanca bir ses seç
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('de'));
+    if (deVoice) u.voice = deVoice;
+    if (btn) btn.classList.add('playing');
+    u.onend = () => { if (btn) btn.classList.remove('playing'); };
+    u.onerror = () => { if (btn) btn.classList.remove('playing'); };
+    window.speechSynthesis.speak(u);
+  } catch (e) {
+    if (btn) btn.classList.remove('playing');
+  }
+}
+
 function checkAnswer() {
   if (state !== 'prompt') return;
   const raw = document.getElementById('answerInput').value.trim();
   if (!raw) { document.getElementById('answerInput').focus(); return; }
-  evaluate(raw, false);
+  evaluate(raw, false, 'write');
 }
 
 function giveUp() {
   if (state !== 'prompt') return;
-  evaluate('', true);
+  stopMic(true);
+  evaluate('', true, mode);
 }
 
-function evaluate(userText, gaveUp) {
+function evaluate(userText, gaveUp, inputMode) {
+  if (state === 'result') return; // çift değerlendirmeyi önle
   state = 'result';
-  document.getElementById('answerInput').disabled = true;
+  stopMic(true);
+  const inp = document.getElementById('answerInput');
+  if (inp) inp.disabled = true;
   document.getElementById('checkBtn').classList.add('hidden');
   document.getElementById('skipBtn').classList.add('hidden');
+  document.getElementById('modeToggle').classList.add('hidden');
 
-  const uw = words(userText);
   const cw = words(current.de);
 
   // Kelime eşleştirme (çoklu kopyaları da doğru say)
@@ -831,23 +1100,25 @@ function evaluate(userText, gaveUp) {
   // Eksik kalan kelimeler
   const missing = Object.keys(need).filter(k => need[k] > 0);
 
+  const spoke = inputMode === 'speak';
+
   // Puanlama
   let label, sub, color, gained = 0;
   if (gaveUp) {
     label = 'Cevap gösterildi'; sub = 'Seri sıfırlandı — sorun değil, öğrenmek de bu.'; color = 'var(--muted)';
     streak = 0;
   } else if (pct >= 90) {
-    label = 'Mükemmel! 🎯'; sub = 'Neredeyse birebir aynı.'; color = 'var(--green)';
+    label = spoke ? 'Mükemmel telaffuz! 🎯' : 'Mükemmel! 🎯'; sub = 'Neredeyse birebir aynı.'; color = 'var(--green)';
     gained = 100; streak++;
     confetti();
   } else if (pct >= 65) {
     label = 'Çok yakın 👏'; sub = 'Ana yapıyı doğru kurdun, birkaç kelime farklı.'; color = 'var(--accent)';
     gained = 60; streak++;
   } else if (pct >= 35) {
-    label = 'Kısmen doğru'; sub = 'Bazı kelimeleri tutturdun, cümle yapısına bak.'; color = 'var(--accent-2)';
+    label = 'Kısmen doğru'; sub = spoke ? 'Bazı kelimeleri tutturdun. Mikrofon bazen tam anlamayabilir, netçe söyle.' : 'Bazı kelimeleri tutturdun, cümle yapısına bak.'; color = 'var(--accent-2)';
     gained = 25; streak = 0;
   } else {
-    label = 'Tekrar dene'; sub = 'Bu cümleyi not al, tekrar karşına çıkacak.'; color = 'var(--red)';
+    label = 'Tekrar dene'; sub = spoke ? 'Mikrofon seni tam anlamamış olabilir — 🔊 ile doğrusunu dinle, tekrar dene.' : 'Bu cümleyi not al, tekrar karşına çıkacak.'; color = 'var(--red)';
     gained = 0; streak = 0;
   }
 
@@ -866,6 +1137,7 @@ function evaluate(userText, gaveUp) {
   document.getElementById('vSub').textContent = sub + (gained > 0 ? '  +' + gained + ' puan' : '');
 
   const udb = document.getElementById('userDiffBox');
+  document.querySelector('#userDiffBox .diff-title').textContent = spoke ? 'Senin söylediğin' : 'Senin cevabın';
   // %100'de "senin cevabın" kutusu doğru çeviriyle birebir aynı olur — tekrar göstermeye gerek yok.
   if (gaveUp || !userText || pct === 100) {
     udb.classList.add('hidden');
@@ -986,6 +1258,212 @@ async function shareResult() {
   } catch (e) {}
 }
 
+/* ================================================================
+   STORY GÖRSELİ ÜRETİMİ (1080×1920, Instagram story boyutu)
+   Canvas ile markalı skor kartı çizer. İndirilir veya (mobilde)
+   direkt paylaşılır. Her görselde checkyourwrite.com gömülü gider.
+   ================================================================ */
+
+// Yuvarlak köşeli dikdörtgen yardımcısı
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+async function renderShareCanvas() {
+  const avg = rounds ? Math.round(totalPct / rounds) : 0;
+  let title, emoji;
+  if (avg >= 85) { title = 'Almancam uçuyor!'; emoji = '🏆'; }
+  else if (avg >= 65) { title = 'İyi gidiyorum!'; emoji = '💪'; }
+  else if (avg >= 40) { title = 'Yolun başındayım'; emoji = '📚'; }
+  else { title = 'Pratik şart!'; emoji = '🌱'; }
+
+  // Fontların yüklendiğinden emin ol (canvas yüklü fontları kullanabilsin)
+  try { await document.fonts.ready; } catch (e) {}
+
+  const cv = document.getElementById('shareCanvas');
+  const ctx = cv.getContext('2d');
+  const W = 1080, H = 1920;
+
+  // ── Zemin: koyu lacivert degrade ──
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0E1626');
+  bg.addColorStop(0.5, '#0A0E17');
+  bg.addColorStop(1, '#0D1020');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Amber ışık küresi (sağ üst) ──
+  let orb = ctx.createRadialGradient(920, 260, 0, 920, 260, 520);
+  orb.addColorStop(0, 'rgba(255,178,36,0.30)');
+  orb.addColorStop(1, 'rgba(255,178,36,0)');
+  ctx.fillStyle = orb;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Mor ışık küresi (sol alt) ──
+  orb = ctx.createRadialGradient(140, 1640, 0, 140, 1640, 560);
+  orb.addColorStop(0, 'rgba(124,92,255,0.28)');
+  orb.addColorStop(1, 'rgba(124,92,255,0)');
+  ctx.fillStyle = orb;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Kareli kağıt dokusu (hafif noktalar) ──
+  ctx.fillStyle = 'rgba(148,163,197,0.06)';
+  for (let y = 120; y < H - 120; y += 54) {
+    for (let x = 60; x < W - 40; x += 54) {
+      ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  ctx.textAlign = 'center';
+
+  // ── Üst marka: "check" (gri) + "yourwrite" (amber), ortalanmış ──
+  ctx.font = '700 44px "JetBrains Mono", monospace';
+  const w1 = ctx.measureText('check').width;
+  const w2 = ctx.measureText('yourwrite').width;
+  const logoStartX = W/2 - (w1 + w2) / 2;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#8B94AB';
+  ctx.fillText('check', logoStartX, 232);
+  ctx.fillStyle = '#FFB224';
+  ctx.fillText('yourwrite', logoStartX + w1, 232);
+  ctx.textAlign = 'center';
+
+  // ── Oyun etiketi ──
+  ctx.font = '600 34px "Space Grotesk", sans-serif';
+  ctx.fillStyle = '#5A6379';
+  ctx.fillText('🎰  ÇEVİRİ OYUNU', W/2, 310);
+
+  // ── Büyük yüzde ──
+  ctx.font = '700 340px "Space Grotesk", sans-serif';
+  const grad = ctx.createLinearGradient(W/2 - 300, 0, W/2 + 300, 0);
+  grad.addColorStop(0, '#FFB224');
+  grad.addColorStop(1, '#FF8A3D');
+  ctx.fillStyle = grad;
+  ctx.fillText(avg + '%', W/2, 720);
+
+  ctx.font = '500 44px "Inter", sans-serif';
+  ctx.fillStyle = '#8B94AB';
+  ctx.fillText('ortalama başarı', W/2, 800);
+
+  // ── Başlık (emoji + metin) ──
+  ctx.font = '700 68px "Space Grotesk", sans-serif';
+  ctx.fillStyle = '#E8ECF6';
+  ctx.fillText(emoji + ' ' + title, W/2, 950);
+
+  // ── İstatistik kutuları ──
+  const stats = [
+    { n: level, l: 'SEVİYE' },
+    { n: String(rounds), l: 'CÜMLE' },
+    { n: String(score), l: 'PUAN' },
+    { n: String(best), l: 'REKOR SERİ' }
+  ];
+  const boxW = 220, boxH = 200, gap = 28;
+  const totalW = boxW * 2 + gap;
+  const startX = (W - totalW) / 2;
+  const startY = 1080;
+  stats.forEach((s, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = startX + col * (boxW + gap);
+    const y = startY + row * (boxH + gap);
+    ctx.fillStyle = 'rgba(21,27,42,0.72)';
+    roundRect(ctx, x, y, boxW, boxH, 24); ctx.fill();
+    ctx.strokeStyle = 'rgba(148,163,197,0.18)'; ctx.lineWidth = 2;
+    roundRect(ctx, x, y, boxW, boxH, 24); ctx.stroke();
+
+    ctx.font = '700 76px "Space Grotesk", sans-serif';
+    ctx.fillStyle = i === 3 ? '#A98BFF' : '#FFB224';
+    ctx.fillText(s.n, x + boxW/2, y + 108);
+    ctx.font = '500 26px "JetBrains Mono", monospace';
+    ctx.fillStyle = '#5A6379';
+    ctx.fillText(s.l, x + boxW/2, y + 158);
+  });
+
+  // ── Alt CTA ──
+  ctx.font = '700 60px "Space Grotesk", sans-serif';
+  ctx.fillStyle = '#E8ECF6';
+  ctx.fillText('Sen kaç yaparsın?', W/2, 1660);
+
+  // ── URL rozeti ──
+  const badgeW = 560, badgeH = 90, bx = (W - badgeW)/2, by = 1720;
+  const bgrad = ctx.createLinearGradient(bx, 0, bx + badgeW, 0);
+  bgrad.addColorStop(0, '#FFB224'); bgrad.addColorStop(1, '#FF8A3D');
+  ctx.fillStyle = bgrad;
+  roundRect(ctx, bx, by, badgeW, badgeH, 45); ctx.fill();
+  ctx.font = '700 40px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#14100A';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('checkyourwrite.com', W/2, by + badgeH/2 + 2);
+  ctx.textBaseline = 'alphabetic';
+
+  return cv;
+}
+
+// Canvas'ı blob'a çevir
+function canvasToBlob(cv) {
+  return new Promise(resolve => cv.toBlob(resolve, 'image/png'));
+}
+
+// Görseli indir (masaüstü + her yerde çalışır)
+async function downloadImage() {
+  const btn = event.target; const orig = btn.textContent;
+  btn.textContent = 'Hazırlanıyor…';
+  try {
+    const cv = await renderShareCanvas();
+    const blob = await canvasToBlob(cv);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ceviri-oyunu-skorum.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    btn.textContent = '✓ İndirildi!';
+  } catch (e) {
+    console.error(e);
+    btn.textContent = 'Hata, tekrar dene';
+  }
+  setTimeout(() => btn.textContent = orig, 2200);
+}
+
+// Görseli direkt paylaş (mobilde Instagram/WhatsApp'a story olarak gider)
+async function shareImage() {
+  const btn = document.getElementById('shareImgBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Hazırlanıyor…';
+  try {
+    const cv = await renderShareCanvas();
+    const blob = await canvasToBlob(cv);
+    const file = new File([blob], 'ceviri-oyunu-skorum.png', { type: 'image/png' });
+    const avg = rounds ? Math.round(totalPct / rounds) : 0;
+
+    // navigator.share ile görsel paylaşımı (mobil tarayıcılarda)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        text: '🎰 Çeviri Oyunu\'nda %' + avg + ' yaptım! Sen kaç yaparsın? checkyourwrite.com'
+      });
+      btn.textContent = orig;
+    } else {
+      // Görsel paylaşımı desteklenmiyorsa (çoğu masaüstü) → indir
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ceviri-oyunu-skorum.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      btn.textContent = '✓ İndirildi (story\'ne ekle)';
+      setTimeout(() => btn.textContent = orig, 2500);
+    }
+  } catch (e) {
+    console.error(e);
+    btn.textContent = orig;
+  }
+}
+
 /* ── Klavye + input ── */
 document.getElementById('answerInput').addEventListener('input', function() {
   document.getElementById('charCount').textContent = this.value.length + ' karakter';
@@ -1002,6 +1480,12 @@ loadBest();
 updateScoreboard();
 updatePlays();
 checkPlan();
+
+// SpeechSynthesis seslerini önceden yükle (bazı tarayıcılar geç yüklüyor)
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
 </script>
 
 </body>
