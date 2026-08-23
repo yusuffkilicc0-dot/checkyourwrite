@@ -1676,8 +1676,8 @@ document.addEventListener('keydown', function(e) {
 
 
  /* ═══════════════════════════════════════════════════════════════
-   HATA DEFTERİ
-   · Herkes: yanlış yaptığın cümle 3 tur sonra tekrar karşına çıkar
+   HATA DEFTERİ  (v2 — tekrar döngüsü düzeltildi)
+   · Herkes: yanlış yaptığın cümle birkaç tur sonra tekrar gelir
    · Pro:    hatalar kalıcı kaydedilir, listelenir, ayrıca çalışılır
    · Bir cümleyi 2 kez doğru yaparsan defterden silinir
    Mevcut fonksiyonları sarmalıyor — üstteki kodun hiçbirine dokunmaz.
@@ -1686,12 +1686,16 @@ document.addEventListener('keydown', function(e) {
   'use strict';
 
   var MKEY = 'cyw_mistakes_v1';
-  var REPEAT_AFTER = 3;   // kaç tur sonra tekrar çıksın
+  var REPEAT_AFTER = 3;   // ilk tekrar kaç tur sonra
+  var MAX_QUEUE = 3;      // aynı anda en fazla kaç cümle tekrar beklesin
+  var MIN_GAP = 4;        // iki tekrar arasında en az kaç normal cümle
   var MASTER_AT = 2;      // kaç doğrudan sonra defterden silinsin
   var PASS = 65;          // bu yüzdenin altı "hata" sayılır
 
   var notebook = {};
   var queue = [];
+  var drawCount = 0;      // toplam çekiliş sayacı
+  var lastRepeatAt = -99; // son tekrarın hangi çekilişte olduğu
   var isPro = false;
   var notebookMode = false;
   var pendingRepeat = false;
@@ -1820,10 +1824,14 @@ document.addEventListener('keydown', function(e) {
     modal.classList.add('show');
   }
 
-  /* ── Cümle çekme: önce kuyruk / defter ── */
+  /* ── Cümle çekme ──
+     ÖNEMLİ: tekrar cümleleri seviyeye göre filtrelenir ve iki tekrar
+     arasında en az MIN_GAP normal cümle gelmesi zorunludur. Aksi halde
+     kuyruktaki cümleler kendi aralarında döngüye girer. */
   var _draw = drawSentence;
   drawSentence = function (lvl) {
     pendingRepeat = false;
+    drawCount++;
 
     if (notebookMode && isPro) {
       var ks = Object.keys(notebook).filter(function (k) { return notebook[k].lvl === lvl; });
@@ -1836,13 +1844,15 @@ document.addEventListener('keydown', function(e) {
       render();
     }
 
-    for (var i = 0; i < queue.length; i++) queue[i].dueIn--;
-    var idx = -1;
-    for (var j = 0; j < queue.length; j++) { if (queue[j].dueIn <= 0) { idx = j; break; } }
-    if (idx > -1) {
-      var q = queue.splice(idx, 1)[0];
-      pendingRepeat = true;
-      return [q.tr, q.de];
+    if (drawCount - lastRepeatAt >= MIN_GAP) {
+      for (var j = 0; j < queue.length; j++) {
+        if (queue[j].lvl === lvl && drawCount >= queue[j].dueAt) {
+          var q = queue.splice(j, 1)[0];
+          pendingRepeat = true;
+          lastRepeatAt = drawCount;
+          return [q.tr, q.de];
+        }
+      }
     }
     return _draw(lvl);
   };
@@ -1897,9 +1907,14 @@ document.addEventListener('keydown', function(e) {
       e.right = 0;
       notebook[key] = e;
       save();
+
       var already = false;
       for (var i = 0; i < queue.length; i++) { if (queue[i].tr === key) { already = true; break; } }
-      if (!already) queue.push({ tr: key, de: cur.de, dueIn: REPEAT_AFTER });
+      if (!already) {
+        if (queue.length >= MAX_QUEUE) queue.shift();       // kuyruk taşmasın
+        var gap = Math.min(REPEAT_AFTER + (e.wrong - 1) * 3, 12); // her kaçırışta aralık açılır
+        queue.push({ tr: key, de: cur.de, lvl: lvl, dueAt: drawCount + gap });
+      }
     }
     render();
   };
@@ -1919,6 +1934,7 @@ document.addEventListener('keydown', function(e) {
   })();
 
 })();
+ 
  /* ── Başlat ── */
 loadBest();
 updateScoreboard();
