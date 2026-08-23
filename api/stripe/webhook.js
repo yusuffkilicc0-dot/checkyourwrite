@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import nodemailer from 'nodemailer';
 import { connectDB } from '../_lib/db.js';
 import { User, Subscription } from '../_lib/models.js';
 
@@ -11,6 +12,16 @@ export const config = {
 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Hos geldin maili icin mailer (auth ile ayni Gmail yapisi).
+// EMAIL_USER / EMAIL_PASS .env'de tanimli olmali.
+const mailer = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 // Stripe Dashboard'daki Payment Link price ID'leri.
 // Fiyat/urun degisirse buradaki ID'leri de guncellemen gerekir.
@@ -29,6 +40,94 @@ function getRawBody(req) {
     req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
+}
+
+/* ============================================================
+   HOS GELDIN MAILI
+   ------------------------------------------------------------
+   Sadece ILK satin almada (checkout.session.completed) ve
+   abonelik daha once islenmediyse gonderilir. Mail gonderiminde
+   bir sorun cikarsa webhook'u ASLA patlatmaz (try/catch icinde).
+   ============================================================ */
+async function sendWelcomeEmail(email, plan) {
+  if (!email) return;
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.warn('EMAIL_USER/EMAIL_PASS tanimli degil -> hos geldin maili atlandi');
+    return;
+  }
+
+  const planLabel = plan === 'pro' ? 'Pro' : 'Premium';
+
+  const html = `
+  <div style="margin:0;padding:0;background-color:#F6F3EC;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F6F3EC;padding:32px 0;font-family:Arial,Helvetica,sans-serif;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e7e0d3;">
+            <tr>
+              <td style="background-color:#1C2B4A;padding:28px 32px;text-align:center;">
+                <div style="color:#ffffff;font-size:22px;font-weight:bold;letter-spacing:0.5px;">checkyourwrite</div>
+                <div style="color:#9C7A3C;font-size:12px;margin-top:6px;letter-spacing:2px;text-transform:uppercase;">Almanya yolculugunda yaninda</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:36px 32px 24px 32px;color:#1C2B4A;">
+                <h1 style="margin:0 0 16px 0;font-size:22px;color:#1C2B4A;">Aramiza hos geldin! &#127881;</h1>
+                <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#3a4560;">
+                  Bize katildigin icin cok tesekkurler. Artik <strong style="color:#9C7A3C;">${planLabel}</strong> uyemizsin ve checkyourwrite'in tum ilgili ozelliklerine erisebilirsin.
+                </p>
+                <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#3a4560;">
+                  Yazilarini kontrol etmekten ceviri oyununa, kelime kartlarindan rehberlere kadar her sey seni bekliyor. Istedigin zaman siteye giris yapip kaldigin yerden devam edebilirsin.
+                </p>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 28px 0;">
+                  <tr>
+                    <td style="background-color:#9C7A3C;border-radius:8px;">
+                      <a href="https://checkyourwrite.com" style="display:inline-block;padding:13px 28px;color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;">Siteye git &#8594;</a>
+                    </td>
+                  </tr>
+                </table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F6F3EC;border-radius:10px;border-left:4px solid #9C7A3C;">
+                  <tr>
+                    <td style="padding:20px 22px;">
+                      <p style="margin:0 0 8px 0;font-size:15px;font-weight:bold;color:#1C2B4A;">Fikrin bizim icin degerli &#128172;</p>
+                      <p style="margin:0;font-size:14px;line-height:1.6;color:#3a4560;">
+                        Siteyle ilgili onerin, dusuncen ya da takildigin bir sey olursa bize ulasmaktan cekinme. Geri bildirimlerin checkyourwrite'i senin icin daha iyi yapmamiza yardimci oluyor.
+                      </p>
+                      <p style="margin:12px 0 0 0;font-size:14px;line-height:1.8;color:#3a4560;">
+                        &#128233; Bu maile dogrudan cevap yazabilirsin<br>
+                        &#128241; Instagram'dan <a href="https://instagram.com/deutschlandyusuf" style="color:#9C7A3C;font-weight:bold;text-decoration:none;">@deutschlandyusuf</a> DM atabilirsin
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 32px 28px 32px;border-top:1px solid #eee6d8;text-align:center;">
+                <p style="margin:0;font-size:13px;line-height:1.6;color:#9aa0ad;">
+                  Sevgiler,<br>
+                  <strong style="color:#1C2B4A;">deutschlandyusuf</strong> &middot; checkyourwrite.com
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>`;
+
+  try {
+    await mailer.sendMail({
+      from: `checkyourwrite <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "checkyourwrite'a hos geldin - artik aramizdasin \u{1F389}",
+      html,
+    });
+    console.log(`📧 Hos geldin maili gonderildi -> ${email} (${planLabel})`);
+  } catch (e) {
+    // Mail gitmezse webhook'u patlatma - odeme/plan zaten islendi.
+    console.error('Hos geldin maili gonderilemedi:', e.message);
+  }
 }
 
 /* ============================================================
@@ -165,6 +264,12 @@ export default async function handler(req, res) {
         const period = getPeriod(subscription);
 
         if (plan) {
+          // Bu abonelik daha once islendi mi? (Stripe ayni event'i tekrar
+          // gonderebilir -> mukerrer hos geldin maili gitmesin.)
+          const alreadyProcessed = await Subscription.findOne({
+            stripe_subscription_id: subscription.id,
+          }).lean();
+
           await setUserPlan({
             email: email.toLowerCase(),
             plan,
@@ -173,6 +278,11 @@ export default async function handler(req, res) {
             currentPeriodStart: period.start,
             currentPeriodEnd: period.end,
           });
+
+          // Sadece ILK kez (yeni abonelik) hos geldin maili gonder.
+          if (!alreadyProcessed) {
+            await sendWelcomeEmail(email.toLowerCase(), plan);
+          }
         } else {
           console.warn('Webhook: bilinmeyen price ID ->', priceId);
         }
