@@ -1674,7 +1674,252 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && state === 'result') { e.preventDefault(); spin(); }
 });
 
-/* ── Başlat ── */
+
+ /* ═══════════════════════════════════════════════════════════════
+   HATA DEFTERİ
+   · Herkes: yanlış yaptığın cümle 3 tur sonra tekrar karşına çıkar
+   · Pro:    hatalar kalıcı kaydedilir, listelenir, ayrıca çalışılır
+   · Bir cümleyi 2 kez doğru yaparsan defterden silinir
+   Mevcut fonksiyonları sarmalıyor — üstteki kodun hiçbirine dokunmaz.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var MKEY = 'cyw_mistakes_v1';
+  var REPEAT_AFTER = 3;   // kaç tur sonra tekrar çıksın
+  var MASTER_AT = 2;      // kaç doğrudan sonra defterden silinsin
+  var PASS = 65;          // bu yüzdenin altı "hata" sayılır
+
+  var notebook = {};
+  var queue = [];
+  var isPro = false;
+  var notebookMode = false;
+  var pendingRepeat = false;
+
+  try { notebook = JSON.parse(localStorage.getItem(MKEY)) || {}; } catch (e) { notebook = {}; }
+  function save() { try { localStorage.setItem(MKEY, JSON.stringify(notebook)); } catch (e) {} }
+  function count(lvl) {
+    return Object.keys(notebook).filter(function (k) { return !lvl || notebook[k].lvl === lvl; }).length;
+  }
+
+  /* ── Stil ── */
+  var st = document.createElement('style');
+  st.textContent =
+    '.mb-btn{font-family:var(--display);font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:9px;' +
+    'border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}' +
+    '.mb-btn:hover{color:var(--text);border-color:var(--muted);}' +
+    '.mb-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#14100A;border-color:transparent;}' +
+    '.mb-btn.pro{color:#A98BFF;border-color:rgba(124,92,255,.45);}' +
+    '.mb-btn.pro:hover{background:rgba(124,92,255,.12);border-color:#A98BFF;color:#C4AEFF;}' +
+    '.mb-list{text-align:left;max-height:42vh;overflow-y:auto;margin-bottom:16px;}' +
+    '.mb-row{background:rgba(10,14,23,.45);border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:8px;}' +
+    '.mb-tr{font-size:14px;color:var(--text);margin-bottom:4px;}' +
+    '.mb-de{font-family:var(--display);font-size:14px;font-weight:600;color:var(--green);}' +
+    '.mb-meta{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:6px;letter-spacing:.06em;}' +
+    '.mb-empty{color:var(--faint);font-size:13.5px;padding:24px 0;text-align:center;}' +
+    '#mistakeBar{margin-top:-4px;}';
+  document.head.appendChild(st);
+
+  /* ── Sayaç çubuğu (hak barının hemen altına) ── */
+  var bar = document.createElement('div');
+  bar.className = 'plays';
+  bar.id = 'mistakeBar';
+  var host = document.getElementById('playsBar');
+  if (host) host.insertAdjacentElement('afterend', bar);
+
+  /* ── Modal ── */
+  var modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'mbModal';
+  modal.innerHTML =
+    '<div class="modal-card">' +
+      '<div class="modal-icon" id="mbIcon">📕</div>' +
+      '<div class="modal-title" id="mbTitle">Hata Defterin</div>' +
+      '<div class="modal-sub" id="mbSub"></div>' +
+      '<div class="mb-list" id="mbList"></div>' +
+      '<div id="mbCta"></div>' +
+      '<button class="modal-2nd" id="mbClose">Kapat</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+  document.getElementById('mbClose').onclick = function () { modal.classList.remove('show'); };
+  modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.remove('show'); });
+
+  /* ── Çubuğu çiz ── */
+  function render() {
+    var n = count();
+    var right;
+    if (isPro) {
+      right = '<button class="mb-btn' + (notebookMode ? ' on' : '') + '" id="mbToggle">' +
+              (notebookMode ? '✓ Sadece hatalarım' : '🔁 Sadece hatalarım') + '</button>' +
+              '<button class="mb-btn pro" id="mbOpen">Defteri aç</button>';
+    } else {
+      right = '<button class="mb-btn pro" id="mbOpen">🔒 Pro</button>';
+    }
+    bar.innerHTML =
+      '<span class="plays-lbl">📕 Hata defterin · <b style="color:var(--accent)">' + n + '</b> cümle</span>' +
+      '<div style="display:flex;gap:6px;align-items:center;">' + right + '</div>';
+    var t = document.getElementById('mbToggle'); if (t) t.onclick = toggleMode;
+    var o = document.getElementById('mbOpen');   if (o) o.onclick = openBook;
+  }
+
+  /* ── "Sadece hatalarım" modu (Pro) ── */
+  function toggleMode() {
+    if (!isPro || state === 'prompt') return;
+    var tip = document.getElementById('tipLine');
+    if (!notebookMode && count(level) === 0) {
+      if (tip) tip.textContent = level + ' seviyesinde henüz hatan yok — normal moda devam 👌';
+      return;
+    }
+    notebookMode = !notebookMode;
+    if (tip) tip.textContent = notebookMode
+      ? '📕 Hata defteri modu açık — sadece kaçırdığın cümleler gelecek'
+      : 'Normal moda döndün — tüm cümleler karışık gelecek';
+    render();
+  }
+
+  /* ── Defteri aç ── */
+  function openBook() {
+    var list = document.getElementById('mbList');
+    var sub  = document.getElementById('mbSub');
+    var cta  = document.getElementById('mbCta');
+    var ttl  = document.getElementById('mbTitle');
+    var icn  = document.getElementById('mbIcon');
+
+    if (!isPro) {
+      icn.textContent = '📕';
+      ttl.textContent = 'Hata Defteri — Pro özelliği';
+      sub.innerHTML = 'Kaçırdığın cümleler şu an sadece o oturum boyunca tekrar geliyor. ' +
+        '<b>Pro</b> ile kalıcı olarak kaydedilir: listeni istediğin zaman açar, sadece hatalarını çalışabilirsin.';
+      list.innerHTML = '<div class="mb-empty">Şu anda ' + count() + ' cümlelik bir hata geçmişin var.<br>' +
+        'Pro ile bunları kalıcı olarak takip edebilirsin.</div>';
+      cta.innerHTML = '<a href="/index.html?plans=1" class="modal-cta">✦ Pro\'ya Geç · €5.99/ay</a>';
+      modal.classList.add('show');
+      return;
+    }
+
+    icn.textContent = '📕';
+    ttl.textContent = 'Hata Defterin';
+    cta.innerHTML = '';
+    var keys = Object.keys(notebook).sort(function (a, b) { return notebook[b].wrong - notebook[a].wrong; });
+    sub.textContent = keys.length
+      ? 'Bir cümleyi ' + MASTER_AT + ' kez doğru yaparsan defterden silinir.'
+      : '';
+    if (!keys.length) {
+      list.innerHTML = '<div class="mb-empty">Defterin tertemiz ✨<br>Yanlış yaptığın cümleler burada birikecek.</div>';
+    } else {
+      list.innerHTML = keys.map(function (k) {
+        var e = notebook[k];
+        return '<div class="mb-row">' +
+          '<div class="mb-tr">' + esc(k) + '</div>' +
+          '<div class="mb-de">' + esc(e.de) + '</div>' +
+          '<div class="mb-meta">' + esc(e.lvl || '') + ' · ' + e.wrong + ' kez kaçırdın' +
+          (e.right ? ' · ' + e.right + '/' + MASTER_AT + ' doğru' : '') + '</div>' +
+        '</div>';
+      }).join('');
+    }
+    modal.classList.add('show');
+  }
+
+  /* ── Cümle çekme: önce kuyruk / defter ── */
+  var _draw = drawSentence;
+  drawSentence = function (lvl) {
+    pendingRepeat = false;
+
+    if (notebookMode && isPro) {
+      var ks = Object.keys(notebook).filter(function (k) { return notebook[k].lvl === lvl; });
+      if (ks.length) {
+        var k = ks[Math.floor(Math.random() * ks.length)];
+        pendingRepeat = true;
+        return [k, notebook[k].de];
+      }
+      notebookMode = false; // defter boşaldıysa normale dön
+      render();
+    }
+
+    for (var i = 0; i < queue.length; i++) queue[i].dueIn--;
+    var idx = -1;
+    for (var j = 0; j < queue.length; j++) { if (queue[j].dueIn <= 0) { idx = j; break; } }
+    if (idx > -1) {
+      var q = queue.splice(idx, 1)[0];
+      pendingRepeat = true;
+      return [q.tr, q.de];
+    }
+    return _draw(lvl);
+  };
+
+  /* ── Tekrar cümlesinde etiket göster ── */
+  var _spin = spin;
+  spin = function () {
+    _spin();
+    setTimeout(function () {
+      if (pendingRepeat && state === 'prompt') {
+        var tag = document.getElementById('mTag');
+        if (tag) tag.textContent = '🔁 daha önce kaçırdığın cümle';
+      }
+    }, 2260);
+  };
+
+  /* ── Sonucu deftere işle ── */
+  var _evaluate = evaluate;
+  evaluate = function (userText, gaveUp, inputMode) {
+    if (state === 'result') return _evaluate(userText, gaveUp, inputMode);
+    var cur = current;
+    var lvl = level;
+    _evaluate(userText, gaveUp, inputMode);
+    if (!cur) return;
+
+    var pct = 0;
+    if (!gaveUp) {
+      var cw = words(cur.de), need = {}, hits = 0;
+      cw.forEach(function (w) { need[w] = (need[w] || 0) + 1; });
+      String(userText || '').trim().split(/\s+/).filter(Boolean).forEach(function (o) {
+        var n = norm(o);
+        if (n && need[n] > 0) { need[n]--; hits++; }
+      });
+      pct = cw.length ? Math.round(hits / cw.length * 100) : 0;
+    }
+
+    var key = cur.tr;
+    if (!gaveUp && pct >= PASS) {
+      if (notebook[key]) {
+        notebook[key].right = (notebook[key].right || 0) + 1;
+        if (notebook[key].right >= MASTER_AT) {
+          delete notebook[key];
+          var tip = document.getElementById('tipLine');
+          if (tip) tip.textContent = '✅ Bu cümleyi öğrendin — hata defterinden silindi!';
+        }
+        save();
+      }
+    } else {
+      var e = notebook[key] || { wrong: 0, right: 0 };
+      e.de = cur.de; e.lvl = lvl;
+      e.wrong = (e.wrong || 0) + 1;
+      e.right = 0;
+      notebook[key] = e;
+      save();
+      var already = false;
+      for (var i = 0; i < queue.length; i++) { if (queue[i].tr === key) { already = true; break; } }
+      if (!already) queue.push({ tr: key, de: cur.de, dueIn: REPEAT_AFTER });
+    }
+    render();
+  };
+
+  /* ── Plan tespiti ── */
+  (function detectPlan() {
+    var t = localStorage.getItem('checkyourwrite_jwt_token');
+    render();
+    if (!t) return;
+    fetch('/api/user/profile', { headers: { 'Authorization': 'Bearer ' + t } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (d && d.user && d.user.subscription_plan === 'pro') isPro = true;
+        render();
+      })
+      .catch(function () {});
+  })();
+
+})();
+ /* ── Başlat ── */
 loadBest();
 updateScoreboard();
 updatePlays();
