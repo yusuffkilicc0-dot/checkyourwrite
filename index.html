@@ -373,6 +373,7 @@
   </a>
   <nav class="navbar">
     <a href="/game" target="_blank" class="nav-game">🎰 Çeviri Oyunu</a>
+    <a href="#" onclick="openMuendlich(); return false;" class="nav-game">🎤 Mündlich Pratik</a>
     <a href="#" onclick="document.querySelector('main').style.display='none'; document.getElementById('resources-page').style.display='block'; return false;">📚 Kaynaklar</a>
     <button class="btn btn-primary" onclick="showPremiumModal()">✦ Premium</button>
     <span id="premium-status" style="font-size:12px;"></span>
@@ -1701,6 +1702,17 @@ document.addEventListener('DOMContentLoaded', function() {
 // Giriş butonuna basılınca email modal'ını aç
 function askForEmail() {
   openEmailModal();
+}
+
+// Mündlich Pratik: şimdilik sadece admin erişebilir
+const MUENDLICH_ADMINS = ['yusuffkilicc0@gmail.com'];
+function openMuendlich() {
+  const email = (localStorage.getItem('checkyourwrite_current_email') || '').trim().toLowerCase();
+  if (MUENDLICH_ADMINS.includes(email)) {
+    window.open('/muendlich.html', '_blank');
+  } else {
+    showToast('🚧 Mündlich Pratik geliştirme aşamasında, çok yakında!', 'info');
+  }
 }
 
 // Çıkış yap
