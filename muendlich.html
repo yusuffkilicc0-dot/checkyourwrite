@@ -1,0 +1,1106 @@
+<title>Sözlü Sınav Provası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0E17;
+    --bg2: #0E1420;
+    --surface: #151B2A;
+    --surface-2: rgba(148,163,197,0.06);
+    --ink: #E8ECF6;
+    --muted: #8B94AB;
+    --faint: #5A6379;
+    --line: rgba(148,163,197,0.16);
+    --line-strong: rgba(148,163,197,0.28);
+    --accent: #FFB224;
+    --accent-2: #FF8A3D;
+    --accent-ink: #14100A;
+    --accent-soft: rgba(255,178,36,0.12);
+    --warm: #FBBF24;
+    --warm-soft: rgba(251,191,36,0.12);
+    --danger: #F87171;
+    --danger-soft: rgba(248,113,113,0.12);
+    --good: #4ADE80;
+    --violet: #7C5CFF;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px -14px rgba(0,0,0,.6);
+    --radius: 14px;
+    --glow: 0 0 24px rgba(255,178,36,0.25);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ text-size-adjust:100%; scroll-behavior:smooth; }
+  body{
+    margin:0; color:var(--ink);
+    background:
+      radial-gradient(1200px 800px at 85% -10%, #131C33 0%, transparent 55%),
+      radial-gradient(1000px 700px at -10% 110%, #141126 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    background-attachment: fixed;
+    font-family:'Inter', ui-sans-serif, system-ui, sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; font-weight:700; text-wrap:balance; margin:0 0 .3em; }
+  .mono{ font-family:'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::selection{ background:var(--accent-soft); }
+  button{ font:inherit; }
+  a{ color:var(--accent); }
+
+  .shell{ max-width:920px; margin:0 auto; padding:20px 20px 80px; }
+  header.top{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:14px 0 22px;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .home-link{ font-family:'JetBrains Mono', monospace; font-size:14px; font-weight:700; color:var(--ink); text-decoration:none; letter-spacing:-.02em; }
+  .home-link span{ color:var(--accent); }
+  .home-link:hover{ opacity:.85; }
+  .brand-div{ width:1px; height:26px; background:var(--line-strong); }
+  .brand .name{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:17px; letter-spacing:.01em; }
+  .brand .sub{ font-size:12px; color:var(--muted); margin-top:-2px; font-family:'JetBrains Mono', monospace; }
+  nav.tabs{ display:flex; gap:4px; background:var(--surface-2); padding:4px; border-radius:11px; border:1px solid var(--line); }
+  nav.tabs button{
+    border:0; background:transparent; color:var(--muted); padding:7px 13px; border-radius:8px;
+    cursor:pointer; font-size:13px; font-weight:600; font-family:'Space Grotesk', sans-serif;
+  }
+  nav.tabs button.active{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:var(--accent-ink); }
+
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:24px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  }
+  .stack{ display:flex; flex-direction:column; gap:16px; }
+  .grid-stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; }
+  .stat-tile{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px;
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .stat-tile .num{ font-family:'JetBrains Mono', monospace; font-size:26px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .stat-tile .lbl{ font-size:12.5px; color:var(--muted); }
+
+  .eyebrow{ text-transform:uppercase; letter-spacing:.08em; font-size:11px; color:var(--muted); font-weight:600; }
+
+  .mode-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:16px; }
+  .mode-card{
+    text-align:left; cursor:pointer; border:1px solid var(--line); background:var(--surface);
+    border-radius:var(--radius); padding:18px; display:flex; flex-direction:column; gap:8px;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .mode-card:hover{ transform:translateY(-2px); box-shadow:0 12px 32px rgba(0,0,0,.35); border-color:rgba(255,178,36,.4); }
+  .mode-card .icon{ font-size:22px; }
+  .mode-card h3{ font-size:17px; margin:0; }
+  .mode-card p{ margin:0; color:var(--muted); font-size:13px; line-height:1.45; }
+  .mode-card.primary{ background:var(--accent-soft); border-color:var(--accent); }
+
+  .btn{
+    border:0; border-radius:10px; padding:11px 18px; font-weight:600; font-size:14px;
+    cursor:pointer; display:inline-flex; align-items:center; gap:8px; justify-content:center;
+  }
+  .btn{ transition:transform .16s, box-shadow .16s, background .16s, border-color .16s; }
+  .btn:active{ transform:scale(.98); }
+  .btn-accent{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:var(--accent-ink); }
+  .btn-accent:hover{ transform:translateY(-1px); box-shadow:var(--glow); }
+  .btn-warm{ background:linear-gradient(135deg,var(--violet),#9F7DFF); color:#fff; }
+  .btn-warm:hover{ transform:translateY(-1px); box-shadow:0 0 24px rgba(124,92,255,.35); }
+  .btn-ghost{ background:transparent; color:var(--muted); border:1px solid var(--line-strong); }
+  .btn-ghost:hover{ color:var(--ink); border-color:var(--muted); }
+  .btn-danger{ background:transparent; color:var(--danger); border:1px solid var(--danger); }
+  .btn-danger:hover{ background:var(--danger-soft); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; }
+
+  .stepper{ display:flex; gap:8px; margin-bottom:6px; }
+  .step-pill{
+    flex:1; text-align:center; font-size:12px; font-weight:600; padding:7px 6px; border-radius:8px;
+    background:var(--surface-2); color:var(--muted); border:1px solid transparent;
+  }
+  .step-pill.active{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent); }
+  .step-pill.done{ background:var(--surface-2); color:var(--good); }
+
+  .topic-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .topic-cat{ color:var(--muted); font-size:12.5px; }
+  .option-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+  @media (max-width:640px){ .option-grid{ grid-template-columns:1fr; } }
+  .option-card{
+    text-align:left; cursor:pointer; border:1.5px solid var(--line); background:var(--surface);
+    border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px;
+  }
+  .option-card:hover{ border-color:var(--accent); }
+  .option-letter{
+    width:24px; height:24px; border-radius:7px; background:var(--surface-2); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-family:'JetBrains Mono',monospace;
+  }
+  .de-text{ font-family:'Space Grotesk', sans-serif; font-size:16.5px; line-height:1.5; }
+  .prompt-box{
+    background:var(--surface-2); border-left:3px solid var(--accent); border-radius:8px;
+    padding:14px 16px; font-family:'Space Grotesk', sans-serif; font-size:16.5px; line-height:1.55;
+  }
+
+  .timer-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .timer-chip{
+    font-family:'JetBrains Mono', monospace; font-weight:600; font-size:22px; padding:8px 16px;
+    border-radius:10px; background:var(--surface-2); color:var(--ink); font-variant-numeric:tabular-nums;
+    border:1px solid var(--line);
+  }
+  .timer-chip.warn{ background:var(--warm-soft); color:var(--warm); border-color:var(--warm); }
+  .timer-chip.over{ background:var(--danger-soft); color:var(--danger); border-color:var(--danger); }
+  .rec-dot{ width:9px; height:9px; border-radius:50%; background:var(--danger); display:inline-block; margin-right:6px; animation:pulse 1.4s infinite; }
+  @media (prefers-reduced-motion:reduce){ .rec-dot{ animation:none; } }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  .mic-btn{
+    width:64px; height:64px; border-radius:50%; border:2px solid var(--accent); background:var(--accent-soft);
+    color:var(--accent); font-size:24px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .mic-btn.live{ background:var(--danger); border-color:var(--danger); color:#fff; }
+
+  textarea, .transcript-box{
+    width:100%; border:1px solid var(--line); border-radius:10px; background:var(--surface-2);
+    color:var(--ink); padding:12px 14px; font-family:'JetBrains Mono', monospace; font-size:13.5px; line-height:1.6;
+    resize:vertical;
+  }
+  textarea{ min-height:90px; }
+  .transcript-box{ min-height:64px; white-space:pre-wrap; }
+  .transcript-box .interim{ color:var(--muted); }
+  label.field-label{ font-size:12.5px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:6px; }
+
+  .qa-block{ border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--surface); }
+  .qa-block + .qa-block{ margin-top:12px; }
+  .qa-tag{ font-size:11.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--warm); }
+
+  .rating-row{ display:grid; grid-template-columns:170px 1fr 30px; align-items:center; gap:10px; }
+  .rating-row + .rating-row{ margin-top:10px; }
+  input[type="range"]{ width:100%; accent-color:var(--accent); }
+  .rating-row .val{ font-family:'JetBrains Mono',monospace; text-align:center; font-weight:600; }
+
+  table.history{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.history th{ text-align:left; color:var(--muted); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; padding:0 10px 8px; border-bottom:1px solid var(--line); }
+  table.history td{ padding:10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.history tr:last-child td{ border-bottom:0; }
+  .pill{ display:inline-block; padding:2px 9px; border-radius:99px; font-size:11.5px; font-weight:600; background:var(--surface-2); color:var(--muted); }
+  .pill.mode-full{ background:var(--accent-soft); color:var(--accent); }
+  .pill.mode-warmup{ background:var(--warm-soft); color:var(--warm); }
+  .empty{ color:var(--muted); font-size:13.5px; padding:20px 0; text-align:center; }
+  .table-wrap{ overflow-x:auto; }
+  .hint{ font-size:12.5px; color:var(--muted); }
+  .divider{ height:1px; background:var(--line); border:0; margin:4px 0; }
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--bg);
+    padding:10px 18px; border-radius:10px; font-size:13.5px; box-shadow:var(--shadow); opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease; z-index:50;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+  .settings-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; }
+  .switch{ position:relative; width:42px; height:24px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch .track{ position:absolute; inset:0; background:var(--surface-2); border-radius:99px; cursor:pointer; transition:.15s; border:1px solid var(--line); }
+  .switch .track:before{ content:""; position:absolute; width:18px; height:18px; left:2px; top:2px; background:var(--surface); border-radius:50%; transition:.15s; box-shadow:var(--shadow); }
+  .switch input:checked + .track{ background:var(--accent); }
+  .switch input:checked + .track:before{ transform:translateX(18px); background:var(--accent-ink); }
+  .back-link{ background:none; border:0; color:var(--muted); cursor:pointer; font-size:13px; padding:4px 0; display:inline-flex; align-items:center; gap:5px; }
+  .back-link:hover{ color:var(--ink); }
+  .footnote{ font-size:12px; color:var(--muted); line-height:1.5; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+</style>
+
+<!-- Admin olmayan ziyaretçiler için "geliştirme aşamasında" ekranı -->
+<div id="dev-gate" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; text-align:center;">
+  <div style="max-width:440px;">
+    <div style="font-size:52px; margin-bottom:18px;">🚧</div>
+    <h1 style="font-family:'Space Grotesk',sans-serif; font-size:26px; color:#E8ECF6; margin-bottom:12px;">Mündlich Pratik</h1>
+    <p style="color:#8B94AB; font-size:15px; line-height:1.6; margin-bottom:26px;">
+      Bu özellik şu anda <strong style="color:#FFB224;">geliştirme aşamasında</strong>.<br>
+      Çok yakında sözlü sınav pratiği burada olacak! 🎤
+    </p>
+    <a href="/index.html" style="display:inline-block; padding:12px 24px; background:linear-gradient(135deg,#FFB224,#FF8A3D); color:#14100A; text-decoration:none; border-radius:11px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;">← Ana Sayfaya Dön</a>
+  </div>
+</div>
+
+<div class="shell" id="shell">
+  <header class="top">
+    <div class="brand">
+      <a href="/index.html" class="home-link" title="checkyourwrite ana sayfa">check<span>yourwrite</span></a>
+      <div class="brand-div"></div>
+      <div>
+        <div class="name">🎤 Mündlich Pratik</div>
+        <div class="sub">telc C1 Hochschule &middot; mündliche Prüfung</div>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="home">Ana Sayfa</button>
+      <button data-tab="history">Geçmişim</button>
+    </nav>
+  </header>
+  <main id="app"></main>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script id="app-state" type="application/json">{"sessions":[],"prefs":{"quickPrep":false}}</script>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- data: topic bank ---------- */
+const TOPICS = [
+  { id:"t1", category:"Bildung & Digitalisierung",
+    a:{ title:"Digitale Lehrmittel an Hochschulen", prompt:"Immer mehr Vorlesungen werden online angeboten. Diskutieren Sie Vor- und Nachteile des digitalen Lernens gegenüber der Präsenzlehre." },
+    b:{ title:"Künstliche Intelligenz beim Lernen", prompt:"Studierende nutzen zunehmend KI-Tools, um Hausarbeiten zu schreiben. Nehmen Sie Stellung dazu, ob dies den Lernerfolg fördert oder gefährdet." },
+    followUps:[ "Welche Rolle sollten Dozentinnen und Dozenten in einer zunehmend digitalisierten Lehre noch spielen?",
+      "Glauben Sie, dass digitale Lernformen soziale Ungleichheiten verstärken oder verringern können?",
+      "Wie könnte eine gute Balance zwischen digitalem und klassischem Lernen aussehen?" ],
+    discussion:{ statement:"Manche fordern, dass Universitäten komplett auf Online-Lehre umstellen, um Kosten zu sparen und Flexibilität zu erhöhen.",
+      turns:[ "Aber ist es nicht schwierig, in Online-Seminaren echte Diskussionen zu führen?",
+        "Manche Studierende sagen, sie lernen zuhause konzentrierter. Was sagen Sie dazu?",
+        "Wie steht es um soziale Kontakte und Networking, wenn alles online stattfindet?",
+        "Sehen Sie einen Mittelweg, der beiden Seiten gerecht wird?" ] } },
+  { id:"t2", category:"Arbeit & Zukunft",
+    a:{ title:"Homeoffice vs. Büropräsenz", prompt:"Viele Unternehmen rufen ihre Angestellten zurück ins Büro. Diskutieren Sie, ob Homeoffice die Zukunft der Arbeit bleiben sollte." },
+    b:{ title:"Die Vier-Tage-Woche", prompt:"Einige Firmen testen die Vier-Tage-Woche bei vollem Lohnausgleich. Bewerten Sie dieses Modell." },
+    followUps:[ "Welche Branchen könnten von flexibleren Arbeitsmodellen besonders profitieren oder darunter leiden?",
+      "Wie verändert sich die Unternehmenskultur, wenn Mitarbeitende sich seltener persönlich treffen?",
+      "Sollte der Staat solche Arbeitsmodelle gesetzlich fördern?" ],
+    discussion:{ statement:"Kritiker behaupten, flexible Arbeitsmodelle würden vor allem gut bezahlten Bürojobs nutzen und andere Berufsgruppen benachteiligen.",
+      turns:[ "Ist das nicht ungerecht gegenüber Berufen, die vor Ort ausgeübt werden müssen, etwa in der Pflege?",
+        "Manche Arbeitgeber befürchten Produktivitätsverluste — teilen Sie diese Sorge?",
+        "Könnte man das Modell an bestimmte Branchen anpassen, statt es pauschal einzuführen?",
+        "Was wäre ein fairer Kompromiss für alle Beschäftigtengruppen?" ] } },
+  { id:"t3", category:"Umwelt & Gesellschaft",
+    a:{ title:"Individuelle Verantwortung im Klimaschutz", prompt:"Diskutieren Sie, ob der Klimawandel eher durch individuelles Verhalten oder durch politische und wirtschaftliche Maßnahmen bekämpft werden sollte." },
+    b:{ title:"Verkehrswende in Großstädten", prompt:"Viele Städte planen, den Autoverkehr in Innenstädten stark einzuschränken. Nehmen Sie dazu Stellung." },
+    followUps:[ "Wie realistisch ist es, dass Menschen freiwillig auf Komfort verzichten, um die Umwelt zu schützen?",
+      "Welche Rolle spielt der Vergleich mit anderen Ländern in dieser Debatte?",
+      "Wie könnte man Menschen mit geringem Einkommen bei solchen Veränderungen unterstützen?" ],
+    discussion:{ statement:"Manche meinen, strengere Verbote und Vorschriften seien der einzige wirksame Weg, das Klima zu schützen.",
+      turns:[ "Aber schränken solche Verbote nicht die persönliche Freiheit stark ein?",
+        "Sind finanzielle Anreize nicht wirksamer als Verbote?",
+        "Wie würden Sie mit dem Widerstand betroffener Branchen umgehen?",
+        "Glauben Sie, dass internationale Zusammenarbeit hier überhaupt möglich ist?" ] } },
+  { id:"t4", category:"Migration & Gesellschaft",
+    a:{ title:"Fachkräftemangel und Zuwanderung", prompt:"Deutschland sucht dringend Fachkräfte aus dem Ausland. Diskutieren Sie Chancen und Herausforderungen gezielter Arbeitsmigration." },
+    b:{ title:"Integration durch Sprache", prompt:"Sprachkurse gelten als Schlüssel zur Integration. Bewerten Sie, welche weiteren Maßnahmen wichtig sind." },
+    followUps:[ "Welche Verantwortung tragen Unternehmen bei der Integration neuer Fachkräfte?",
+      "Wie kann man Vorurteile gegenüber Zugewanderten in der Gesellschaft abbauen?",
+      "Sollte die Anerkennung ausländischer Abschlüsse vereinfacht werden?" ],
+    discussion:{ statement:"Manche befürchten, dass verstärkte Zuwanderung den Arbeitsmarkt für einheimische Arbeitskräfte verschlechtert.",
+      turns:[ "Gibt es dafür aus Ihrer Sicht wirklich Belege?",
+        "Wie könnte man Ängste in der Bevölkerung ernst nehmen, ohne Zuwanderung zu verhindern?",
+        "Welche Rolle spielt Bildungspolitik in dieser Debatte?",
+        "Was wäre ein gutes Gleichgewicht zwischen Offenheit und Kontrolle?" ] } },
+  { id:"t5", category:"Medien & Gesellschaft",
+    a:{ title:"Soziale Medien und Meinungsbildung", prompt:"Diskutieren Sie, wie soziale Medien die politische Meinungsbildung junger Menschen beeinflussen." },
+    b:{ title:"Fake News und Medienkompetenz", prompt:"Nehmen Sie Stellung dazu, wie man Falschinformationen im Internet wirksam begegnen kann." },
+    followUps:[ "Sollten Plattformen stärker reguliert werden, oder liegt die Verantwortung bei den Nutzern?",
+      "Welche Rolle sollten Schulen bei der Vermittlung von Medienkompetenz spielen?",
+      "Wie verändert sich politische Debatte, wenn sie hauptsächlich online stattfindet?" ],
+    discussion:{ statement:"Manche fordern eine Klarnamenpflicht in sozialen Netzwerken, um Hasskommentare einzudämmen.",
+      turns:[ "Würde das nicht auch Menschen gefährden, die anonym Kritik äußern müssen?",
+        "Ist Anonymität nicht wichtig für die Meinungsfreiheit?",
+        "Welche Alternativen gäbe es, um Hetze im Netz zu bekämpfen?",
+        "Wie sollte man das Gleichgewicht zwischen Sicherheit und Freiheit gestalten?" ] } },
+  { id:"t6", category:"Studium & Lebensgestaltung",
+    a:{ title:"Auslandssemester", prompt:"Ein Auslandssemester wird oft empfohlen. Diskutieren Sie den persönlichen und akademischen Nutzen eines Studienaufenthalts im Ausland." },
+    b:{ title:"Studium und Nebenjob", prompt:"Viele Studierende arbeiten neben dem Studium. Bewerten Sie die Auswirkungen darauf." },
+    followUps:[ "Welche Hürden erschweren es Studierenden aus einkommensschwachen Familien, im Ausland zu studieren?",
+      "Wie könnten Hochschulen Studierende besser unterstützen, die neben dem Studium arbeiten müssen?",
+      "Ist ein längeres Studium durch Nebenjobs oder Auslandsaufenthalte gesellschaftlich akzeptabel?" ],
+    discussion:{ statement:"Manche meinen, ein Studium sollte in der Regelstudienzeit abgeschlossen werden, unabhängig von individuellen Umständen.",
+      turns:[ "Ist das nicht unfair gegenüber Studierenden, die arbeiten müssen?",
+        "Sollten Stipendien diese Unterschiede ausgleichen?",
+        "Welche Rolle spielt der Druck durch Förderfristen?",
+        "Wie ließe sich mehr Flexibilität im System schaffen?" ] } },
+  { id:"t7", category:"Wissenschaft & Gesellschaft",
+    a:{ title:"Wissenschaftskommunikation", prompt:"Diskutieren Sie, wie Wissenschaft der breiten Öffentlichkeit besser vermittelt werden kann." },
+    b:{ title:"Vertrauen in die Wissenschaft", prompt:"Nehmen Sie Stellung dazu, warum wissenschaftliche Erkenntnisse zunehmend angezweifelt werden." },
+    followUps:[ "Welche Verantwortung tragen Medien bei der Darstellung wissenschaftlicher Themen?",
+      "Wie können Forschende komplexe Themen verständlich, aber korrekt vermitteln?",
+      "Welche Rolle spielt Bildung dabei, wissenschaftliches Denken zu fördern?" ],
+    discussion:{ statement:"Manche behaupten, Expertenmeinungen sollten in gesellschaftlichen Debatten mehr Gewicht haben als Laienmeinungen.",
+      turns:[ "Ist das nicht undemokratisch?",
+        "Wie geht man mit Fällen um, in denen sich Experten widersprechen?",
+        "Welche Rolle sollte gesunder Menschenverstand neben Expertenwissen spielen?",
+        "Wie ließe sich Vertrauen zwischen Wissenschaft und Gesellschaft stärken?" ] } },
+  { id:"t8", category:"Konsum & Nachhaltigkeit",
+    a:{ title:"Bewusster Konsum", prompt:"Diskutieren Sie, ob individuelles Konsumverhalten tatsächlich etwas zum Umweltschutz beitragen kann." },
+    b:{ title:"Fast Fashion", prompt:"Nehmen Sie Stellung zur Rolle von Billigmode bei Umweltproblemen und Arbeitsbedingungen." },
+    followUps:[ "Wie stark beeinflusst der Preis die Kaufentscheidung gegenüber ökologischen Überlegungen?",
+      "Welche Rolle sollten Unternehmen im Vergleich zu Konsumentinnen und Konsumenten tragen?",
+      "Könnten strengere Gesetze das Konsumverhalten wirksamer verändern als Aufklärung?" ],
+    discussion:{ statement:"Manche meinen, nachhaltiger Konsum sei vor allem ein Privileg wohlhabender Menschen.",
+      turns:[ "Trifft das nicht auch auf viele andere gesellschaftliche Debatten zu?",
+        "Wie könnte nachhaltiger Konsum für alle Einkommensgruppen zugänglicher werden?",
+        "Welche Rolle spielt hier die Politik durch Steuern oder Subventionen?",
+        "Sehen Sie realistische kurzfristige Lösungen?" ] } }
+];
+
+const WARMUPS = [
+  "Wie sieht ein typischer Tag bei Ihnen momentan aus?",
+  "Was war die letzte gute Nachricht, über die Sie sich gefreut haben?",
+  "Erzählen Sie von einem Ort, an den Sie gerne zurückkehren würden.",
+  "Was schätzen Sie an der Stadt, in der Sie gerade leben?",
+  "Wie halten Sie sich über aktuelle Ereignisse auf dem Laufenden?",
+  "Welchem Hobby würden Sie gerne mehr Zeit widmen?",
+  "Was hat sich in Ihrem Leben im letzten Jahr am meisten verändert?",
+  "Wie würden Sie einem Freund Ihre Heimatstadt beschreiben?",
+  "Was war die größte Herausforderung, seit Sie Deutsch lernen?",
+  "Erzählen Sie von einem Buch oder Film, der Sie beeindruckt hat.",
+  "Wie entspannen Sie sich nach einem anstrengenden Tag?",
+  "Was würden Sie tun, wenn Sie einen freien Monat hätten?",
+  "Welche Traditionen aus Ihrer Kultur sind Ihnen wichtig?",
+  "Was motiviert Sie, weiter Deutsch zu lernen?",
+  "Erzählen Sie von einer Reise, die Sie nie vergessen werden.",
+  "Wie sieht für Sie ein perfektes Wochenende aus?",
+  "Was schätzen Sie an guten Freundschaften?",
+  "Welche Fähigkeit würden Sie gerne noch lernen?",
+  "Wie gehen Sie mit stressigen Situationen um?",
+  "Was würden Sie jemandem raten, der gerade anfängt, Deutsch zu lernen?"
+];
+
+window.__TELC_TOPICS__ = TOPICS;
+window.__TELC_WARMUPS__ = WARMUPS;
+})();
+</script>
+
+<script>
+(function(){
+"use strict";
+/* ---------- ADMIN KAPISI ---------- */
+/* Bu sayfa şimdilik sadece admin (site sahibi) tarafından kullanılabilir.
+   Diğer ziyaretçiler "geliştirme aşamasında" ekranı görür. */
+const ADMIN_EMAILS = ["yusuffkilicc0@gmail.com"];
+(function adminGate(){
+  const email = (localStorage.getItem("checkyourwrite_current_email") || "").trim().toLowerCase();
+  const isAdmin = ADMIN_EMAILS.includes(email);
+  if(!isAdmin){
+    const shell = document.getElementById("shell");
+    const gate = document.getElementById("dev-gate");
+    if(shell) shell.style.display = "none";
+    if(gate) gate.style.display = "flex";
+    // Uygulamanın geri kalanını hiç başlatmadan çık
+    throw new Error("__DEV_GATE__"); // IIFE'yi durdurur, konsola zararsız
+  }
+})();
+
+const TOPICS = window.__TELC_TOPICS__;
+const WARMUPS = window.__TELC_WARMUPS__;
+
+/* pristine snapshot of the authored document, captured before any render
+   touches the DOM — this is the template a publish is built from, so a
+   republish never bakes in session-only state or runtime-injected nodes. */
+const PRISTINE_HTML = document.documentElement.outerHTML;
+
+/* ---------- persisted state ---------- */
+const LS_KEY = "checkyourwrite_muendlich_state";
+let state = null;
+// Önce localStorage'dan yükle, yoksa gömülü başlangıç state'ini kullan
+try{ state = JSON.parse(localStorage.getItem(LS_KEY)); }catch(e){ state = null; }
+if(!state){
+  try{ state = JSON.parse(document.getElementById("app-state").textContent); }catch(e){ state = null; }
+}
+if(!state || !Array.isArray(state.sessions)) state = { sessions: [], prefs:{ quickPrep:false } };
+if(!state.prefs) state.prefs = { quickPrep:false };
+
+/* Kalıcı kayıt: şimdilik localStorage. (3. adımda MongoDB'ye bağlanacak.) */
+async function persistState(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }catch(e){
+    toast("Kayıt yapılamadı (depolama dolu olabilir).");
+  }
+}
+
+/* ---------- small utils ---------- */
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._h);
+  toast._h = setTimeout(()=>t.classList.remove("show"), 3200);
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function fmtTime(sec){
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return (m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+}
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString("tr-TR", { day:"2-digit", month:"short", year:"numeric" }) + " · " +
+    d.toLocaleTimeString("tr-TR", { hour:"2-digit", minute:"2-digit" });
+}
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function shuffled(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* ---------- speech: recognition ---------- */
+const SRClass = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+function supportsRecognition(){ return !!SRClass; }
+function supportsSynthesis(){ return "speechSynthesis" in window; }
+
+function makeRecognizer(handlers){
+  if(!SRClass) return null;
+  const r = new SRClass();
+  r.lang = "de-DE";
+  r.continuous = true;
+  r.interimResults = true;
+  let shouldRun = false;
+  r.onresult = (e)=>{
+    let finalChunk = "", interim = "";
+    for(let i=e.resultIndex; i<e.results.length; i++){
+      const txt = e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalChunk += txt + " ";
+      else interim += txt;
+    }
+    if(finalChunk && handlers.onFinal) handlers.onFinal(finalChunk);
+    if(handlers.onInterim) handlers.onInterim(interim);
+  };
+  r.onerror = (e)=>{ if(handlers.onError) handlers.onError(e.error); };
+  r.onend = ()=>{ if(shouldRun){ try{ r.start(); }catch(e){} } else if(handlers.onStop) handlers.onStop(); };
+  r._start = ()=>{ shouldRun = true; try{ r.start(); }catch(e){} };
+  r._stop = ()=>{ shouldRun = false; try{ r.stop(); }catch(e){} };
+  return r;
+}
+
+let cachedVoices = [];
+function loadVoices(){
+  cachedVoices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+}
+if(supportsSynthesis()){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function speak(text){
+  return new Promise((resolve)=>{
+    if(!supportsSynthesis()){ resolve(); return; }
+    try{
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "de-DE";
+      const de = cachedVoices.find(v=>v.lang && v.lang.toLowerCase().startsWith("de"));
+      if(de) u.voice = de;
+      u.rate = 0.98;
+      u.onend = ()=>resolve();
+      u.onerror = ()=>resolve();
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }catch(e){ resolve(); }
+  });
+}
+
+/* ---------- timer helpers ---------- */
+function makeCountdown(seconds, onTick, onDone){
+  let remaining = seconds;
+  onTick(remaining);
+  const h = setInterval(()=>{
+    remaining--; onTick(remaining);
+    if(remaining <= 0){ clearInterval(h); if(onDone) onDone(); }
+  }, 1000);
+  return { stop:()=>clearInterval(h) };
+}
+function makeCountup(onTick){
+  let elapsed = 0;
+  onTick(elapsed);
+  const h = setInterval(()=>{ elapsed++; onTick(elapsed); }, 1000);
+  return { stop:()=>clearInterval(h), elapsed:()=>elapsed };
+}
+
+/* ---------- recording buffer (bridges recognizer <-> DOM) ---------- */
+let recordBuffer = "";
+let lastInterim = "";
+function renderLiveTranscript(){
+  const el = document.getElementById("live-transcript");
+  if(el) el.innerHTML = esc(recordBuffer) + '<span class="interim">'+esc(lastInterim)+'</span>';
+}
+function startRecording(){
+  recordBuffer = "";
+  lastInterim = "";
+  if(!supportsRecognition()) return;
+  recognizer = makeRecognizer({
+    onFinal(chunk){ recordBuffer += chunk; renderLiveTranscript(); },
+    onInterim(text){ lastInterim = text; renderLiveTranscript(); },
+    onError(){ /* e.g. no-speech / not-allowed: ignore, user can still edit text manually */ }
+  });
+  recognizer._start();
+}
+function stopRecording(){
+  if(recognizer){ recognizer._stop(); recognizer = null; }
+  const text = recordBuffer.trim();
+  lastInterim = "";
+  return text;
+}
+
+/* ---------- app / flow state (not persisted) ---------- */
+let view = "home"; // home | history | flow
+let flow = null;   // active practice session in progress
+let recognizer = null;
+
+function resetFlow(kind, topic){
+  flow = {
+    kind: kind, // "full" | "praesentation" | "rueckfragen" | "diskussion" | "warmup"
+    step: "pick",
+    topic: topic || null,
+    chosen: null, // "a" | "b"
+    prepNotes: "",
+    transcript: { praesentation:"", rueckfragen:[], diskussion:[] },
+    warmupQs: [],
+    warmupAnswers: [],
+    idx: 0,
+    timing: { prep:0, speak:0, overTime:false },
+    ratings: { aussprache:3, wortschatz:3, grammatik:3, aufbau:3, interaktion:3 },
+    notes: ""
+  };
+}
+
+/* ---------- navigation ---------- */
+function go(v){ view = v; stopAnyRecognition(); render(); window.scrollTo({top:0, behavior:"smooth"}); }
+function stopAnyRecognition(){ if(recognizer){ recognizer._stop(); recognizer = null; } speechSynthesis && speechSynthesis.cancel && speechSynthesis.cancel(); }
+
+/* ---------- starting flows ---------- */
+function startFull(){ resetFlow("full", pick(TOPICS)); flow.step="pick"; view="flow"; render(); }
+function startPart(part){
+  if(part === "warmup"){
+    resetFlow("warmup");
+    flow.warmupQs = shuffled(WARMUPS).slice(0,3);
+    flow.step = "warmup";
+    view = "flow"; render();
+    return;
+  }
+  resetFlow(part, pick(TOPICS));
+  flow.step = "pick";
+  view = "flow"; render();
+}
+function chooseOption(letter){
+  flow.chosen = letter;
+  if(flow.kind === "full" || flow.kind === "praesentation"){ flow.step = "prep"; }
+  else if(flow.kind === "rueckfragen"){ flow.step = "rueckfragen"; flow.idx = 0; }
+  else if(flow.kind === "diskussion"){ flow.step = "diskussion"; flow.idx = 0; }
+  render();
+}
+function chosenOptionData(){ return flow.chosen === "b" ? flow.topic.b : flow.topic.a; }
+function discussionPrompts(topic){ return [topic.discussion.statement].concat(topic.discussion.turns); }
+
+function goToSpeak(){ flow.step = "speak"; flow.itemPhase = undefined; flow.timing.speak = 0; flow.timing.overTime = false; render(); }
+function stopSpeak(){
+  if(activeTimer){ activeTimer.stop(); activeTimer = null; }
+  flow.reviewText = stopRecording();
+  flow.itemPhase = "review";
+  render();
+}
+function speakConfirm(){
+  const v = document.getElementById("review-text");
+  flow.transcript.praesentation = v ? v.value : "";
+  if(flow.kind === "full"){ flow.step = "rueckfragen"; flow.idx = 0; flow.itemPhase = "prompt"; }
+  else { flow.step = "result"; }
+  render();
+}
+
+function questionMeta(){
+  if(!flow) return null;
+  if(flow.step === "rueckfragen") return { label:"Prüfer fragt", text: flow.topic.followUps[flow.idx], count: flow.topic.followUps.length, index: flow.idx };
+  if(flow.step === "diskussion"){
+    const prompts = discussionPrompts(flow.topic);
+    return { label: flow.idx===0 ? "Diskussionsthese" : "Gegenposition", text: prompts[flow.idx], count: prompts.length, index: flow.idx };
+  }
+  if(flow.step === "warmup") return { label:"Frage", text: flow.warmupQs[flow.idx], count: flow.warmupQs.length, index: flow.idx };
+  return null;
+}
+function isLastItem(){ const m = questionMeta(); return m ? (m.index+1 >= m.count) : true; }
+function commitCurrentItem(text){
+  if(flow.step === "rueckfragen"){
+    flow.transcript.rueckfragen[flow.idx] = text;
+    flow.idx++;
+    if(flow.idx >= flow.topic.followUps.length){
+      if(flow.kind === "full"){ flow.step = "diskussion"; flow.idx = 0; }
+      else { flow.step = "result"; }
+    }
+  } else if(flow.step === "diskussion"){
+    flow.transcript.diskussion[flow.idx] = text;
+    flow.idx++;
+    const total = flow.topic.discussion.turns.length + 1;
+    if(flow.idx >= total){ flow.step = "result"; }
+  } else if(flow.step === "warmup"){
+    flow.warmupAnswers[flow.idx] = text;
+    flow.idx++;
+    if(flow.idx >= flow.warmupQs.length){ flow.step = "result"; }
+  }
+}
+
+/* ---------- timing mounts ---------- */
+let activeTimer = null;
+function mountPrep(){
+  const secs = state.prefs.quickPrep ? 300 : 1200;
+  activeTimer = makeCountdown(secs, (remaining)=>{
+    const el = document.getElementById("timer-val");
+    if(el) el.textContent = fmtTime(remaining);
+    const chip = document.getElementById("timer-chip");
+    if(chip){ chip.classList.toggle("warn", remaining<=60 && remaining>15); chip.classList.toggle("over", remaining<=15); }
+  }, ()=>{ goToSpeak(); });
+}
+function mountSpeak(){
+  startRecording();
+  activeTimer = makeCountup((elapsed)=>{
+    flow.timing.speak = elapsed;
+    const remaining = 180 - elapsed;
+    const el = document.getElementById("timer-val");
+    const chip = document.getElementById("timer-chip");
+    if(remaining >= 0){
+      if(el) el.textContent = fmtTime(remaining);
+      if(chip) chip.classList.toggle("warn", remaining<=30);
+    } else {
+      flow.timing.overTime = true;
+      if(el) el.textContent = "+"+fmtTime(-remaining);
+      if(chip) chip.classList.add("over");
+    }
+  });
+}
+function mountQARecording(){
+  startRecording();
+  activeTimer = makeCountup((elapsed)=>{
+    const el = document.getElementById("timer-val");
+    if(el) el.textContent = fmtTime(elapsed);
+    const chip = document.getElementById("timer-chip");
+    if(chip) chip.classList.toggle("warn", elapsed>=60);
+  });
+}
+function mountFlow(){
+  if(!flow) return;
+  if(flow.step === "prep"){ mountPrep(); }
+  else if(flow.step === "speak" && (flow.itemPhase||"recording") === "recording"){ mountSpeak(); }
+  else if((flow.step==="rueckfragen"||flow.step==="diskussion"||flow.step==="warmup") && flow.itemPhase === "recording"){ mountQARecording(); }
+}
+
+/* ---------- transcript build ---------- */
+function buildTranscriptText(){
+  const lines = [];
+  lines.push("telc C1 Hochschule – Sözlü Sınav Provası Transkripti");
+  lines.push("Tarih: " + new Date().toLocaleString("tr-TR"));
+  if(flow.kind === "warmup"){
+    lines.push(""); lines.push("Mod: Günlük Isınma (Alltag)"); lines.push("");
+    flow.warmupQs.forEach((q,i)=>{
+      lines.push("Soru "+(i+1)+": "+q);
+      lines.push("Cevabım: "+(flow.warmupAnswers[i]||"(yanıt yok)"));
+      lines.push("");
+    });
+  } else {
+    const opt = chosenOptionData();
+    lines.push(""); lines.push("Konu: " + flow.topic.category);
+    lines.push("Seçilen tema: " + (opt? opt.title : "-"));
+    if(opt) lines.push("Görev: " + opt.prompt);
+    if(flow.transcript.praesentation){
+      lines.push("");
+      lines.push("--- Teil 1: Präsentation (konuşma süresi "+fmtTime(flow.timing.speak||0)+(flow.timing.overTime? ", süre aşıldı":"")+") ---");
+      lines.push(flow.transcript.praesentation.trim());
+    }
+    if(flow.transcript.rueckfragen.length){
+      lines.push(""); lines.push("--- Teil 2: Rückfragen ---");
+      flow.topic.followUps.forEach((q,i)=>{
+        if(flow.transcript.rueckfragen[i]){
+          lines.push("Soru: "+q);
+          lines.push("Cevabım: "+flow.transcript.rueckfragen[i].trim());
+          lines.push("");
+        }
+      });
+    }
+    if(flow.transcript.diskussion.length){
+      lines.push("--- Teil 3: Diskussion ---");
+      const prompts = discussionPrompts(flow.topic);
+      prompts.forEach((p,i)=>{
+        if(flow.transcript.diskussion[i]){
+          lines.push((i===0? "Tartışma konusu: " : "Karşı görüş: ") + p);
+          lines.push("Cevabım: "+flow.transcript.diskussion[i].trim());
+          lines.push("");
+        }
+      });
+    }
+  }
+  lines.push("Öz değerlendirme (1-5): Aussprache "+flow.ratings.aussprache+", Wortschatz "+flow.ratings.wortschatz+", Grammatik "+flow.ratings.grammatik+", Aufbau "+flow.ratings.aufbau+", Interaktion "+flow.ratings.interaktion);
+  if(flow.notes) lines.push("Notlarım: " + flow.notes);
+  return lines.join("\n");
+}
+
+/* ---------- stats ---------- */
+function computeStats(){
+  const sessions = state.sessions;
+  const total = sessions.length;
+  const now = Date.now();
+  const weekAgo = now - 7*24*3600*1000;
+  const thisWeek = sessions.filter(s=> new Date(s.date).getTime() >= weekAgo).length;
+  const days = new Set(sessions.map(s=> new Date(s.date).toDateString()));
+  let streak = 0, cursor = new Date();
+  while(days.has(cursor.toDateString())){ streak++; cursor.setDate(cursor.getDate()-1); }
+  const rated = sessions.filter(s=>s.ratings).slice(-5);
+  let avg = null;
+  if(rated.length){
+    const sum = rated.reduce((acc,s)=>{
+      const vals = Object.values(s.ratings);
+      return acc + vals.reduce((a,b)=>a+b,0)/vals.length;
+    },0);
+    avg = sum/rated.length;
+  }
+  return { total, thisWeek, streak, avg };
+}
+
+/* ---------- session save / export ---------- */
+function saveSession(){
+  const rec = {
+    id: "s"+Date.now(),
+    date: new Date().toISOString(),
+    mode: flow.kind,
+    topicCategory: flow.kind === "warmup" ? "Günlük Isınma" : flow.topic.category,
+    topicTitle: flow.kind === "warmup" ? null : chosenOptionData().title,
+    timing: flow.timing,
+    ratings: flow.ratings,
+    notes: flow.notes,
+    transcriptPreview: buildTranscriptText().slice(0, 4000)
+  };
+  state.sessions.push(rec);
+  persistState();
+  flow = null;
+  go("history");
+}
+function copyTranscript(){
+  const text = buildTranscriptText();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text)
+      .then(()=>toast("Kopyalandı — Claude sohbetine yapıştırabilirsin."))
+      .catch(()=>toast("Kopyalanamadı, metni elle seçip kopyalayabilirsin."));
+  } else {
+    toast("Tarayıcı panoyu desteklemiyor, metni elle seçip kopyala.");
+  }
+}
+
+/* ---------- render: shell pieces ---------- */
+function renderStepper(){
+  const stepsByKind = {
+    full: ["pick","prep","speak","rueckfragen","diskussion","result"],
+    praesentation: ["pick","prep","speak","result"],
+    rueckfragen: ["pick","rueckfragen","result"],
+    diskussion: ["pick","diskussion","result"],
+    warmup: ["warmup","result"]
+  };
+  const labels = { pick:"Thema", prep:"Vorbereitung", speak:"Präsentation", rueckfragen:"Rückfragen", diskussion:"Diskussion", warmup:"Fragen", result:"Ergebnis" };
+  const seq = stepsByKind[flow.kind] || [];
+  const curIdx = seq.indexOf(flow.step);
+  return '<div class="stepper">' + seq.map((s,i)=>{
+    const cls = i===curIdx ? "active" : (i<curIdx ? "done" : "");
+    return '<div class="step-pill '+cls+'">'+esc(labels[s])+'</div>';
+  }).join("") + '</div>';
+}
+
+/* ---------- render: home / history ---------- */
+function renderHome(){
+  const st = computeStats();
+  return `
+    <div class="stack">
+      <div class="grid-stats">
+        <div class="stat-tile"><div class="num mono">${st.total}</div><div class="lbl">Toplam prova</div></div>
+        <div class="stat-tile"><div class="num mono">${st.thisWeek}</div><div class="lbl">Bu hafta</div></div>
+        <div class="stat-tile"><div class="num mono">${st.streak}</div><div class="lbl">Gün üst üste</div></div>
+        <div class="stat-tile"><div class="num mono">${st.avg!==null ? st.avg.toFixed(1) : "—"}</div><div class="lbl">Son provaların ort. puanı</div></div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Bugün ne çalışalım?</div>
+        <div class="mode-grid">
+          <button class="mode-card primary" data-action="start-full">
+            <div class="icon">🎓</div>
+            <h3>Tam Sınav Simülasyonu</h3>
+            <p>Präsentation → Rückfragen → Diskussion. telc C1 Hochschule sözlü sınavının tamamı, gerçek süreleriyle.</p>
+          </button>
+          <button class="mode-card" data-action="start-part" data-part="praesentation">
+            <div class="icon">🗣️</div>
+            <h3>Sadece Präsentation</h3>
+            <p>Hazırlık + 3 dakikalık sunum. Yapıyı ve zamanlamayı oturtmak için.</p>
+          </button>
+          <button class="mode-card" data-action="start-part" data-part="rueckfragen">
+            <div class="icon">❓</div>
+            <h3>Sadece Rückfragen</h3>
+            <p>Sunum sonrası gelebilecek takip sorularına anında cevap verme pratiği.</p>
+          </button>
+          <button class="mode-card" data-action="start-part" data-part="diskussion">
+            <div class="icon">💬</div>
+            <h3>Sadece Diskussion</h3>
+            <p>Karşı görüşlere gerçek zamanlı argümanla karşılık verme pratiği.</p>
+          </button>
+          <button class="mode-card" data-action="start-part" data-part="warmup">
+            <div class="icon">☕</div>
+            <h3>Günlük Isınma</h3>
+            <p>Sınav formatı yok, sadece gündelik 3 soruyla ağzını Almancaya alıştır.</p>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <div>
+            <div style="font-weight:600;font-size:14px;">Hızlı pratik modu</div>
+            <div class="hint">Kapalıyken hazırlık süresi gerçek sınav gibi 20 dakikadır. Açarsan 5 dakikaya iner.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="quickprep-toggle" ${state.prefs.quickPrep? "checked":""}>
+            <span class="track"></span>
+          </label>
+        </div>
+        <hr class="divider">
+        <p class="footnote">Bu sayfa konuşmanı kaydedip senin cümlelerinle pratik yaptırır; dilbilgisi, kelime seçimi ve C1 seviyesine uygunluk hakkında geri bildirimi bir prova bitince "Transkripti Kopyala" ile alıp bu Claude sohbetine yapıştırarak alırsın.</p>
+      </div>
+    </div>`;
+}
+function renderHistory(){
+  const sessions = state.sessions.slice().reverse();
+  if(!sessions.length){
+    return `<div class="card"><div class="empty">Henüz kayıtlı bir prova yok. Ana sayfadan bir mod seçip başla.</div></div>`;
+  }
+  const modeLabels = { full:"Tam Sınav", praesentation:"Präsentation", rueckfragen:"Rückfragen", diskussion:"Diskussion", warmup:"Isınma" };
+  const rows = sessions.map(s=>{
+    const avg = s.ratings ? (Object.values(s.ratings).reduce((a,b)=>a+b,0)/Object.values(s.ratings).length).toFixed(1) : "—";
+    const pillClass = s.mode === "full" ? "mode-full" : (s.mode === "warmup" ? "mode-warmup" : "");
+    return `<tr>
+      <td class="mono" style="white-space:nowrap;">${esc(fmtDate(s.date))}</td>
+      <td><span class="pill ${pillClass}">${esc(modeLabels[s.mode]||s.mode)}</span></td>
+      <td>${esc(s.topicTitle || s.topicCategory || "-")}</td>
+      <td class="mono">${avg}</td>
+    </tr>`;
+  }).join("");
+  return `
+    <div class="card">
+      <div class="eyebrow">Geçmiş provalar</div>
+      <div class="table-wrap" style="margin-top:12px;">
+        <table class="history">
+          <thead><tr><th>Tarih</th><th>Mod</th><th>Konu</th><th>Puan</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+/* ---------- render: flow steps ---------- */
+function renderFlow(){
+  if(!flow) return renderHome();
+  switch(flow.step){
+    case "pick": return renderPick();
+    case "prep": return renderPrep();
+    case "speak": return renderSpeak();
+    case "rueckfragen":
+    case "diskussion":
+    case "warmup": return renderQAStep();
+    case "result": return renderResult();
+    default: return renderHome();
+  }
+}
+function renderPick(){
+  const t = flow.topic;
+  return `
+    <div class="card stack">
+      ${renderStepper()}
+      <div class="topic-head">
+        <div>
+          <div class="eyebrow">Thema wählen</div>
+          <h2 style="margin-top:4px;">${esc(t.category)}</h2>
+        </div>
+      </div>
+      <p class="hint">Gerçek sınavdaki gibi iki temadan birini seç. Hangisi hakkında daha rahat konuşabileceğine hızlıca karar ver — bu da sınavın bir parçası.</p>
+      <div class="option-grid">
+        <button class="option-card" data-action="choose-option" data-choice="a">
+          <div class="option-letter">A</div>
+          <div class="de-text">${esc(t.a.title)}</div>
+          <p style="margin:0;color:var(--muted);font-size:13px;">${esc(t.a.prompt)}</p>
+        </button>
+        <button class="option-card" data-action="choose-option" data-choice="b">
+          <div class="option-letter">B</div>
+          <div class="de-text">${esc(t.b.title)}</div>
+          <p style="margin:0;color:var(--muted);font-size:13px;">${esc(t.b.prompt)}</p>
+        </button>
+      </div>
+      <button class="back-link" data-action="cancel-flow">← Ana sayfaya dön</button>
+    </div>`;
+}
+function renderPrep(){
+  const secs = state.prefs.quickPrep ? 300 : 1200;
+  return `
+    <div class="card stack">
+      ${renderStepper()}
+      <div class="eyebrow">Vorbereitungszeit</div>
+      <div class="prompt-box">${esc(chosenOptionData().prompt)}</div>
+      <div class="timer-row">
+        <div class="timer-chip" id="timer-chip"><span id="timer-val">${fmtTime(secs)}</span></div>
+        <button class="btn btn-accent" data-action="prep-skip">Sunuma Geç →</button>
+      </div>
+      <div>
+        <label class="field-label">Stichpunkte (notlar değerlendirilmez, sadece senin için)</label>
+        <textarea id="prep-notes" rows="5" placeholder="Einleitung, Hauptargumente, Beispiele, Schluss…">${esc(flow.prepNotes||"")}</textarea>
+      </div>
+      <button class="back-link" data-action="cancel-flow">← Ana sayfaya dön</button>
+    </div>`;
+}
+function renderSpeak(){
+  const phase = flow.itemPhase || "recording";
+  if(phase === "review"){
+    return `
+      <div class="card stack">
+        ${renderStepper()}
+        <div class="eyebrow">Präsentation · gözden geçir</div>
+        <label class="field-label">Konuşman (düzenleyebilirsin)</label>
+        <textarea id="review-text" rows="7">${esc(flow.reviewText||"")}</textarea>
+        <div class="hint">Konuşma süren: <span class="mono">${fmtTime(flow.timing.speak||0)}</span>${flow.timing.overTime? ' · <span style="color:var(--danger);">süre aşıldı</span>' : ''}</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" data-action="speak-redo">↺ Tekrar Kaydet</button>
+          <button class="btn btn-accent" data-action="speak-confirm">Devam Et →</button>
+        </div>
+        <button class="back-link" data-action="cancel-flow">← Ana sayfaya dön</button>
+      </div>`;
+  }
+  return `
+    <div class="card stack">
+      ${renderStepper()}
+      <div class="eyebrow">Präsentation · Sprechzeit 3:00</div>
+      <div class="prompt-box">${esc(chosenOptionData().prompt)}</div>
+      <div class="timer-row">
+        <div class="timer-chip" id="timer-chip"><span class="rec-dot"></span><span id="timer-val">03:00</span></div>
+        <button class="btn btn-danger" data-action="stop-speak">■ Bitir</button>
+      </div>
+      <div>
+        <label class="field-label">Canlı döküm</label>
+        <div class="transcript-box" id="live-transcript"></div>
+      </div>
+      <p class="hint">${supportsRecognition() ? "Konuşurken yazıya döküm burada canlı görünür." : "Tarayıcın konuşma tanımayı desteklemiyor: bitirince metni elle yazabilirsin."}</p>
+      <button class="back-link" data-action="cancel-flow">← Ana sayfaya dön</button>
+    </div>`;
+}
+function renderQAStep(){
+  const meta = questionMeta();
+  const phase = flow.itemPhase || "prompt";
+  let body = "";
+  if(phase === "prompt"){
+    body = `
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn btn-ghost" data-action="listen-current">🔊 Dinle</button>
+        <button class="btn btn-accent" data-action="qa-start-mic">🎤 Cevaba Başla</button>
+      </div>`;
+  } else if(phase === "recording"){
+    body = `
+      <div class="timer-row" style="margin-top:14px;">
+        <div class="timer-chip" id="timer-chip"><span class="rec-dot"></span><span id="timer-val">00:00</span></div>
+        <button class="btn btn-danger" data-action="qa-stop-mic">■ Cevabı Bitir</button>
+      </div>
+      <div class="transcript-box" id="live-transcript" style="margin-top:12px;"></div>`;
+  } else if(phase === "review"){
+    body = `
+      <label class="field-label" style="margin-top:14px;display:block;">Cevabın (düzenleyebilirsin)</label>
+      <textarea id="review-text" rows="4">${esc(flow.reviewText||"")}</textarea>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn btn-ghost" data-action="qa-redo">↺ Tekrar Kaydet</button>
+        <button class="btn btn-accent" data-action="qa-confirm">${isLastItem()? "Bitir ve Sonucu Gör →" : "Sonraki →"}</button>
+      </div>`;
+  }
+  return `
+    <div class="card stack">
+      ${renderStepper()}
+      <div>
+        <div class="qa-tag">${esc(meta.label)} · ${meta.index+1}/${meta.count}</div>
+        <p class="de-text" style="margin-top:6px;">${esc(meta.text)}</p>
+      </div>
+      ${body}
+      <button class="back-link" data-action="cancel-flow">← Ana sayfaya dön</button>
+    </div>`;
+}
+function renderRatingRow(key, label){
+  return `
+    <div class="rating-row">
+      <div style="font-size:13px;">${esc(label)}</div>
+      <input type="range" min="1" max="5" step="1" value="${flow.ratings[key]}" data-rating="${key}">
+      <div class="val mono">${flow.ratings[key]}</div>
+    </div>`;
+}
+function renderResult(){
+  const text = buildTranscriptText();
+  return `
+    <div class="card stack">
+      ${renderStepper()}
+      <div class="eyebrow">Ergebnis</div>
+      <h2 style="margin-top:2px;">Prova tamamlandı</h2>
+      <div>
+        <label class="field-label">Transkript</label>
+        <div class="transcript-box" style="max-height:320px;overflow:auto;">${esc(text)}</div>
+      </div>
+      <div>
+        <div class="field-label" style="margin-bottom:10px;">Öz değerlendirme (telc kriterlerine göre, 1–5)</div>
+        ${renderRatingRow("aussprache","Aussprache & Intonation")}
+        ${renderRatingRow("wortschatz","Wortschatz (akademisch)")}
+        ${renderRatingRow("grammatik","Grammatik & Komplexität")}
+        ${renderRatingRow("aufbau","Aufbau & Struktur")}
+        ${renderRatingRow("interaktion","Interaktion & Flexibilität")}
+      </div>
+      <div>
+        <label class="field-label">Notlarım</label>
+        <textarea id="result-notes" rows="3" placeholder="Neyi zor buldun, hangi kelime aklına gelmedi…">${esc(flow.notes||"")}</textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-accent" data-action="save-session">💾 Oturumu Kaydet</button>
+        <button class="btn btn-warm" data-action="copy-transcript">📋 Transkripti Kopyala</button>
+        <button class="btn btn-ghost" data-action="go-home">Ana Sayfa</button>
+      </div>
+      <p class="footnote">Bu transkripti kopyaladıktan sonra Claude ile olan bu sohbete yapıştır — cümlelerindeki hatalara ve daha akademik ifadelere, senin söylediklerinden örnekler vererek geri bildirim veririm.</p>
+    </div>`;
+}
+
+/* ---------- master render ---------- */
+function render(){
+  if(activeTimer){ activeTimer.stop(); activeTimer = null; }
+  if(recognizer){ recognizer._stop(); recognizer = null; }
+  document.querySelectorAll("#tabs button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.tab === (view==="flow" ? "home" : view));
+  });
+  const app = document.getElementById("app");
+  if(view === "home") app.innerHTML = renderHome();
+  else if(view === "history") app.innerHTML = renderHistory();
+  else if(view === "flow") app.innerHTML = renderFlow();
+  if(view === "flow") mountFlow();
+}
+
+/* ---------- events ---------- */
+document.getElementById("app").addEventListener("click", (e)=>{
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const action = el.dataset.action;
+  if(action === "go-home" || action === "cancel-flow"){ flow = null; go("home"); }
+  else if(action === "start-full"){ startFull(); }
+  else if(action === "start-part"){ startPart(el.dataset.part); }
+  else if(action === "choose-option"){ chooseOption(el.dataset.choice); }
+  else if(action === "prep-skip"){ if(activeTimer){ activeTimer.stop(); activeTimer=null; } goToSpeak(); }
+  else if(action === "stop-speak"){ stopSpeak(); }
+  else if(action === "speak-redo"){ flow.itemPhase = undefined; flow.timing.speak = 0; flow.timing.overTime = false; render(); }
+  else if(action === "speak-confirm"){ speakConfirm(); }
+  else if(action === "qa-start-mic"){ flow.itemPhase = "recording"; render(); }
+  else if(action === "qa-stop-mic"){ if(activeTimer){ activeTimer.stop(); activeTimer=null; } flow.reviewText = stopRecording(); flow.itemPhase = "review"; render(); }
+  else if(action === "qa-redo"){ flow.itemPhase = "prompt"; flow.reviewText = ""; render(); }
+  else if(action === "qa-confirm"){ const v = document.getElementById("review-text"); commitCurrentItem(v ? v.value : ""); flow.itemPhase = "prompt"; flow.reviewText = ""; render(); }
+  else if(action === "listen-current"){ const meta = questionMeta(); if(meta) speak(meta.text); }
+  else if(action === "save-session"){ saveSession(); }
+  else if(action === "copy-transcript"){ copyTranscript(); }
+});
+document.getElementById("app").addEventListener("input", (e)=>{
+  if(e.target.id === "prep-notes"){ flow.prepNotes = e.target.value; }
+  else if(e.target.id === "result-notes"){ flow.notes = e.target.value; }
+  else if(e.target.id === "review-text"){ flow.reviewText = e.target.value; }
+  else if(e.target.dataset && e.target.dataset.rating){
+    flow.ratings[e.target.dataset.rating] = Number(e.target.value);
+    const valEl = e.target.parentElement.querySelector(".val");
+    if(valEl) valEl.textContent = e.target.value;
+  }
+});
+document.getElementById("app").addEventListener("change", (e)=>{
+  if(e.target.id === "quickprep-toggle"){ state.prefs.quickPrep = e.target.checked; persistState(); }
+});
+document.getElementById("tabs").addEventListener("click", (e)=>{
+  const b = e.target.closest("button[data-tab]");
+  if(!b) return;
+  flow = null;
+  go(b.dataset.tab);
+});
+
+/* ---------- init ---------- */
+render();
+})();
+</script>
