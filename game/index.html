@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Çeviri Oyunu — Almancanı test et | CheckYourWrite</title>
+<meta name="description" content="Türkçe cümleyi Almancaya çevir, puanını al, arkadaşlarınla yarış. Ücretsiz Almanca çeviri oyunu.">
+<meta property="og:title" content="🎰 Çeviri Oyunu — Almancanı test et">
+<meta property="og:description" content="Türkçe cümle çıkıyor, sen Almancaya çeviriyorsun. Kaç puan alacaksın?">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0A0E17; --bg2: #0E1420;
+    --surface: rgba(21,27,42,0.72); --surface-solid: #151B2A;
+    --border: rgba(148,163,197,0.14); --border-strong: rgba(148,163,197,0.28);
+    --text: #E8ECF6; --muted: #8B94AB; --faint: #5A6379;
+    --accent: #FFB224; --accent-2: #FF8A3D; --violet: #7C5CFF;
+    --green: #4ADE80; --green-soft: rgba(74,222,128,0.12);
+    --red: #F87171; --red-soft: rgba(248,113,113,0.12);
+    --blue: #60A5FA;
+    --radius: 14px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --display: 'Space Grotesk', sans-serif;
+    --glow: 0 0 24px rgba(255,178,36,0.25);
+  }
+  body {
+    font-family: var(--sans); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6;
+    background: radial-gradient(1200px 800px at 85% -10%, #131C33 0%, transparent 55%),
+                radial-gradient(1000px 700px at -10% 110%, #141126 0%, transparent 55%),
+                linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    background-attachment: fixed; overflow-x: hidden;
+  }
+  .bg-grid { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(148,163,197,0.10) 1px, transparent 1px); background-size: 26px 26px;
+    mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 82%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 82%, transparent 100%); }
+  .bg-orb { position: fixed; border-radius: 50%; filter: blur(90px); z-index: 0; pointer-events: none; opacity: .5; }
+  .bg-orb.amber { width: 420px; height: 420px; top: -140px; right: -100px;
+    background: radial-gradient(circle, rgba(255,178,36,.35) 0%, transparent 70%); animation: orbB 11s ease-in-out infinite; }
+  .bg-orb.violet { width: 480px; height: 480px; bottom: -180px; left: -140px;
+    background: radial-gradient(circle, rgba(124,92,255,.30) 0%, transparent 70%); animation: orbB 14s ease-in-out infinite reverse; }
+  @keyframes orbB { 0%,100%{transform:scale(1);opacity:.45;} 50%{transform:scale(1.15) translate(-16px,12px);opacity:.65;} }
+  header, main { position: relative; z-index: 1; }
+
+  header { padding: .9rem 2rem; display: flex; align-items: center; gap: 18px;
+    background: rgba(12,16,27,.65); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
+  .logo span { color: var(--accent); }
+  .navbar { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--display);
+    font-weight: 600; font-size: 13.5px; padding: 9px 18px; border-radius: 12px; border: none; cursor: pointer;
+    text-decoration: none; transition: transform .18s, box-shadow .18s, background .18s, border-color .18s, color .18s; }
+  .btn:active { transform: translateY(1px) scale(.98); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border-strong); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); background: rgba(148,163,197,.06); }
+  .plan-badge-header { font-family: var(--display); font-size: 11px; font-weight: 700; letter-spacing: .06em;
+    color: var(--green); background: var(--green-soft); border: 1px solid rgba(74,222,128,.35); padding: 4px 10px; border-radius: 8px; }
+
+  main { max-width: 640px; margin: 0 auto; padding: 2rem 1.2rem 3rem; }
+
+  /* ── Skor şeridi ── */
+  .scorebar { display: flex; gap: 8px; margin-bottom: 18px; }
+  .score-cell { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 11px 8px; text-align: center; }
+  .score-num { font-family: var(--display); font-size: 21px; font-weight: 700; line-height: 1.1; }
+  .score-num.amber { color: var(--accent); } .score-num.green { color: var(--green); } .score-num.violet { color: #A98BFF; }
+  .score-lbl { font-family: var(--mono); font-size: 9.5px; color: var(--faint); text-transform: uppercase; letter-spacing: .08em; margin-top: 3px; }
+  .streak-fire { display: inline-block; animation: fireP 1.4s ease-in-out infinite; }
+  @keyframes fireP { 0%,100%{transform:scale(1);} 50%{transform:scale(1.18);} }
+
+  /* ── Seviye ── */
+  .level-row { display: flex; justify-content: center; margin-bottom: 16px; }
+  .level-inner { display: inline-flex; align-items: center; gap: 3px; background: rgba(148,163,197,.05);
+    border: 1px solid var(--border); border-radius: 12px; padding: 4px; }
+  .lvl { padding: 6px 15px; border: none; border-radius: 9px; font-size: 12.5px; font-family: var(--mono);
+    font-weight: 500; cursor: pointer; background: transparent; color: var(--muted); transition: all .15s; }
+  .lvl:hover:not(:disabled) { color: var(--text); }
+  .lvl.on { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #14100A; font-weight: 700; }
+  .lvl:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ── SLOT MAKİNESİ ── */
+  .machine { background: var(--surface); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 14px; }
+  .machine-top { display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; border-bottom: 1px solid var(--border); background: rgba(10,14,23,.35); }
+  .machine-tag { font-family: var(--mono); font-size: 10px; color: var(--faint); text-transform: uppercase; letter-spacing: .12em; }
+  .machine-lights { display: flex; gap: 5px; }
+  .mlight { width: 7px; height: 7px; border-radius: 50%; background: rgba(148,163,197,.2); transition: background .2s; }
+  .mlight.on { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+  .reel-window { position: relative; height: 132px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; }
+  .reel-window::before, .reel-window::after { content: ''; position: absolute; left: 0; right: 0; height: 42px; z-index: 3; pointer-events: none; }
+  .reel-window::before { top: 0; background: linear-gradient(180deg, #10151F 0%, transparent 100%); }
+  .reel-window::after { bottom: 0; background: linear-gradient(0deg, #10151F 0%, transparent 100%); }
+  .reel-strip { position: absolute; top: 0; left: 0; width: 100%; will-change: transform; }
+  .reel-item { height: 132px; display: flex; align-items: center; justify-content: center; padding: 0 24px; text-align: center; }
+  .reel-text { font-family: var(--display); font-size: clamp(17px, 3.6vw, 23px); font-weight: 600; line-height: 1.35; color: var(--text); }
+  .reel-idle { color: var(--faint); font-family: var(--sans); font-size: 15px; font-weight: 400; }
+
+  /* ── Cevap alanı ── */
+  .answer-zone { padding: 0 16px 16px; }
+
+  /* Mod seçici */
+  .mode-toggle { display: flex; gap: 4px; background: rgba(148,163,197,.05); border: 1px solid var(--border);
+    border-radius: 12px; padding: 4px; margin-bottom: 14px; }
+  .mode-btn { flex: 1; padding: 9px; border: none; border-radius: 9px; background: transparent; color: var(--muted);
+    font-family: var(--display); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .mode-btn:hover { color: var(--text); }
+  .mode-btn.on { background: var(--surface-solid); color: var(--text); border: 1px solid var(--border-strong); }
+
+  .answer-input { width: 100%; background: rgba(10,14,23,.5); border: 1px solid var(--border-strong);
+    border-radius: 12px; padding: 14px 15px; color: var(--text); font-family: var(--sans); font-size: 15.5px;
+    line-height: 1.5; resize: none; outline: none; transition: border-color .18s, box-shadow .18s; min-height: 58px; }
+  .answer-input::placeholder { color: var(--faint); }
+  .answer-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,178,36,.12); }
+  .answer-input:disabled { opacity: .55; }
+  .input-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 7px;
+    font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
+
+  /* ── Mikrofon modu ── */
+  .mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 10px 0 6px; }
+  .mic-btn { position: relative; width: 96px; height: 96px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, box-shadow .2s; box-shadow: 0 6px 24px rgba(255,178,36,.3); }
+  .mic-btn:hover { transform: scale(1.04); }
+  .mic-btn:active { transform: scale(0.97); }
+  .mic-icon { font-size: 40px; line-height: 1; z-index: 2; filter: grayscale(0); }
+  .mic-pulse { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
+  /* Kayıt hali: parlar + dalga efekti */
+  .mic-btn.recording { background: linear-gradient(135deg, #F87171, #EF4444); box-shadow: 0 0 0 0 rgba(248,113,113,.6); animation: micGlow 1.4s ease-in-out infinite; }
+  .mic-btn.recording .mic-pulse { animation: micRipple 1.5s ease-out infinite; border: 3px solid rgba(248,113,113,.5); }
+  @keyframes micGlow { 0%,100% { box-shadow: 0 0 24px 4px rgba(248,113,113,.5); } 50% { box-shadow: 0 0 40px 12px rgba(248,113,113,.75); } }
+  @keyframes micRipple { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(1.7); opacity: 0; } }
+  .mic-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .mic-status { font-family: var(--display); font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; min-height: 20px; }
+  .mic-status.live { color: var(--red); }
+  .mic-heard { font-size: 16px; color: var(--text); text-align: center; min-height: 22px; font-style: italic; max-width: 90%; }
+  .mic-unsupported { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.3); border-radius: 12px;
+    padding: 14px 16px; font-size: 13px; color: #FBBF24; line-height: 1.55; text-align: center; }
+
+  /* ── Sonuç: dinle butonu ── */
+  .correct-row { display: flex; align-items: center; gap: 12px; }
+  .correct-row .answer-de { flex: 1; }
+  .listen-btn { flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; border: 1px solid rgba(74,222,128,.4);
+    background: transparent; color: var(--green); font-size: 20px; cursor: pointer; transition: all .15s;
+    display: flex; align-items: center; justify-content: center; }
+  .listen-btn:hover { background: var(--green-soft); border-color: var(--green); }
+  .listen-btn.playing { animation: listenPulse .8s ease-in-out infinite; }
+  @keyframes listenPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+  /* ── Sonuç ── */
+  .verdict { padding: 0 16px 16px; }
+  .verdict-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .verdict-score { font-family: var(--display); font-size: 30px; font-weight: 700; line-height: 1; }
+  .verdict-label { font-family: var(--display); font-size: 15px; font-weight: 700; }
+  .verdict-sub { font-size: 12.5px; color: var(--muted); }
+  .diff-box { background: rgba(10,14,23,.45); border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; margin-bottom: 10px; }
+  .diff-title { font-family: var(--mono); font-size: 9.5px; color: var(--faint); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 7px; }
+  .diff-body { font-size: 15px; line-height: 1.7; }
+  .w-hit { color: var(--green); font-weight: 600; }
+  .w-miss { color: var(--red); text-decoration: line-through; opacity: .75; }
+  .w-need { color: var(--accent); border-bottom: 1.5px dotted var(--accent); }
+  .answer-de { font-family: var(--display); font-size: clamp(17px,3.4vw,21px); font-weight: 600; color: var(--green); line-height: 1.4; }
+  /* ── Butonlar ── */
+  .actions { padding: 0 16px 18px; display: flex; flex-direction: column; gap: 9px; }
+  .btn-big { width: 100%; padding: 16px; border: none; border-radius: var(--radius); font-family: var(--display);
+    font-size: 16px; font-weight: 700; cursor: pointer; transition: transform .18s, box-shadow .18s, opacity .18s;
+    display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-big:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-spin { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #14100A; }
+  .btn-spin:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(255,178,36,.35); }
+  .btn-check { background: linear-gradient(135deg, var(--green), #34D399); color: #06210F; }
+  .btn-check:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(74,222,128,.3); }
+  .btn-line { background: transparent; border: 1px solid var(--border-strong); color: var(--muted); }
+  .btn-line:hover { color: var(--text); border-color: var(--muted); }
+  .btn-next { background: rgba(148,163,197,.1); border: 1px solid var(--border-strong); color: var(--text); }
+  .btn-next:hover { background: rgba(148,163,197,.18); }
+  .hidden { display: none !important; }
+
+  /* ── Hak sayacı ── */
+  .plays { display: flex; align-items: center; justify-content: space-between; padding: 11px 15px;
+    background: rgba(148,163,197,.04); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; }
+  .plays-lbl { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .plays-dots { display: flex; gap: 5px; }
+  .pdot { width: 8px; height: 8px; border-radius: 50%; background: rgba(148,163,197,.2); transition: background .25s; }
+  .pdot.used { background: var(--accent); }
+  .plays-n { font-family: var(--mono); font-size: 11.5px; font-weight: 700; }
+  .plays-n.ok{color:var(--green);} .plays-n.warn{color:var(--accent);} .plays-n.out{color:var(--red);}
+
+  .tip { text-align: center; font-size: 12.5px; color: var(--faint); }
+
+  /* ── Modal (paywall + paylaşım) ── */
+  .modal { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center;
+    padding: 16px; background: rgba(6,9,16,.78); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .modal.show { display: flex; }
+  .modal-card { background: var(--surface-solid); border: 1px solid var(--border-strong); border-radius: 20px;
+    padding: 30px 26px; width: 100%; max-width: 420px; text-align: center;
+    box-shadow: 0 24px 80px rgba(0,0,0,.55); animation: mIn .35s cubic-bezier(.2,.9,.3,1.1) both;
+    max-height: 92vh; overflow-y: auto; }
+  @keyframes mIn { from{opacity:0;transform:translateY(18px) scale(.97);} to{opacity:1;transform:none;} }
+  .modal-icon { font-size: 40px; margin-bottom: 12px; }
+  .modal-title { font-family: var(--display); font-size: 21px; font-weight: 700; margin-bottom: 8px; }
+  .modal-sub { font-size: 13.5px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+  .modal-cta { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #14100A; border: none; border-radius: 12px; font-family: var(--display); font-size: 15.5px; font-weight: 700;
+    cursor: pointer; text-decoration: none; display: block; margin-bottom: 9px; transition: box-shadow .16s, transform .16s; }
+  .modal-cta:hover { box-shadow: var(--glow); transform: translateY(-1px); }
+  .modal-2nd { width: 100%; padding: 13px; background: transparent; color: var(--muted); border: 1px solid var(--border-strong);
+    border-radius: 12px; font-family: var(--display); font-size: 14px; font-weight: 600; cursor: pointer;
+    text-decoration: none; display: block; transition: all .16s; }
+  .modal-2nd:hover { color: var(--text); border-color: var(--muted); }
+  .modal-price { font-family: var(--mono); font-size: 12.5px; color: var(--accent); margin-bottom: 16px; }
+
+  /* ── Paylaşım kartı (ekran görüntüsü için) ── */
+  .share-card { background: linear-gradient(155deg, #131A2B 0%, #0D1220 100%);
+    border: 1px solid rgba(255,178,36,.22); border-radius: 16px; padding: 24px 20px; margin-bottom: 18px; position: relative; overflow: hidden; }
+  .share-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(255,178,36,.18) 0%, transparent 70%); border-radius: 50%; }
+  .share-brand { font-family: var(--mono); font-size: 10.5px; color: var(--faint); letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 14px; position: relative; }
+  .share-big { font-family: var(--display); font-size: 46px; font-weight: 700; line-height: 1;
+    background: linear-gradient(100deg, var(--accent) 20%, var(--accent-2) 90%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; position: relative; }
+  .share-of { font-family: var(--display); font-size: 17px; color: var(--muted); font-weight: 600; }
+  .share-title { font-family: var(--display); font-size: 17px; font-weight: 700; color: var(--text); margin: 12px 0 4px; position: relative; }
+  .share-meta { font-family: var(--mono); font-size: 11.5px; color: var(--muted); position: relative; }
+  .share-url { font-family: var(--mono); font-size: 10.5px; color: var(--accent); margin-top: 14px;
+    padding-top: 12px; border-top: 1px solid rgba(148,163,197,.12); position: relative; }
+
+  /* ── Konfeti ── */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 900; overflow: hidden; }
+  .conf { position: absolute; width: 8px; height: 14px; opacity: .9; animation: confFall linear forwards; }
+  @keyframes confFall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .bg-orb { display: none; }
+  }
+  @media (max-width: 640px) {
+    header { padding: .8rem 1rem; }
+    main { padding: 1.5rem 1rem 2.5rem; }
+    .reel-window { height: 116px; }
+    .reel-item { height: 116px; padding: 0 18px; }
+    .bg-orb.amber { width: 260px; height: 260px; }
+    .bg-orb.violet { width: 300px; height: 300px; }
+    .share-big { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-orb amber"></div>
+<div class="bg-orb violet"></div>
+<div id="confetti"></div>
+
+<header>
+  <a href="/index.html" class="logo">check<span>yourwrite</span></a>
+  <nav class="navbar">
+    <span id="planBadge"></span>
+    <a href="/index.html" class="btn btn-ghost">← Ana Sayfa</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Skor şeridi -->
+  <div class="scorebar">
+    <div class="score-cell">
+      <div class="score-num amber" id="sc-score">0</div>
+      <div class="score-lbl">Puan</div>
+    </div>
+    <div class="score-cell">
+      <div class="score-num green" id="sc-streak">0</div>
+      <div class="score-lbl">Seri</div>
+    </div>
+    <div class="score-cell">
+      <div class="score-num violet" id="sc-best">0</div>
+      <div class="score-lbl">Rekor</div>
+    </div>
+  </div>
+
+  <!-- Seviye -->
+  <div class="level-row">
+    <div class="level-inner" id="levelBox">
+      <button class="lvl on" data-l="A2" onclick="setLevel(this,'A2')">A2</button>
+      <button class="lvl" data-l="B1" onclick="setLevel(this,'B1')">B1</button>
+      <button class="lvl" data-l="B2" onclick="setLevel(this,'B2')">B2</button>
+      <button class="lvl" data-l="C1" onclick="setLevel(this,'C1')">C1</button>
+    </div>
+  </div>
+
+  <!-- MAKİNE -->
+  <div class="machine">
+    <div class="machine-top">
+      <span class="machine-tag" id="mTag">🇹🇷 türkçe cümle</span>
+      <div class="machine-lights" id="mLights">
+        <span class="mlight"></span><span class="mlight"></span><span class="mlight"></span>
+      </div>
+    </div>
+
+    <div class="reel-window">
+      <div class="reel-strip" id="reelStrip">
+        <div class="reel-item"><span class="reel-text reel-idle">Başlamak için çevir'e bas 🎰</span></div>
+      </div>
+    </div>
+
+    <!-- Cevap yazma / konuşma -->
+    <div class="answer-zone hidden" id="answerZone">
+
+      <!-- Mod seçici: Yazarak / Konuşarak -->
+      <div class="mode-toggle" id="modeToggle">
+        <button class="mode-btn on" id="modeWriteBtn" onclick="setMode('write')">⌨️ Yazarak</button>
+        <button class="mode-btn" id="modeSpeakBtn" onclick="setMode('speak')">🎤 Konuşarak</button>
+      </div>
+
+      <!-- YAZMA modu -->
+      <div id="writeMode">
+        <textarea class="answer-input" id="answerInput" rows="2"
+          placeholder="Almancasını buraya yaz…" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
+        <div class="input-meta">
+          <span id="charCount">0 karakter</span>
+          <span>Enter ↵ ile kontrol et</span>
+        </div>
+      </div>
+
+      <!-- KONUŞMA modu -->
+      <div id="speakMode" class="hidden">
+        <div class="mic-wrap">
+          <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+            <span class="mic-icon">🎤</span>
+            <span class="mic-pulse"></span>
+          </button>
+          <div class="mic-status" id="micStatus">Butona bas ve Almancasını söyle</div>
+          <div class="mic-heard" id="micHeard"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sonuç -->
+    <div class="verdict hidden" id="verdictZone">
+      <div class="verdict-head">
+        <span class="verdict-score" id="vScore">0%</span>
+        <div>
+          <div class="verdict-label" id="vLabel">—</div>
+          <div class="verdict-sub" id="vSub">—</div>
+        </div>
+      </div>
+      <div class="diff-box" id="userDiffBox">
+        <div class="diff-title">Senin cevabın</div>
+        <div class="diff-body" id="userDiff">—</div>
+      </div>
+      <div class="diff-box">
+        <div class="diff-title">Doğru çeviri</div>
+        <div class="correct-row">
+          <div class="answer-de" id="correctDe">—</div>
+          <button class="listen-btn" id="listenBtn" onclick="speakGerman()" title="Almanca telaffuzu dinle">🔊</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Butonlar -->
+    <div class="actions">
+      <button class="btn-big btn-spin" id="spinBtn" onclick="spin()">🎰 Çevir</button>
+      <button class="btn-big btn-check hidden" id="checkBtn" onclick="checkAnswer()">✓ Kontrol Et</button>
+      <button class="btn-big btn-line hidden" id="skipBtn" onclick="giveUp()">Bilmiyorum, cevabı göster</button>
+      <button class="btn-big btn-next hidden" id="nextBtn" onclick="spin()">Sıradaki →</button>
+      <button class="btn-big btn-line hidden" id="shareBtn" onclick="openShare()">📤 Skorumu Paylaş</button>
+    </div>
+  </div>
+
+  <!-- Hak -->
+  <div class="plays" id="playsBar">
+    <span class="plays-lbl" id="playsLbl">Ücretsiz hakkın</span>
+    <div style="display:flex;align-items:center;gap:11px;">
+      <div class="plays-dots" id="playsDots"></div>
+      <span class="plays-n ok" id="playsN">5/5</span>
+    </div>
+  </div>
+
+  <p class="tip" id="tipLine">Cümle çıkınca Almancasını <b>yaz</b> ya da <b>🎤 konuş</b> — sistem kontrol etsin</p>
+</main>
+
+<!-- Paywall -->
+<div class="modal" id="paywall">
+  <div class="modal-card">
+    <div class="modal-icon">🔓</div>
+    <div class="modal-title">Günlük hakkın bitti!</div>
+    <div class="modal-sub">Bugün 5 çeviri yaptın. Sınırsız pratik için Premium'a geç — yazı düzeltme, eşanlamlı öneriler ve telaffuz da dahil.</div>
+    <div class="modal-price">Premium · €2.99/ay</div>
+    <a href="/index.html?plans=1" class="modal-cta">✦ Premium'a Geç</a>
+    <button class="modal-2nd" onclick="closeModal('paywall'); openShare();">📤 Önce skorumu paylaşayım</button>
+  </div>
+</div>
+
+<!-- Paylaşım -->
+<div class="modal" id="shareModal">
+  <div class="modal-card">
+    <div class="share-card" id="shareCard">
+      <div class="share-brand">🎰 çeviri oyunu</div>
+      <div>
+        <span class="share-big" id="shBig">0%</span>
+        <span class="share-of" id="shOf">ortalama</span>
+      </div>
+      <div class="share-title" id="shTitle">—</div>
+      <div class="share-meta" id="shMeta">—</div>
+      <div class="share-url">checkyourwrite.com</div>
+    </div>
+    <button class="modal-cta" id="shareImgBtn" onclick="shareImage()">📲 Story Görselini Paylaş</button>
+    <button class="modal-2nd" onclick="downloadImage()" style="margin-bottom:9px;">⬇ Görseli İndir</button>
+    <button class="modal-2nd" onclick="shareResult()" style="margin-bottom:9px;">📋 Metin Olarak Kopyala</button>
+    <button class="modal-2nd" onclick="closeModal('shareModal')">Kapat</button>
+    <!-- Görsel üretimi için gizli canvas -->
+    <canvas id="shareCanvas" width="1080" height="1920" style="display:none;"></canvas>
+  </div>
+</div>
+
+<script>
+/* ── CÜMLE HAVUZU (Türkçe → Almanca) ── */
+const SENTENCES = {
+  A2: [
+    ["Her sabah kahve içerim.","Ich trinke jeden Morgen Kaffee."],
+    ["O okula otobüsle gidiyor.","Er fährt mit dem Bus zur Schule."],
+    ["Bugün hava çok güzel.","Heute ist das Wetter sehr schön."],
+    ["Benim bir kız kardeşim var.","Ich habe eine Schwester."],
+    ["Akşam yemeği saat yedide.","Das Abendessen ist um sieben Uhr."],
+    ["Bu kitap çok ilginç.","Dieses Buch ist sehr interessant."],
+    ["Hafta sonu sinemaya gidiyoruz.","Wir gehen am Wochenende ins Kino."],
+    ["Onun köpeği çok büyük.","Sein Hund ist sehr groß."],
+    ["Marketten ekmek almam lazım.","Ich muss Brot vom Supermarkt kaufen."],
+    ["Almanca öğrenmek istiyorum.","Ich möchte Deutsch lernen."],
+    ["Kardeşim futbol oynamayı seviyor.","Mein Bruder spielt gern Fußball."],
+    ["Yarın işe gitmiyorum.","Morgen gehe ich nicht zur Arbeit."],
+    ["Bu ne kadar?","Wie viel kostet das?"],
+    ["Yorgunum ve uyumak istiyorum.","Ich bin müde und möchte schlafen."],
+    ["Çocuklar bahçede oynuyor.","Die Kinder spielen im Garten."],
+    ["Bir bardak su alabilir miyim?","Kann ich ein Glas Wasser haben?"],
+    ["Annem çok iyi yemek yapar.","Meine Mutter kocht sehr gut."],
+    ["Hafta içi erken kalkarım.","Unter der Woche stehe ich früh auf."],
+    ["Bugün çok işim var.","Heute habe ich viel zu tun."],
+    ["Sen nerede yaşıyorsun?","Wo wohnst du?"],
+    ["Bu benim en sevdiğim şarkı.","Das ist mein Lieblingslied."],
+    ["Kahvaltıda peynir yerim.","Zum Frühstück esse ich Käse."],
+    ["O çok hızlı koşuyor.","Er läuft sehr schnell."],
+    ["Yağmur yağıyor, şemsiyeni al.","Es regnet, nimm deinen Regenschirm."],
+    ["Babam doktor olarak çalışıyor.","Mein Vater arbeitet als Arzt."],
+    ["Bu tren Berlin'e gidiyor.","Dieser Zug fährt nach Berlin."],
+    ["Odamda bir masa var.","In meinem Zimmer gibt es einen Tisch."],
+    ["Sabahları spor yapıyorum.","Morgens mache ich Sport."],
+    ["Bugün pazartesi.","Heute ist Montag."],
+    ["Onu çok seviyorum.","Ich mag ihn sehr."],
+    ["Adım Yusuf ve Türkiye'den geliyorum.","Ich heiße Yusuf und komme aus der Türkei."],
+    ["Almanca öğrenmek zor ama eğlenceli.","Deutsch lernen ist schwer, aber macht Spaß."],
+    ["Bugün derse geç kaldım.","Heute bin ich zu spät zum Unterricht gekommen."],
+    ["Bir randevu almak istiyorum.","Ich möchte einen Termin machen."],
+    ["Bu otobüs nereye gidiyor?","Wohin fährt dieser Bus?"],
+    ["Banka nerede, biliyor musunuz?","Wissen Sie, wo die Bank ist?"],
+    ["Ben öğrenciyim ve Berlin'de yaşıyorum.","Ich bin Student und wohne in Berlin."],
+    ["Hesabı ödeyebilir miyim?","Kann ich bitte bezahlen?"],
+    ["Bu kelimeyi anlamıyorum.","Dieses Wort verstehe ich nicht."],
+    ["Lütfen daha yavaş konuşun.","Sprechen Sie bitte langsamer."],
+    ["Kız arkadaşım Almanca öğretmeni.","Meine Freundin ist Deutschlehrerin."],
+    ["Yarın doktora gideceğim.","Morgen gehe ich zum Arzt."],
+    ["Odam çok küçük ama temiz.","Mein Zimmer ist sehr klein, aber sauber."],
+    ["Hafta sonu ne yapıyorsun?","Was machst du am Wochenende?"],
+    ["Bu çanta çok pahalı.","Diese Tasche ist sehr teuer."],
+    ["Kahvaltıyı saat sekizde yaparım.","Ich frühstücke um acht Uhr."],
+    ["Almanya'da hava genelde soğuk.","In Deutschland ist das Wetter meistens kalt."],
+    ["Bir sorum var.","Ich habe eine Frage."],
+    ["Otobüs durağı buraya yakın mı?","Ist die Bushaltestelle in der Nähe?"],
+    ["Bugün süpermarkete gitmem gerek.","Heute muss ich zum Supermarkt gehen."],
+    ["Ailemi çok özlüyorum.","Ich vermisse meine Familie sehr."],
+    ["Bu ders saat kaçta başlıyor?","Wann fängt dieser Unterricht an?"],
+    ["Arkadaşımla kütüphanede buluşuyorum.","Ich treffe mich mit meinem Freund in der Bibliothek."],
+    ["Yeni bir telefon almak istiyorum.","Ich möchte ein neues Handy kaufen."],
+    ["Türkçe ve Almanca konuşuyorum.","Ich spreche Türkisch und Deutsch."],
+    ["Bugün çok yorgunum.","Heute bin ich sehr müde."],
+    ["Kahve mi çay mı istersin?","Möchtest du Kaffee oder Tee?"],
+    ["Trenim saat üçte kalkıyor.","Mein Zug fährt um drei Uhr ab."],
+    ["Burada sigara içmek yasak.","Hier ist Rauchen verboten."],
+    ["Yardımınız için teşekkür ederim.","Vielen Dank für Ihre Hilfe."],
+    ["Sabahları duş alırım.","Morgens dusche ich."],
+    ["Öğle yemeğinde salata yiyorum.","Zum Mittagessen esse ich einen Salat."],
+    ["Bugün eczaneye uğramam gerekiyor.","Heute muss ich in die Apotheke gehen."],
+    ["Dışarısı çok gürültülü.","Draußen ist es sehr laut."],
+    ["Kız kardeşim Berlin'de yaşıyor.","Meine Schwester wohnt in Berlin."],
+    ["Bu akşam evde kalıyorum.","Heute Abend bleibe ich zu Hause."],
+    ["Kahvaltıdan sonra dişlerimi fırçalarım.","Nach dem Frühstück putze ich mir die Zähne."],
+    ["Kışın çok kar yağıyor.","Im Winter schneit es viel."],
+    ["Otobüs on dakika sonra geliyor.","Der Bus kommt in zehn Minuten."],
+    ["Hava soğuk, ceketini giy.","Es ist kalt, zieh deine Jacke an."],
+    ["Hafta sonu ailemi ziyaret ederim.","Am Wochenende besuche ich meine Familie."],
+    ["Süpermarket saat sekizde kapanıyor.","Der Supermarkt schließt um acht Uhr."],
+    ["Almanca dersim iki saat sürüyor.","Mein Deutschkurs dauert zwei Stunden."],
+    ["Bu hafta iki sınavım var.","Diese Woche habe ich zwei Prüfungen."],
+    ["Arkadaşımla mesajlaşıyorum.","Ich schreibe mit meinem Freund."],
+    ["Ödevim çok zor.","Meine Hausaufgabe ist sehr schwer."],
+    ["Bu uçak saat altıda kalkıyor.","Dieses Flugzeug startet um sechs Uhr."],
+    ["Postaneye gitmem gerekiyor.","Ich muss zur Post gehen."],
+    ["Babam her akşam gazete okur.","Mein Vater liest jeden Abend Zeitung."],
+    ["Hafta sonu genelde geç uyanırım.","Am Wochenende wache ich meistens spät auf."],
+    ["Yeni komşularımız çok kibar.","Unsere neuen Nachbarn sind sehr nett."],
+    ["Bugün işe bisikletle gittim.","Heute bin ich mit dem Fahrrad zur Arbeit gefahren."],
+    ["Akşamları biraz kitap okurum.","Abends lese ich ein bisschen."],
+    ["Bu elbise bana çok pahalı.","Dieses Kleid ist mir zu teuer."],
+    ["Yarın hava güneşli olacak.","Morgen wird es sonnig."],
+    ["Hastayım, bugün gelemem.","Ich bin krank, heute kann ich nicht kommen."],
+    ["Kızım okuldan üçte dönüyor.","Meine Tochter kommt um drei von der Schule zurück."],
+    ["Öğleden sonra biraz uyudum.","Am Nachmittag habe ich ein bisschen geschlafen."],
+    ["Her gün on yeni kelime öğreniyorum.","Jeden Tag lerne ich zehn neue Wörter."],
+    ["Cumartesi günü alışverişe çıkıyoruz.","Am Samstag gehen wir einkaufen."],
+    ["Komşumuzun kedisi çok tatlı.","Die Katze unseres Nachbarn ist sehr süß."],
+    ["Bu kahve çok sıcak.","Dieser Kaffee ist sehr heiß."],
+    ["Akşam yemeğini birlikte yiyelim.","Lass uns zusammen zu Abend essen."],
+    ["Bugün hava çok rüzgarlı.","Heute ist es sehr windig."],
+    ["Evim istasyona yakın.","Meine Wohnung ist in der Nähe vom Bahnhof."],
+    ["Akşam çamaşır yıkamam lazım.","Am Abend muss ich Wäsche waschen."],
+    ["Bu yolu bilmiyorum.","Ich kenne diesen Weg nicht."],
+    ["Pazartesi günü tatile gidiyoruz.","Am Montag fahren wir in den Urlaub."],
+    ["Yeni işim çok hoşuma gidiyor.","Meine neue Arbeit gefällt mir sehr."],
+    ["Bana yardım edebilir misin?","Kannst du mir helfen?"],
+    ["Almanca dersinde çok arkadaş edindim.","Im Deutschkurs habe ich viele Freunde gefunden."],
+    ["Bu film çok komik.","Dieser Film ist sehr lustig."],
+    ["Yarın erken kalkmam lazım.","Morgen muss ich früh aufstehen."],
+    ["Balkonumda çiçekler var.","Auf meinem Balkon gibt es Blumen."],
+    ["Şu an vaktim yok.","Ich habe gerade keine Zeit."],
+    ["Bu akşam misafirimiz var.","Heute Abend haben wir Besuch."],
+    ["Kütüphane pazar günü kapalı.","Die Bibliothek ist sonntags geschlossen."],
+    ["Yeni bir bisiklet aldım.","Ich habe ein neues Fahrrad gekauft."],
+    ["Hava kararmadan eve dönelim.","Lass uns nach Hause gehen, bevor es dunkel wird."],
+    ["Bu çantayı nereden aldın?","Wo hast du diese Tasche gekauft?"]
+  ],
+  B1: [
+    ["Dün akşam arkadaşlarımla buluştum.","Gestern Abend habe ich mich mit meinen Freunden getroffen."],
+    ["Almanya'ya taşındığımda hiç Almanca bilmiyordum.","Als ich nach Deutschland gezogen bin, konnte ich kein Deutsch."],
+    ["Sınavı geçtiğim için çok mutluyum.","Ich bin sehr glücklich, weil ich die Prüfung bestanden habe."],
+    ["Eğer vaktim olursa sana yardım ederim.","Wenn ich Zeit habe, helfe ich dir."],
+    ["Bu filmi daha önce izlemiştim.","Diesen Film hatte ich schon einmal gesehen."],
+    ["Doktora gitmem gerektiğini düşünüyorum.","Ich denke, dass ich zum Arzt gehen muss."],
+    ["Tatilde çok güzel fotoğraflar çektik.","Im Urlaub haben wir sehr schöne Fotos gemacht."],
+    ["Otobüsü kaçırdım, o yüzden geç kaldım.","Ich habe den Bus verpasst, deshalb bin ich zu spät gekommen."],
+    ["Yeni bir iş aramaya başladım.","Ich habe angefangen, eine neue Arbeit zu suchen."],
+    ["Hava soğuk olmasına rağmen dışarı çıktık.","Obwohl es kalt war, sind wir rausgegangen."],
+    ["Ne zaman geleceğini bilmiyorum.","Ich weiß nicht, wann er kommt."],
+    ["Bu şehirde üç yıldır yaşıyorum.","Ich wohne seit drei Jahren in dieser Stadt."],
+    ["Sana söylediğim şeyi unutma.","Vergiss nicht, was ich dir gesagt habe."],
+    ["Trafik yüzünden toplantıya geç kaldım.","Wegen des Verkehrs bin ich zu spät zur Besprechung gekommen."],
+    ["Almancamı geliştirmek için her gün pratik yapıyorum.","Um mein Deutsch zu verbessern, übe ich jeden Tag."],
+    ["Yemek yaparken müzik dinlerim.","Beim Kochen höre ich Musik."],
+    ["Bana yardım edeceğine söz verdi.","Er hat mir versprochen, dass er mir hilft."],
+    ["Bu problemi nasıl çözeceğimizi bilmiyoruz.","Wir wissen nicht, wie wir dieses Problem lösen sollen."],
+    ["Küçükken köyde yaşardık.","Als wir klein waren, haben wir auf dem Dorf gelebt."],
+    ["İşim bittikten sonra seni ararım.","Nachdem ich mit der Arbeit fertig bin, rufe ich dich an."],
+    ["Bu haberi duyunca çok şaşırdım.","Als ich diese Nachricht gehört habe, war ich sehr überrascht."],
+    ["Sağlığına dikkat etmelisin.","Du solltest auf deine Gesundheit achten."],
+    ["Bu kelimenin ne anlama geldiğini biliyor musun?","Weißt du, was dieses Wort bedeutet?"],
+    ["Vize başvurusu için randevu aldım.","Ich habe einen Termin für den Visumantrag bekommen."],
+    ["Üniversiteye kaydolmak istiyorum.","Ich möchte mich an der Universität einschreiben."],
+    ["Kirayı her ayın başında ödüyorum.","Ich zahle die Miete am Anfang jedes Monats."],
+    ["Bu belgeyi imzalamanız gerekiyor.","Sie müssen dieses Dokument unterschreiben."],
+    ["Onunla telefonda konuştum.","Ich habe mit ihm telefoniert."],
+    ["Bugün kendimi iyi hissetmiyorum.","Heute fühle ich mich nicht gut."],
+    ["Ders çalışmak için kütüphaneye gidiyorum.","Ich gehe in die Bibliothek, um zu lernen."],
+    ["Üniversiteye başvurmak için hangi belgeler gerekiyor?","Welche Unterlagen braucht man, um sich an der Universität zu bewerben?"],
+    ["Oturum iznimi uzatmam gerekiyor.","Ich muss meine Aufenthaltserlaubnis verlängern."],
+    ["Bloke hesap açtırdıktan sonra vizeye başvurdum.","Nachdem ich ein Sperrkonto eröffnet hatte, habe ich das Visum beantragt."],
+    ["Almanya'ya geldiğimden beri çok şey öğrendim.","Seit ich nach Deutschland gekommen bin, habe ich viel gelernt."],
+    ["Ev bulmak düşündüğümden çok daha zor.","Eine Wohnung zu finden ist viel schwieriger, als ich dachte."],
+    ["Sağlık sigortası yaptırmadan kayıt olamazsın.","Ohne Krankenversicherung kannst du dich nicht einschreiben."],
+    ["Dil kursuna gitmek bana çok yardımcı oldu.","Der Sprachkurs hat mir sehr geholfen."],
+    ["Yarı zamanlı bir iş bulmaya çalışıyorum.","Ich versuche, einen Teilzeitjob zu finden."],
+    ["Sınavdan önce iyi hazırlanmam gerekiyor.","Vor der Prüfung muss ich mich gut vorbereiten."],
+    ["Bu formu doldurup imzalamalısınız.","Sie müssen dieses Formular ausfüllen und unterschreiben."],
+    ["Almanca konuşurken hâlâ hata yapıyorum.","Beim Deutschsprechen mache ich immer noch Fehler."],
+    ["Şehir merkezine taşınmayı düşünüyorum.","Ich überlege, ins Stadtzentrum zu ziehen."],
+    ["Kayıt işlemlerini internetten yapabilirsiniz.","Die Anmeldung können Sie online machen."],
+    ["İş görüşmesine giderken çok heyecanlıydım.","Als ich zum Vorstellungsgespräch ging, war ich sehr aufgeregt."],
+    ["Bu ülkede alışmak zaman aldı.","Es hat Zeit gebraucht, mich in diesem Land einzuleben."],
+    ["Yurtta kalmak daha ucuza geliyor.","Im Wohnheim zu wohnen ist günstiger."],
+    ["Danışmanımla randevu ayarladım.","Ich habe einen Termin mit meinem Berater vereinbart."],
+    ["Notlarım beklediğimden iyi çıktı.","Meine Noten sind besser ausgefallen, als ich erwartet hatte."],
+    ["Ders programını henüz açıklamadılar.","Den Stundenplan haben sie noch nicht veröffentlicht."],
+    ["Kirayı zamanında ödemezsen sorun çıkar.","Wenn du die Miete nicht pünktlich zahlst, gibt es Probleme."],
+    ["Arkadaşlarım bana çok destek oldu.","Meine Freunde haben mich sehr unterstützt."],
+    ["Bu belgeyi tercüme ettirmen lazım.","Du musst dieses Dokument übersetzen lassen."],
+    ["Almanca seviyemi geliştirmek istiyorum.","Ich möchte mein Deutschniveau verbessern."],
+    ["Otobüs kartını her ay yeniliyorum.","Ich verlängere meine Monatskarte jeden Monat."],
+    ["Bu konuda bana bilgi verebilir misiniz?","Können Sie mir dazu Informationen geben?"],
+    ["Staj yapmak zorunlu mu?","Ist ein Praktikum Pflicht?"],
+    ["Ailemle her hafta görüntülü konuşuyorum.","Ich telefoniere jede Woche per Video mit meiner Familie."],
+    ["İlk aylarda çok zorlandım.","In den ersten Monaten hatte ich es sehr schwer."],
+    ["Bu üniversitenin eğitim kalitesi yüksek.","Die Ausbildungsqualität dieser Universität ist hoch."],
+    ["Randevu almak aylar sürebiliyor.","Einen Termin zu bekommen kann Monate dauern."],
+    ["Dün gece geç yattığım için yorgunum.","Ich bin müde, weil ich gestern Nacht spät ins Bett gegangen bin."],
+    ["Sınavı geçersem ailem çok sevinecek.","Wenn ich die Prüfung bestehe, wird sich meine Familie sehr freuen."],
+    ["Onun neden gelmediğini bilmiyorum.","Ich weiß nicht, warum er nicht gekommen ist."],
+    ["Bu şehir düşündüğümden daha büyük.","Diese Stadt ist größer, als ich dachte."],
+    ["Almanca öğrenmek sabır gerektiriyor.","Deutsch zu lernen erfordert Geduld."],
+    ["Tren iptal edildiği için başka bir yol bulmak zorunda kaldım.","Weil der Zug ausgefallen ist, musste ich einen anderen Weg finden."],
+    ["Geçen hafta konuştuğumuz konuyu hatırlıyor musun?","Erinnerst du dich an das Thema, über das wir letzte Woche gesprochen haben?"],
+    ["Bu kitabı okuduktan sonra sana vereceğim.","Nachdem ich dieses Buch gelesen habe, gebe ich es dir."],
+    ["Keşke daha çok zamanım olsaydı.","Ich wünschte, ich hätte mehr Zeit."],
+    ["Yeni bir daire arıyoruz ama fiyatlar çok yüksek.","Wir suchen eine neue Wohnung, aber die Preise sind sehr hoch."],
+    ["Doktor bana daha çok dinlenmemi tavsiye etti.","Der Arzt hat mir empfohlen, mich mehr auszuruhen."],
+    ["Kendi yemeğimi yapmayı burada öğrendim.","Hier habe ich gelernt, selbst zu kochen."],
+    ["Bu işi kabul edip etmeyeceğime karar vermedim.","Ich habe noch nicht entschieden, ob ich diese Stelle annehme."],
+    ["Hava güzel olursa piknik yaparız.","Wenn das Wetter schön ist, machen wir ein Picknick."],
+    ["Onun söyledikleri bana mantıklı gelmedi.","Was er gesagt hat, kam mir nicht logisch vor."],
+    ["Bu problemi çözmek için yardımına ihtiyacım var.","Um dieses Problem zu lösen, brauche ich deine Hilfe."],
+    ["Ne kadar çok pratik yaparsam o kadar iyi oluyorum.","Je mehr ich übe, desto besser werde ich."],
+    ["Toplantı ertelendiği için biraz rahatladım.","Ich war etwas erleichtert, weil die Besprechung verschoben wurde."],
+    ["Her gün en az yarım saat kelime çalışıyorum.","Jeden Tag lerne ich mindestens eine halbe Stunde Vokabeln."],
+    ["Bu kadar erken kalkmaya alışkın değilim.","Ich bin es nicht gewohnt, so früh aufzustehen."],
+    ["Sana katılıyorum ama bir şartla.","Ich stimme dir zu, aber unter einer Bedingung."],
+    ["Yolda hiç trafik yoktu, erken vardık.","Auf der Straße war kein Verkehr, wir sind früh angekommen."],
+    ["Bu haberi ona nasıl söyleyeceğimi bilmiyorum.","Ich weiß nicht, wie ich ihm diese Nachricht sagen soll."],
+    ["Onu ikna etmek kolay olmayacak.","Es wird nicht leicht sein, ihn zu überzeugen."],
+    ["Param yetmediği için o telefonu alamadım.","Ich konnte das Handy nicht kaufen, weil mein Geld nicht gereicht hat."],
+    ["Bence bu fikir gerçekten mantıklı.","Meiner Meinung nach ist diese Idee wirklich sinnvoll."],
+    ["Yeni işe başlamadan önce biraz tatil yapacağım.","Bevor ich die neue Stelle antrete, mache ich etwas Urlaub."],
+    ["Ne yazık ki kutlamaya katılamayacağım.","Leider kann ich nicht an der Feier teilnehmen."],
+    ["Telaffuzum yavaş yavaş düzeliyor.","Meine Aussprache wird langsam besser."],
+    ["Bu kararı vermek benim için zor oldu.","Diese Entscheidung zu treffen, war für mich schwer."],
+    ["Sen gelene kadar burada bekleyeceğim.","Ich warte hier, bis du kommst."],
+    ["Onlar bize hiçbir şey söylemedi.","Sie haben uns nichts gesagt."],
+    ["Bu konuda seninle aynı fikirde değilim.","In diesem Punkt bin ich nicht deiner Meinung."],
+    ["Zamanında gelirsen sana yer ayırırım.","Wenn du pünktlich kommst, halte ich dir einen Platz frei."],
+    ["Sınavdan sonra kendimi çok rahat hissettim.","Nach der Prüfung habe ich mich sehr erleichtert gefühlt."],
+    ["Bu şehirde yaşamak pahalı olsa da güzel.","Obwohl das Leben in dieser Stadt teuer ist, ist es schön."],
+    ["İşten çıktıktan sonra spora gidiyorum.","Nach der Arbeit gehe ich zum Sport."],
+    ["Yarın gelip gelmeyeceğini henüz söylemedi.","Er hat noch nicht gesagt, ob er morgen kommt."],
+    ["Raporu yarına kadar teslim etmem gerekiyor.","Ich muss den Bericht bis morgen abgeben."],
+    ["Almanya'da iş bulmak sandığımdan kolay oldu.","Einen Job in Deutschland zu finden, war leichter als gedacht."],
+    ["Yağmur başlamadan eve varmak istiyorum.","Ich möchte zu Hause sein, bevor der Regen anfängt."],
+    ["Bu konuyu daha sonra konuşsak olur mu?","Können wir über dieses Thema später sprechen?"],
+    ["Bu konuyu yöneticimle konuşmam gerekiyor.","Ich muss dieses Thema mit meinem Vorgesetzten besprechen."],
+    ["Elektrik faturası bu ay çok yüksek geldi.","Die Stromrechnung ist diesen Monat sehr hoch ausgefallen."],
+    ["Bu kursu bitirince bir sertifika alacağım.","Wenn ich diesen Kurs abschließe, bekomme ich ein Zertifikat."],
+    ["Sağlığım için daha az şeker yemeye çalışıyorum.","Für meine Gesundheit versuche ich, weniger Zucker zu essen."],
+    ["Bana kızgın olduğunu hissediyorum.","Ich habe das Gefühl, dass du sauer auf mich bist."],
+    ["Bu işi tek başıma yapamam.","Diese Arbeit kann ich nicht allein machen."],
+    ["Ne kadar sürede hazır olabilirsin?","Wie lange brauchst du, bis du fertig bist?"],
+    ["Almancayı akıcı konuşmak en büyük hedefim.","Fließend Deutsch zu sprechen ist mein größtes Ziel."]
+  ],
+  B2: [
+    ["Bence herkes yabancı bir dil öğrenmeli.","Meiner Meinung nach sollte jeder eine Fremdsprache lernen."],
+    ["Keşke daha erken başlamış olsaydım.","Ich wünschte, ich hätte früher angefangen."],
+    ["Bu karar dikkatlice alınmalı.","Diese Entscheidung sollte sorgfältig getroffen werden."],
+    ["Sorun çözülene kadar burada bekleyeceğiz.","Wir warten hier, bis das Problem gelöst ist."],
+    ["Onun haklı olduğunu kabul etmek zorundayım.","Ich muss zugeben, dass er recht hat."],
+    ["Bu konu hakkında farklı görüşler var.","Zu diesem Thema gibt es unterschiedliche Meinungen."],
+    ["Ne kadar çok çalışırsan o kadar başarılı olursun.","Je mehr du arbeitest, desto erfolgreicher wirst du."],
+    ["Zamanında gelseydin treni kaçırmazdın.","Wenn du pünktlich gekommen wärst, hättest du den Zug nicht verpasst."],
+    ["Bu ürün Almanya'da üretiliyor.","Dieses Produkt wird in Deutschland hergestellt."],
+    ["Ne demek istediğini tam olarak anlamadım.","Ich habe nicht genau verstanden, was er meinte."],
+    ["İklim değişikliği ciddi bir sorundur.","Der Klimawandel ist ein ernstes Problem."],
+    ["Başarılı olmak için sabırlı olmak gerekir.","Um erfolgreich zu sein, muss man geduldig sein."],
+    ["Teklifiniz dikkate alınacaktır.","Ihr Vorschlag wird berücksichtigt."],
+    ["Ona güvenip güvenemeyeceğimi bilmiyorum.","Ich weiß nicht, ob ich ihm vertrauen kann."],
+    ["Sanki hiçbir şey olmamış gibi davrandı.","Er tat so, als ob nichts passiert wäre."],
+    ["Bu deneyim bana çok şey öğretti.","Diese Erfahrung hat mir viel beigebracht."],
+    ["Gelecekte ne olacağını kimse bilemez.","Niemand kann wissen, was in der Zukunft passiert."],
+    ["Onun yerinde olsaydım farklı davranırdım.","An seiner Stelle würde ich anders handeln."],
+    ["Bu hata tekrarlanmamalı.","Dieser Fehler darf nicht wiederholt werden."],
+    ["Ekonomik durum giderek kötüleşiyor.","Die wirtschaftliche Lage verschlechtert sich zunehmend."],
+    ["Söylediklerine katılmakta zorlanıyorum.","Es fällt mir schwer, dem zuzustimmen, was du sagst."],
+    ["Bu fırsatı kaçırmamalısın.","Diese Gelegenheit solltest du dir nicht entgehen lassen."],
+    ["Her ne kadar zor olsa da pes etmeyeceğim.","So schwer es auch ist, ich werde nicht aufgeben."],
+    ["Onun başarısı çok çalışmasının sonucudur.","Sein Erfolg ist das Ergebnis seiner harten Arbeit."],
+    ["Bu duruma bir an önce çözüm bulunmalı.","Für diese Situation muss so schnell wie möglich eine Lösung gefunden werden."],
+    ["Kararımı henüz vermiş değilim.","Ich habe meine Entscheidung noch nicht getroffen."],
+    ["Toplantı ertelendiği için planlarım değişti.","Weil die Besprechung verschoben wurde, haben sich meine Pläne geändert."],
+    ["Bu iddiayı destekleyecek kanıt yok.","Es gibt keine Beweise, die diese Behauptung stützen."],
+    ["Yeni yasalar gelecek ay yürürlüğe girecek.","Die neuen Gesetze treten nächsten Monat in Kraft."],
+    ["Onun ne kadar çalıştığını takdir ediyorum.","Ich schätze es, wie viel er arbeitet."],
+    ["Yurt dışında okumak insanı olgunlaştırıyor.","Im Ausland zu studieren macht einen reifer."],
+    ["Bürokrasi burada oldukça yavaş işliyor.","Die Bürokratie funktioniert hier ziemlich langsam."],
+    ["Diplomanın denkliği için başvuru yaptım.","Ich habe die Anerkennung meines Abschlusses beantragt."],
+    ["Kültürel farklılıklara alışmak zaman alır.","Sich an kulturelle Unterschiede zu gewöhnen, braucht Zeit."],
+    ["Bu karar geleceğimi doğrudan etkileyecek.","Diese Entscheidung wird meine Zukunft direkt beeinflussen."],
+    ["Dil bilmeden iş bulmak neredeyse imkânsız.","Ohne Sprachkenntnisse einen Job zu finden ist fast unmöglich."],
+    ["Konut krizi öğrencileri ciddi şekilde etkiliyor.","Die Wohnungskrise betrifft die Studierenden erheblich."],
+    ["Başvurumun reddedilmesi beni çok üzdü.","Dass meine Bewerbung abgelehnt wurde, hat mich sehr traurig gemacht."],
+    ["Zamanı iyi yönetmeyi öğrenmek zorundaydım.","Ich musste lernen, meine Zeit gut zu verwalten."],
+    ["Bu programın kontenjanı oldukça sınırlı.","Die Plätze in diesem Programm sind ziemlich begrenzt."],
+    ["Uyum süreci herkes için farklı işliyor.","Der Anpassungsprozess verläuft bei jedem anders."],
+    ["Maddi olarak kendi ayaklarımın üzerinde duruyorum.","Finanziell stehe ich auf eigenen Beinen."],
+    ["Bu deneyim bana sorumluluk almayı öğretti.","Diese Erfahrung hat mich gelehrt, Verantwortung zu übernehmen."],
+    ["Yabancı olmak bazen dezavantaj yaratıyor.","Ausländer zu sein bringt manchmal Nachteile mit sich."],
+    ["Eğitim sistemi Türkiye'dekinden oldukça farklı.","Das Bildungssystem unterscheidet sich deutlich von dem in der Türkei."],
+    ["Bu fırsatı değerlendirmemek büyük hata olurdu.","Diese Gelegenheit nicht zu nutzen, wäre ein großer Fehler."],
+    ["Uzmanlar bu konuda hemfikir değil.","Die Experten sind sich in dieser Frage nicht einig."],
+    ["Başvuru sürecinin ne kadar süreceği belirsiz.","Es ist unklar, wie lange der Bewerbungsprozess dauern wird."],
+    ["Kendi kararlarımın sorumluluğunu alıyorum.","Ich übernehme die Verantwortung für meine eigenen Entscheidungen."],
+    ["Bu şartlarda çalışmak oldukça yıpratıcı.","Unter diesen Bedingungen zu arbeiten ist ziemlich zermürbend."],
+    ["Hayallerimin peşinden gitmekten pişman değilim.","Ich bereue es nicht, meinen Träumen gefolgt zu sein."],
+    ["Dil engeli iletişimi zorlaştırıyor.","Die Sprachbarriere erschwert die Kommunikation."],
+    ["Bu sektörde rekabet son derece yoğun.","In dieser Branche ist die Konkurrenz äußerst stark."],
+    ["Aldığım eğitimin karşılığını fazlasıyla aldım.","Die Ausbildung, die ich bekommen habe, hat sich mehr als gelohnt."],
+    ["Planladığım gibi gitmese de vazgeçmedim.","Auch wenn es nicht wie geplant lief, habe ich nicht aufgegeben."],
+    ["Bu yasa değişikliği öğrencileri yakından ilgilendiriyor.","Diese Gesetzesänderung betrifft die Studierenden unmittelbar."],
+    ["Yeterli bilgiye sahip olmadan karar vermemeliyiz.","Wir sollten nicht entscheiden, ohne genügend Informationen zu haben."],
+    ["Uzun vadede bu yatırım kendini amorti edecek.","Auf lange Sicht wird sich diese Investition amortisieren."],
+    ["İnsanların önyargıları hâlâ devam ediyor.","Die Vorurteile der Menschen bestehen immer noch."],
+    ["Bu tecrübeyi hiçbir şeye değişmem.","Diese Erfahrung würde ich gegen nichts eintauschen."],
+    ["Zamanında haber verilseydi, sorunu önleyebilirdik.","Wenn wir rechtzeitig informiert worden wären, hätten wir das Problem verhindern können."],
+    ["Bu tür kararlar aceleye getirilmemeli.","Solche Entscheidungen sollten nicht überstürzt werden."],
+    ["Çok çalışmasına rağmen sınavı geçemedi.","Obwohl er viel gelernt hat, hat er die Prüfung nicht bestanden."],
+    ["Proje zamanında bitirilmezse cezayı ödemek zorunda kalırız.","Falls das Projekt nicht rechtzeitig fertiggestellt wird, müssen wir die Strafe zahlen."],
+    ["Böyle bir teklif karşısında herkes tereddüt ederdi.","Angesichts eines solchen Angebots würde jeder zögern."],
+    ["Fiyatların artması tüketicileri olumsuz etkiledi.","Der Anstieg der Preise hat die Verbraucher negativ beeinflusst."],
+    ["Bu konu uzmanlar tarafından uzun süre tartışıldı.","Dieses Thema wurde von Experten lange diskutiert."],
+    ["Ne kadar dikkatli olursan ol, hatalar kaçınılmazdır.","Egal, wie vorsichtig man ist, Fehler sind unvermeidlich."],
+    ["Toplantı, herkesin katılabilmesi için ertelendi.","Die Besprechung wurde verschoben, damit alle teilnehmen können."],
+    ["Bu sorunun çözülmesi biraz zaman alacak.","Die Lösung dieses Problems wird etwas Zeit in Anspruch nehmen."],
+    ["Keşke ona gerçeği söyleseydim.","Ich wünschte, ich hätte ihm die Wahrheit gesagt."],
+    ["Sonuçlar açıklanır açıklanmaz seni ararım.","Sobald die Ergebnisse bekannt gegeben werden, rufe ich dich an."],
+    ["Ekonomik durum düzelmediği sürece işsizlik artacak.","Solange sich die wirtschaftliche Lage nicht verbessert, wird die Arbeitslosigkeit steigen."],
+    ["Onun bu kadar çabuk vazgeçmesine şaşırdım.","Ich war überrascht, dass er so schnell aufgegeben hat."],
+    ["Bu kurallara uyulması herkes için zorunludur.","Die Einhaltung dieser Regeln ist für alle verpflichtend."],
+    ["Yeterince bilgi verilseydi, farklı karar verirdim.","Wenn mir genügend Informationen gegeben worden wären, hätte ich anders entschieden."],
+    ["Trafik gittikçe artıyor, bu yüzden erken çıkmalıyız.","Der Verkehr nimmt immer mehr zu, deshalb sollten wir früher losfahren."],
+    ["Dili öğrenmek, kültürü anlamanın anahtarıdır.","Die Sprache zu lernen ist der Schlüssel zum Verständnis der Kultur."],
+    ["Bu davranışı kabul edilebilir görmüyorum.","Ich halte dieses Verhalten nicht für akzeptabel."],
+    ["Hava koşulları uygun olsaydı, uçuş iptal edilmezdi.","Wenn die Wetterbedingungen günstig gewesen wären, wäre der Flug nicht gestrichen worden."],
+    ["Onun endişelenmesine gerek yoktu.","Er hätte sich keine Sorgen machen müssen."],
+    ["Malzemeler büyük bir özenle seçiliyor.","Die Materialien werden mit großer Sorgfalt ausgewählt."],
+    ["Sorunun kaynağı henüz tespit edilmedi.","Die Ursache des Problems wurde noch nicht festgestellt."],
+    ["İşi bırakması, ailesini derinden etkiledi.","Dass er seinen Job aufgegeben hat, hat seine Familie tief getroffen."],
+    ["Bu teklif reddedilirse başka seçeneğimiz kalmaz.","Falls dieses Angebot abgelehnt wird, bleibt uns keine andere Wahl."],
+    ["Ne söylersem söyleyeyim beni dinlemiyor.","Egal, was ich sage, er hört mir nicht zu."],
+    ["Bu bilgiler gizli tutulmalıdır.","Diese Informationen müssen vertraulich behandelt werden."],
+    ["Yorgun olmama rağmen çalışmaya devam ettim.","Obwohl ich müde war, habe ich weitergearbeitet."],
+    ["Onun kararlılığı ekibe örnek oldu.","Seine Entschlossenheit war für das Team ein Vorbild."],
+    ["Başvuru süresi geçtiği için değerlendirmeye alınmadı.","Weil die Bewerbungsfrist abgelaufen war, wurde sie nicht berücksichtigt."],
+    ["Bu konuda daha fazla araştırma yapılması gerekiyor.","Zu diesem Thema müssen weitere Untersuchungen durchgeführt werden."],
+    ["Sonuçtan memnun olduğunu söyledi.","Er sagte, dass er mit dem Ergebnis zufrieden sei."],
+    ["Ne yazık ki durum düşündüğümüzden daha ciddi.","Leider ist die Lage ernster, als wir dachten."],
+    ["Bu hata zamanında fark edilseydi, önlenebilirdi.","Wäre dieser Fehler rechtzeitig bemerkt worden, hätte er verhindert werden können."],
+    ["Herkesin fikri saygıyla karşılanmalı.","Die Meinung jedes Einzelnen sollte mit Respekt behandelt werden."],
+    ["Ekonomik büyümeye rağmen fakirlik azalmadı.","Trotz des Wirtschaftswachstums ist die Armut nicht zurückgegangen."],
+    ["Onunla konuştuktan sonra fikrim değişti.","Nachdem ich mit ihm gesprochen hatte, änderte sich meine Meinung."],
+    ["Bu sözleşme imzalanmadan yürürlüğe girmez.","Dieser Vertrag tritt nicht in Kraft, bevor er unterschrieben ist."],
+    ["Ne kadar erken başlarsak, o kadar erken bitiririz.","Je früher wir anfangen, desto früher sind wir fertig."],
+    ["Onun bu işi başaracağından eminim.","Ich bin sicher, dass er diese Aufgabe schaffen wird."],
+    ["Sağlıklı beslenme, uzun bir yaşamın temelidir.","Eine gesunde Ernährung ist die Grundlage für ein langes Leben."],
+    ["Bu durum ciddiye alınmadığı için kötüleşti.","Weil die Situation nicht ernst genommen wurde, hat sie sich verschlechtert."],
+    ["Karar verilmeden önce tüm seçenekler değerlendirildi.","Bevor die Entscheidung getroffen wurde, wurden alle Optionen abgewogen."],
+    ["Bunu bilseydim asla kabul etmezdim.","Hätte ich das gewusst, hätte ich niemals zugestimmt."],
+    ["Toplumun desteği olmadan bu proje başarılamaz.","Ohne die Unterstützung der Gesellschaft kann dieses Projekt nicht gelingen."],
+    ["Görüşlerinizi paylaştığınız için teşekkür ederiz.","Wir danken Ihnen, dass Sie Ihre Ansichten mit uns geteilt haben."],
+    ["Bu kadar çok seçeneğin olması kararı zorlaştırıyor.","Dass es so viele Optionen gibt, erschwert die Entscheidung."],
+    ["Yasa değiştirilene kadar eski kurallar geçerli.","Bis das Gesetz geändert wird, gelten die alten Regeln."],
+    ["Yeni kurallar herkese e-posta ile duyuruldu.","Die neuen Regeln wurden allen per E-Mail mitgeteilt."],
+    ["Ne olursa olsun sözümü tutacağım.","Was auch immer passiert, ich werde mein Wort halten."]
+  ],
+  C1: [
+    ["İşler yolunda gitmezse bir B planımız olmalı.","Falls die Dinge nicht wie geplant laufen, sollten wir einen Plan B haben."],
+    ["Bu mesele göründüğünden çok daha karmaşık.","Diese Angelegenheit ist weitaus komplexer, als sie scheint."],
+    ["Uzun süredir ertelediğim işi sonunda hallettim.","Endlich habe ich die Aufgabe erledigt, die ich lange aufgeschoben hatte."],
+    ["Onun tavrı beni hayal kırıklığına uğrattı.","Sein Verhalten hat mich enttäuscht."],
+    ["Bu duruma çözüm bulmak kaçınılmaz hale geldi.","Es ist unumgänglich geworden, eine Lösung für diese Situation zu finden."],
+    ["Eleştirilere açık olmak gelişmenin anahtarıdır.","Offen für Kritik zu sein, ist der Schlüssel zur Weiterentwicklung."],
+    ["Söz konusu para olunca herkes dikkatli davranır.","Wenn es ums Geld geht, wird jeder vorsichtig."],
+    ["Bu proje beklenenden çok daha fazla emek gerektirdi.","Dieses Projekt hat weitaus mehr Aufwand erfordert als erwartet."],
+    ["Gerçek er ya da geç ortaya çıkacaktır.","Die Wahrheit wird früher oder später ans Licht kommen."],
+    ["Onun sözlerini ciddiye almakta tereddüt ettim.","Ich habe gezögert, seine Worte ernst zu nehmen."],
+    ["Bu başarı bir gecede elde edilmedi.","Dieser Erfolg wurde nicht über Nacht erreicht."],
+    ["Kararını verirken tüm olasılıkları göz önünde bulundur.","Berücksichtige alle Möglichkeiten, wenn du deine Entscheidung triffst."],
+    ["Onun yaklaşımı meslektaşları arasında tartışma yarattı.","Sein Ansatz hat unter den Kollegen für Diskussionen gesorgt."],
+    ["Ne yazık ki bu konuda elimizden bir şey gelmiyor.","Leider können wir in dieser Sache nichts tun."],
+    ["Bu deneyim hayata bakış açımı tamamen değiştirdi.","Diese Erfahrung hat meine Sicht auf das Leben völlig verändert."],
+    ["Uzun vadeli düşünmek kısa vadeli kazançlardan önemlidir.","Langfristig zu denken ist wichtiger als kurzfristige Gewinne."],
+    ["Sözünü tutmaması güvenimi sarstı.","Dass er sein Wort nicht gehalten hat, hat mein Vertrauen erschüttert."],
+    ["Bu karar şirketin geleceğini belirleyecek.","Diese Entscheidung wird die Zukunft des Unternehmens bestimmen."],
+    ["Beklentileri karşılamak giderek zorlaşıyor.","Den Erwartungen gerecht zu werden, wird immer schwieriger."],
+    ["Onun sabrı sonunda meyvesini verdi.","Seine Geduld hat sich schließlich ausgezahlt."],
+    ["Bu tür sorunların üstesinden birlikte gelebiliriz.","Solche Probleme können wir gemeinsam bewältigen."],
+    ["Konuya farklı bir açıdan bakmakta fayda var.","Es lohnt sich, das Thema aus einer anderen Perspektive zu betrachten."],
+    ["Deneyimi bu alanda ona büyük avantaj sağlıyor.","Seine Erfahrung verschafft ihm in diesem Bereich einen großen Vorteil."],
+    ["Aceleyle verilen kararlar çoğu zaman pişmanlık getirir.","Übereilt getroffene Entscheidungen führen oft zu Reue."],
+    ["Bu başarının arkasında yılların emeği var.","Hinter diesem Erfolg stecken Jahre harter Arbeit."],
+    ["Meselenin özüne inmemiz gerekiyor.","Wir müssen dem Kern der Sache auf den Grund gehen."],
+    ["Bu koşullar altında ilerlemek mümkün değil.","Unter diesen Umständen ist ein Fortschritt nicht möglich."],
+    ["Onun katkısı olmasaydı bunu başaramazdık.","Ohne seinen Beitrag hätten wir das nicht geschafft."],
+    ["Bu yaklaşım uzun vadede sürdürülebilir değil.","Dieser Ansatz ist auf lange Sicht nicht nachhaltig."],
+    ["Söylediklerimin yanlış anlaşılmasını istemem.","Ich möchte nicht, dass meine Worte missverstanden werden."],
+    ["Göç politikaları son yıllarda ciddi biçimde sıkılaştırıldı.","Die Migrationspolitik wurde in den letzten Jahren erheblich verschärft."],
+    ["Nitelikli iş gücü açığı giderek büyüyor.","Der Mangel an Fachkräften wird zunehmend größer."],
+    ["Bu konuda kesin bir yargıya varmak için erken.","Es ist zu früh, um darüber ein endgültiges Urteil zu fällen."],
+    ["Meselenin ekonomik boyutu göz ardı ediliyor.","Die wirtschaftliche Dimension des Problems wird außer Acht gelassen."],
+    ["Söz konusu düzenleme birçok tartışmayı beraberinde getirdi.","Die betreffende Regelung hat zahlreiche Diskussionen nach sich gezogen."],
+    ["Bu yaklaşımın hem avantajları hem de riskleri var.","Dieser Ansatz hat sowohl Vorteile als auch Risiken."],
+    ["Uzun süredir üzerinde çalıştığım tez nihayet tamamlandı.","Die Doktorarbeit, an der ich lange gearbeitet habe, ist endlich fertig."],
+    ["Verilerin güvenilirliği ciddi biçimde sorgulanıyor.","Die Zuverlässigkeit der Daten wird ernsthaft infrage gestellt."],
+    ["Bu gelişme sektörde köklü değişimlere yol açabilir.","Diese Entwicklung könnte zu grundlegenden Veränderungen in der Branche führen."],
+    ["Konuya ilişkin görüşünü açıkça dile getirmekten çekinmedi.","Er hat sich nicht gescheut, seine Meinung dazu offen zu äußern."],
+    ["Bu iddianın hiçbir bilimsel dayanağı yok.","Diese Behauptung hat keinerlei wissenschaftliche Grundlage."],
+    ["Toplumsal uyum karşılıklı çaba gerektirir.","Gesellschaftliche Integration erfordert beiderseitige Anstrengung."],
+    ["Kararın gerekçesi kamuoyuyla paylaşılmadı.","Die Begründung der Entscheidung wurde nicht öffentlich gemacht."],
+    ["Bu alanda köklü bir reforma ihtiyaç duyuluyor.","In diesem Bereich ist eine grundlegende Reform erforderlich."],
+    ["Beklentilerin gerçekçi olması büyük önem taşıyor.","Es ist von großer Bedeutung, dass die Erwartungen realistisch sind."],
+    ["Söylediklerini bağlamından kopararak yorumladılar.","Sie haben seine Aussagen aus dem Zusammenhang gerissen interpretiert."],
+    ["Bu durumun sorumluluğunu kimse üstlenmek istemiyor.","Niemand will die Verantwortung für diese Situation übernehmen."],
+    ["Araştırma sonuçları önceki varsayımları çürüttü.","Die Forschungsergebnisse haben die früheren Annahmen widerlegt."],
+    ["Sürecin şeffaf yürütülmesi güven açısından kritik.","Eine transparente Durchführung des Prozesses ist für das Vertrauen entscheidend."],
+    ["Bu ayrıcalık yalnızca belirli koşullarda tanınıyor.","Dieses Privileg wird nur unter bestimmten Bedingungen gewährt."],
+    ["Eleştirilerin bir kısmı haklı, bir kısmı ise abartılı.","Ein Teil der Kritik ist berechtigt, ein anderer übertrieben."],
+    ["Zaman baskısı altında sağlıklı karar vermek güçtür.","Unter Zeitdruck ist es schwierig, vernünftige Entscheidungen zu treffen."],
+    ["Bu konudaki mevzuat oldukça karmaşık.","Die Gesetzgebung zu diesem Thema ist ziemlich kompliziert."],
+    ["Tarafların uzlaşmaya varması uzun sürdü.","Es hat lange gedauert, bis die Parteien eine Einigung erzielt haben."],
+    ["Bu tür genellemelerden kaçınmakta fayda var.","Es ist ratsam, solche Verallgemeinerungen zu vermeiden."],
+    ["Ekonomik belirsizlik yatırımcıları tedirgin ediyor.","Die wirtschaftliche Unsicherheit beunruhigt die Investoren."],
+    ["Söz verilen desteğin büyük kısmı hayata geçirilmedi.","Ein Großteil der zugesagten Unterstützung wurde nicht umgesetzt."],
+    ["Bu başarı kolektif bir çabanın ürünüdür.","Dieser Erfolg ist das Produkt einer gemeinsamen Anstrengung."],
+    ["Meselenin özünü kavramadan çözüm üretilemez.","Ohne den Kern der Sache zu erfassen, kann keine Lösung gefunden werden."],
+    ["Geriye dönüp baktığımda doğru karar verdiğimi görüyorum.","Wenn ich zurückblicke, sehe ich, dass ich die richtige Entscheidung getroffen habe."],
+    ["Bu konuda son sözü söylemek bana düşmez.","Es steht mir nicht zu, in dieser Angelegenheit das letzte Wort zu haben."],
+    ["Söylediklerine rağmen içten içe pişman olduğu belliydi.","Trotz seiner Worte war offensichtlich, dass er insgeheim bereute."],
+    ["Sözcü, kararın oy birliğiyle alındığını belirtti.","Der Sprecher erklärte, die Entscheidung sei einstimmig getroffen worden."],
+    ["Bu mesele halının altına süpürülemeyecek kadar önemli.","Diese Angelegenheit ist zu wichtig, um unter den Teppich gekehrt zu werden."],
+    ["İşler yolunda gitmese de umudunu asla kaybetmedi.","Auch wenn die Dinge nicht rundliefen, verlor er nie die Hoffnung."],
+    ["Bu girişim başlangıçta pek ciddiye alınmamıştı.","Dieses Vorhaben wurde anfangs kaum ernst genommen."],
+    ["Yetkililer, durumun kontrol altında olduğunu açıkladı.","Die Behörden teilten mit, die Lage sei unter Kontrolle."],
+    ["Bu bakış açısı meseleyi fazlasıyla basitleştiriyor.","Diese Sichtweise vereinfacht die Sache erheblich."],
+    ["Onun başarısı, azmin ne kadar önemli olduğunu gösteriyor.","Sein Erfolg zeigt, wie wichtig Beharrlichkeit ist."],
+    ["Eleştirilere kulak asmadan yoluna devam etti.","Ohne auf die Kritik zu achten, ging er seinen Weg weiter."],
+    ["Tartışma zamanla asıl konudan uzaklaştı.","Die Diskussion entfernte sich mit der Zeit vom eigentlichen Thema."],
+    ["Bu iddianın somut kanıtlarla desteklenmesi şart.","Diese Behauptung muss mit konkreten Beweisen untermauert werden."],
+    ["Ne yazık ki bu fırsat bir daha eline geçmeyebilir.","Leider könnte sich diese Gelegenheit nie wieder bieten."],
+    ["Uzmanlar, önlem alınmazsa sonuçların ağır olacağı konusunda uyardı.","Experten warnten, dass die Folgen schwerwiegend sein würden, falls keine Maßnahmen ergriffen würden."],
+    ["Onun tavrı bardağı taşıran son damla oldu.","Sein Verhalten war der Tropfen, der das Fass zum Überlaufen brachte."],
+    ["Kamuoyu baskısı süreci hızlandırdı.","Der öffentliche Druck hat den Prozess beschleunigt."],
+    ["Bu değişikliğin uzun vadede fayda sağlayacağına inanılıyor.","Man glaubt, dass diese Änderung langfristig von Vorteil sein wird."],
+    ["Onun ifadesi olayların seyrini tamamen değiştirdi.","Seine Aussage veränderte den Verlauf der Ereignisse völlig."],
+    ["Bürokratik engeller sürecin uzamasına yol açtı.","Bürokratische Hürden führten dazu, dass sich der Prozess in die Länge zog."],
+    ["Bakan, reformların kademeli olarak uygulanacağını duyurdu.","Der Minister kündigte an, die Reformen würden schrittweise umgesetzt."],
+    ["Bu konuda tarafsız kalmak neredeyse imkansız.","In dieser Frage neutral zu bleiben, ist nahezu unmöglich."],
+    ["Onun kararlılığı çevresindekileri de etkiledi.","Seine Entschlossenheit steckte auch sein Umfeld an."],
+    ["Yıllardır göz ardı edilen bu sorun nihayet gündeme geldi.","Dieses jahrelang übersehene Problem ist endlich zur Sprache gekommen."],
+    ["Böyle bir riski göze almak akıllıca olmaz.","Ein solches Risiko einzugehen, wäre nicht klug."],
+    ["Yapılan hataların telafi edilmesi kolay olmayacak.","Die begangenen Fehler wiedergutzumachen, wird nicht einfach sein."],
+    ["Görünüşe göre sorunun kökten çözülmesi gerekiyor.","Anscheinend muss das Problem von Grund auf gelöst werden."],
+    ["Sürecin işleyişine dair ciddi eleştiriler yöneltildi.","Am Ablauf des Verfahrens wurde scharfe Kritik geübt."],
+    ["İlk bakışta basit görünse de aslında hiç öyle değil.","Auf den ersten Blick wirkt es einfach, doch in Wahrheit ist es das keineswegs."],
+    ["Tartışma giderek kişisel bir boyut kazanmaya başladı.","Die Diskussion nahm zunehmend eine persönliche Ebene an."],
+    ["Verilen sözlerin tutulması güveni pekiştirir.","Das Einhalten von Versprechen stärkt das Vertrauen."],
+    ["Onun bu kadar soğukkanlı kalması herkesi hayrete düşürdü.","Dass er so gelassen blieb, versetzte alle in Erstaunen."],
+    ["Sorun görmezden gelindikçe daha da büyüdü.","Je mehr das Problem ignoriert wurde, desto größer wurde es."],
+    ["Bu kararın arkasında yatan gerçek nedenler henüz bilinmiyor.","Die wahren Gründe hinter dieser Entscheidung sind noch nicht bekannt."],
+    ["Yıllar geçse de o anıyı bir türlü unutamadım.","Auch wenn Jahre vergangen sind, konnte ich diese Erinnerung einfach nicht vergessen."],
+    ["Toplantıda alınan kararlar tutanağa geçirildi.","Die in der Sitzung gefassten Beschlüsse wurden protokolliert."],
+    ["Bu alanda uzmanlaşmak yıllar alıyor.","Sich auf diesem Gebiet zu spezialisieren, dauert Jahre."],
+    ["Sonuçlar beklentileri fazlasıyla aştı.","Die Ergebnisse übertrafen die Erwartungen bei Weitem."],
+    ["Böylesine hassas bir konu büyük bir incelikle ele alınmalı.","Ein derart heikles Thema muss mit großem Feingefühl behandelt werden."],
+    ["Bu suskunluğun ardında başka nedenler olabilir.","Hinter diesem Schweigen könnten andere Gründe stecken."],
+    ["Onun fikri, tartışmaya tamamen yeni bir yön verdi.","Seine Idee gab der Diskussion eine völlig neue Richtung."],
+    ["Bu koşullar altında geri adım atmak söz konusu bile olamaz.","Unter diesen Umständen kommt ein Rückzug überhaupt nicht in Frage."],
+    ["Ekip içindeki iletişim eksikliği süreci aksattı.","Der Mangel an Kommunikation im Team hat den Prozess beeinträchtigt."],
+    ["Ne kadar uğraşırsak uğraşalım, herkesi memnun etmek mümkün değil.","Wie sehr wir uns auch bemühen, es ist unmöglich, es allen recht zu machen."],
+    ["Onun sessizliği aslında her şeyi anlatıyordu.","Sein Schweigen sagte eigentlich alles."],
+    ["Bu noktaya gelmek sanılandan çok daha uzun sürdü.","Bis zu diesem Punkt zu gelangen, hat weitaus länger gedauert als angenommen."],
+    ["Söylenenlerin çoğu abartıdan ibaretti.","Das meiste von dem, was gesagt wurde, war reine Übertreibung."],
+    ["Bu görev ona ağır bir sorumluluk yüklüyor.","Diese Aufgabe legt ihm eine schwere Verantwortung auf."],
+    ["Kararın gerekçeleri hâlâ merak konusu.","Die Gründe für die Entscheidung geben weiterhin Rätsel auf."],
+    ["Her iki taraf da tavizde bulunmak zorunda kaldı.","Beide Seiten mussten Zugeständnisse machen."],
+    ["Gerçek niyetini gizlemekte oldukça başarılıydı.","Er war ziemlich geschickt darin, seine wahren Absichten zu verbergen."]
+  ]
+};
+
+/* ================================================================
+   ÇEVİRİ OYUNU
+   Akış: slot döner → türkçe cümle → kullanıcı almancasını yazar →
+   kelime kelime karşılaştırma → doğru cevap → seri/puan → paylaşım.
+   Günde 5 ücretsiz hak; premium/pro sınırsız.
+   ================================================================ */
+
+const FREE_LIMIT = 5;
+let level = 'A2';
+let isPremium = false;
+let current = null;          // {tr, de}
+let state = 'idle';          // idle | prompt | result
+let score = 0, streak = 0, best = 0, rounds = 0, totalPct = 0;
+
+/* ── Günlük hak (localStorage, tarihe bağlı) ── */
+function todayKey() {
+  const d = new Date();
+  return 'cyw_game_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function playsUsed() { const n = parseInt(localStorage.getItem(todayKey()), 10); return isNaN(n) ? 0 : n; }
+function addPlay() { localStorage.setItem(todayKey(), String(playsUsed() + 1)); }
+
+/* ── Rekor ── */
+function loadBest() { const n = parseInt(localStorage.getItem('cyw_game_best'), 10); best = isNaN(n) ? 0 : n; }
+function saveBest() { localStorage.setItem('cyw_game_best', String(best)); }
+
+/* ── Plan kontrolü ── */
+async function checkPlan() {
+  const token = localStorage.getItem('checkyourwrite_jwt_token');
+  if (!token) { updatePlays(); return; }
+  try {
+    const r = await fetch('/api/user/profile', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (r.ok) {
+      const d = await r.json();
+      const plan = d.user && d.user.subscription_plan;
+      isPremium = (plan === 'premium' || plan === 'pro');
+      if (isPremium) document.getElementById('planBadge').innerHTML = '<span class="plan-badge-header">' + plan.toUpperCase() + '</span>';
+    }
+  } catch (e) {}
+  updatePlays();
+}
+
+/* ── Seviye ── */
+function setLevel(btn, l) {
+  if (state === 'prompt') return; // ortada soru varken değiştirme
+  level = l;
+  document.querySelectorAll('.lvl').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+/* ── Hak barı ── */
+function updatePlays() {
+  const dots = document.getElementById('playsDots');
+  const n = document.getElementById('playsN');
+  const lbl = document.getElementById('playsLbl');
+  if (isPremium) {
+    dots.innerHTML = ''; n.textContent = '∞'; n.className = 'plays-n ok'; lbl.textContent = 'Premium · sınırsız';
+    return;
+  }
+  const used = playsUsed(), left = Math.max(0, FREE_LIMIT - used);
+  lbl.textContent = 'Bugünkü ücretsiz hakkın';
+  n.textContent = left + '/' + FREE_LIMIT;
+  n.className = 'plays-n ' + (left === 0 ? 'out' : left <= 2 ? 'warn' : 'ok');
+  let h = '';
+  for (let i = 0; i < FREE_LIMIT; i++) h += '<span class="pdot' + (i < used ? ' used' : '') + '"></span>';
+  dots.innerHTML = h;
+}
+
+/* ── Deste (shuffle bag) mantığı ──
+   Rastgele seçim yerine karıştırılmış deste kullanıyoruz: bir seviyedeki tüm
+   cümleler bitmeden hiçbiri tekrar etmez. Deste bitince yeniden karıştırılır
+   (ve yeni destenin ilk cümlesi, eski destenin son cümlesiyle aynı olmaz). */
+const decks = {};
+let lastShown = {};
+
+function drawSentence(lvl) {
+  const pool = SENTENCES[lvl];
+  if (!decks[lvl] || decks[lvl].length === 0) {
+    // Yeni deste: karıştır
+    decks[lvl] = pool.slice().sort(() => Math.random() - 0.5);
+    // pop() sondan çektiği için, destenin SON elemanı bir öncekiyle aynıysa
+    // (yani aynı cümle üst üste gelecekse) sondaki ikisinin yerini değiştir.
+    const n = decks[lvl].length;
+    if (lastShown[lvl] && n > 1 && decks[lvl][n - 1][0] === lastShown[lvl]) {
+      const t = decks[lvl][n - 1]; decks[lvl][n - 1] = decks[lvl][n - 2]; decks[lvl][n - 2] = t;
+    }
+  }
+  const picked = decks[lvl].pop();
+  lastShown[lvl] = picked[0];
+  return picked;
+}
+
+// Destede kaç cümle kaldığını göstermek için
+function deckLeft(lvl) {
+  const total = SENTENCES[lvl].length;
+  const left = decks[lvl] ? decks[lvl].length : total;
+  return { left: left, total: total };
+}
+/* ── Makine ışıkları ── */
+function lights(on) {
+  document.querySelectorAll('.mlight').forEach((l, i) => {
+    if (on) setTimeout(() => l.classList.add('on'), i * 90);
+    else l.classList.remove('on');
+  });
+}
+
+/* ================================================================
+   SLOT ÇEVİRME
+   ================================================================ */
+function spin() {
+  if (state === 'prompt') return;
+
+  if (!isPremium && playsUsed() >= FREE_LIMIT) { openModal('paywall'); return; }
+
+  const pool = SENTENCES[level];
+  const target = drawSentence(level);
+
+  // UI sıfırla
+  state = 'spinning';
+  document.getElementById('spinBtn').classList.add('hidden');
+  document.getElementById('nextBtn').classList.add('hidden');
+  document.getElementById('shareBtn').classList.add('hidden');
+  document.getElementById('checkBtn').classList.add('hidden');
+  document.getElementById('skipBtn').classList.add('hidden');
+  document.getElementById('answerZone').classList.add('hidden');
+  document.getElementById('verdictZone').classList.add('hidden');
+  document.getElementById('mTag').textContent = '🎰 dönüyor…';
+  lights(false);
+
+  // Reel şeridi: rastgele cümleler + en sonda hedef
+  const strip = document.getElementById('reelStrip');
+  const items = [];
+  const spinCount = 14;
+  for (let i = 0; i < spinCount; i++) {
+    items.push(pool[Math.floor(Math.random() * pool.length)][0]);
+  }
+  items.push(target[0]);
+
+  strip.style.transition = 'none';
+  strip.style.transform = 'translateY(0)';
+  strip.innerHTML = items.map(t => '<div class="reel-item"><span class="reel-text">' + esc(t) + '</span></div>').join('');
+
+  // Satır yüksekliğini sabit sayı yerine DOM'dan ölç — mobil/masaüstü farkında şaşmasın.
+  const firstItem = strip.querySelector('.reel-item');
+  const itemH = firstItem ? firstItem.offsetHeight : 132;
+  const finalY = -(items.length - 1) * itemH;
+
+  // Animasyonu tetikle
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      strip.style.transition = 'transform 2.15s cubic-bezier(.13,.72,.15,1)';
+      strip.style.transform = 'translateY(' + finalY + 'px)';
+    });
+  });
+
+  setTimeout(() => {
+    current = { tr: target[0], de: target[1] };
+    state = 'prompt';
+    lights(true);
+    document.getElementById('mTag').textContent = '🇹🇷 bunu almancaya çevir';
+    document.getElementById('answerZone').classList.remove('hidden');
+    document.getElementById('modeToggle').classList.remove('hidden');
+    document.getElementById('checkBtn').classList.remove('hidden');
+    document.getElementById('skipBtn').classList.remove('hidden');
+    const inp = document.getElementById('answerInput');
+    inp.value = ''; inp.disabled = false;
+    document.getElementById('charCount').textContent = '0 karakter';
+    // Konuşma modu arayüzünü sıfırla
+    resetMicUI();
+    // Aktif moda göre doğru alanı göster + odakla
+    applyMode();
+    if (mode === 'write' && window.innerWidth > 640) inp.focus();
+    document.getElementById('tipLine').textContent = mode === 'speak'
+      ? 'Mikrofona bas ve Almancasını yüksek sesle söyle 🎤'
+      : 'Emin değilsen tahmin et — yanlış cevap da öğretir 💪';
+
+    if (!isPremium) { addPlay(); updatePlays(); }
+  }, 2200);
+}
+
+/* ================================================================
+   CEVAP KARŞILAŞTIRMA
+   ================================================================ */
+// Karşılaştırma için normalleştirme.
+// Umlaut'u ae/oe/ue'ye çeviriyoruz (tersi değil): böylece klavyesinde umlaut
+// olmayıp "faehrt" yazan kullanıcı ile "fährt" yazan aynı sonucu alır.
+function norm(s) {
+  return (s || '').toLowerCase()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+    .replace(/[.,;:!?"'()\-–—]/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function words(s) { return norm(s).split(' ').filter(Boolean); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ================================================================
+   SESLİ MOD — mikrofon (ses tanıma) + telaffuz (metin okuma)
+   ================================================================ */
+let mode = 'write';               // 'write' | 'speak'
+let recognition = null;
+let recognizing = false;
+let micSupported = null;          // null = henüz test edilmedi
+
+// Tarayıcı ses tanımayı destekliyor mu?
+function checkMicSupport() {
+  if (micSupported !== null) return micSupported;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  micSupported = !!SR;
+  return micSupported;
+}
+
+// Mod değiştir (Yazarak / Konuşarak)
+function setMode(m) {
+  if (state === 'result') return; // sonuç ekranındayken değiştirme
+  mode = m;
+  document.getElementById('modeWriteBtn').classList.toggle('on', m === 'write');
+  document.getElementById('modeSpeakBtn').classList.toggle('on', m === 'speak');
+  applyMode();
+  if (m === 'write' && window.innerWidth > 640) {
+    const inp = document.getElementById('answerInput');
+    if (inp && !inp.disabled) inp.focus();
+  }
+  document.getElementById('tipLine').textContent = m === 'speak'
+    ? 'Mikrofona bas ve Almancasını yüksek sesle söyle 🎤'
+    : 'Almancasını yaz, sistem kelime kelime kontrol etsin 🧠';
+}
+
+// Aktif moda göre yazma/konuşma alanını göster
+function applyMode() {
+  const writeEl = document.getElementById('writeMode');
+  const speakEl = document.getElementById('speakMode');
+  const checkBtn = document.getElementById('checkBtn');
+  if (mode === 'speak') {
+    writeEl.classList.add('hidden');
+    speakEl.classList.remove('hidden');
+    // Konuşma modunda cevap mikrofonla gelir; "Kontrol Et" butonu gerekmez.
+    if (state === 'prompt') checkBtn.classList.add('hidden');
+    renderMicArea();
+  } else {
+    speakEl.classList.add('hidden');
+    writeEl.classList.remove('hidden');
+    if (state === 'prompt') checkBtn.classList.remove('hidden');
+    stopMic(true); // sessizce durdur
+  }
+}
+
+// Konuşma alanını çiz (destek yoksa uyarı göster)
+function renderMicArea() {
+  const speakEl = document.getElementById('speakMode');
+  if (!checkMicSupport()) {
+    speakEl.innerHTML = '<div class="mic-unsupported">🎤 Tarayıcın sesli çeviriyi desteklemiyor.<br>' +
+      'En iyi deneyim için <b>Chrome</b> kullan ya da yukarıdan <b>⌨️ Yazarak</b> moduna geçip devam edebilirsin.</div>';
+    return;
+  }
+  // Destekliyorsa mikrofon arayüzünü (silinmişse) geri koy
+  if (!document.getElementById('micBtn')) {
+    speakEl.innerHTML = '<div class="mic-wrap">' +
+      '<button class="mic-btn" id="micBtn" onclick="toggleMic()"><span class="mic-icon">🎤</span><span class="mic-pulse"></span></button>' +
+      '<div class="mic-status" id="micStatus">Butona bas ve Almancasını söyle</div>' +
+      '<div class="mic-heard" id="micHeard"></div></div>';
+  }
+  resetMicUI();
+}
+
+function resetMicUI() {
+  const btn = document.getElementById('micBtn');
+  const status = document.getElementById('micStatus');
+  const heard = document.getElementById('micHeard');
+  if (btn) btn.classList.remove('recording');
+  if (status) { status.textContent = 'Butona bas ve Almancasını söyle'; status.classList.remove('live'); }
+  if (heard) heard.textContent = '';
+  recognizing = false;
+}
+
+// Mikrofon aç/kapa
+function toggleMic() {
+  if (state !== 'prompt') return;
+  if (recognizing) { stopMic(); return; }
+  startMic();
+}
+
+function startMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { renderMicArea(); return; }
+
+  recognition = new SR();
+  recognition.lang = 'de-DE';           // Almanca dinle
+  recognition.interimResults = true;    // konuşurken canlı göster
+  recognition.continuous = false;
+  recognition.maxAlternatives = 3;
+
+  let finalTranscript = '';
+
+  recognition.onstart = () => {
+    recognizing = true;
+    const btn = document.getElementById('micBtn');
+    const status = document.getElementById('micStatus');
+    if (btn) btn.classList.add('recording');
+    if (status) { status.textContent = '🔴 Dinliyorum… (bitince tekrar bas)'; status.classList.add('live'); }
+  };
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalTranscript += t;
+      else interim += t;
+    }
+    const heard = document.getElementById('micHeard');
+    if (heard) heard.textContent = '„' + (finalTranscript || interim) + '"';
+  };
+
+  recognition.onerror = (e) => {
+    const status = document.getElementById('micStatus');
+    if (status) {
+      status.classList.remove('live');
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        status.textContent = '⚠️ Mikrofon izni gerekli. Tarayıcı ayarından izin ver.';
+      } else if (e.error === 'no-speech') {
+        status.textContent = 'Ses algılanmadı, tekrar dene 🎤';
+      } else {
+        status.textContent = 'Bir sorun oldu, tekrar dene.';
+      }
+    }
+    const btn = document.getElementById('micBtn');
+    if (btn) btn.classList.remove('recording');
+    recognizing = false;
+  };
+
+  recognition.onend = () => {
+    recognizing = false;
+    const btn = document.getElementById('micBtn');
+    if (btn) btn.classList.remove('recording');
+    const said = finalTranscript.trim();
+    if (said) {
+      // Konuşma bitti + bir şey söylendi → değerlendir
+      evaluate(said, false, 'speak');
+    } else {
+      const status = document.getElementById('micStatus');
+      if (status) { status.textContent = 'Ses algılanmadı, tekrar dene 🎤'; status.classList.remove('live'); }
+    }
+  };
+
+  try {
+    recognition.start();
+  } catch (e) {
+    // Çift start hatası olabilir; sessizce yut
+  }
+}
+
+function stopMic(silent) {
+  if (recognition && recognizing) {
+    try { recognition.stop(); } catch (e) {}
+  }
+  recognizing = false;
+  if (silent) {
+    const btn = document.getElementById('micBtn');
+    if (btn) btn.classList.remove('recording');
+  }
+}
+
+/* ── Telaffuz (metin okuma) — doğru cevabı sesli dinlet ── */
+function speakGerman() {
+  if (!current || !window.speechSynthesis) return;
+  const btn = document.getElementById('listenBtn');
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(current.de);
+    u.lang = 'de-DE';
+    u.rate = 0.92;
+    // Mümkünse Almanca bir ses seç
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('de'));
+    if (deVoice) u.voice = deVoice;
+    if (btn) btn.classList.add('playing');
+    u.onend = () => { if (btn) btn.classList.remove('playing'); };
+    u.onerror = () => { if (btn) btn.classList.remove('playing'); };
+    window.speechSynthesis.speak(u);
+  } catch (e) {
+    if (btn) btn.classList.remove('playing');
+  }
+}
+
+function checkAnswer() {
+  if (state !== 'prompt') return;
+  const raw = document.getElementById('answerInput').value.trim();
+  if (!raw) { document.getElementById('answerInput').focus(); return; }
+  evaluate(raw, false, 'write');
+}
+
+function giveUp() {
+  if (state !== 'prompt') return;
+  stopMic(true);
+  evaluate('', true, mode);
+}
+
+function evaluate(userText, gaveUp, inputMode) {
+  if (state === 'result') return; // çift değerlendirmeyi önle
+  state = 'result';
+  stopMic(true);
+  const inp = document.getElementById('answerInput');
+  if (inp) inp.disabled = true;
+  document.getElementById('checkBtn').classList.add('hidden');
+  document.getElementById('skipBtn').classList.add('hidden');
+  document.getElementById('modeToggle').classList.add('hidden');
+
+  const cw = words(current.de);
+
+  // Kelime eşleştirme (çoklu kopyaları da doğru say)
+  const need = {};
+  cw.forEach(w => need[w] = (need[w] || 0) + 1);
+  let hits = 0;
+  const userMarks = userText.trim().split(/\s+/).filter(Boolean).map(orig => {
+    const n = norm(orig);
+    if (n && need[n] > 0) { need[n]--; hits++; return { w: orig, hit: true }; }
+    return { w: orig, hit: false };
+  });
+
+  const pct = cw.length ? Math.round(hits / cw.length * 100) : 0;
+
+  // Eksik kalan kelimeler
+  const missing = Object.keys(need).filter(k => need[k] > 0);
+
+  const spoke = inputMode === 'speak';
+
+  // Puanlama
+  let label, sub, color, gained = 0;
+  if (gaveUp) {
+    label = 'Cevap gösterildi'; sub = 'Seri sıfırlandı — sorun değil, öğrenmek de bu.'; color = 'var(--muted)';
+    streak = 0;
+  } else if (pct >= 90) {
+    label = spoke ? 'Mükemmel telaffuz! 🎯' : 'Mükemmel! 🎯'; sub = 'Neredeyse birebir aynı.'; color = 'var(--green)';
+    gained = 100; streak++;
+    confetti();
+  } else if (pct >= 65) {
+    label = 'Çok yakın 👏'; sub = 'Ana yapıyı doğru kurdun, birkaç kelime farklı.'; color = 'var(--accent)';
+    gained = 60; streak++;
+  } else if (pct >= 35) {
+    label = 'Kısmen doğru'; sub = spoke ? 'Bazı kelimeleri tutturdun. Mikrofon bazen tam anlamayabilir, netçe söyle.' : 'Bazı kelimeleri tutturdun, cümle yapısına bak.'; color = 'var(--accent-2)';
+    gained = 25; streak = 0;
+  } else {
+    label = 'Tekrar dene'; sub = spoke ? 'Mikrofon seni tam anlamamış olabilir — 🔊 ile doğrusunu dinle, tekrar dene.' : 'Bu cümleyi not al, tekrar karşına çıkacak.'; color = 'var(--red)';
+    gained = 0; streak = 0;
+  }
+
+  // Seri bonusu
+  if (streak >= 3 && gained > 0) gained += streak * 10;
+  score += gained;
+  rounds++;
+  totalPct += (gaveUp ? 0 : pct);
+  if (streak > best) { best = streak; saveBest(); }
+
+  // Sonucu bas
+  document.getElementById('vScore').textContent = gaveUp ? '—' : pct + '%';
+  document.getElementById('vScore').style.color = color;
+  document.getElementById('vLabel').textContent = label;
+  document.getElementById('vLabel').style.color = color;
+  document.getElementById('vSub').textContent = sub + (gained > 0 ? '  +' + gained + ' puan' : '');
+
+  const udb = document.getElementById('userDiffBox');
+  document.querySelector('#userDiffBox .diff-title').textContent = spoke ? 'Senin söylediğin' : 'Senin cevabın';
+  // %100'de "senin cevabın" kutusu doğru çeviriyle birebir aynı olur — tekrar göstermeye gerek yok.
+  if (gaveUp || !userText || pct === 100) {
+    udb.classList.add('hidden');
+  } else {
+    udb.classList.remove('hidden');
+    let h = userMarks.map(m => '<span class="' + (m.hit ? 'w-hit' : 'w-miss') + '">' + esc(m.w) + '</span>').join(' ');
+    if (missing.length) {
+      h += '<div style="margin-top:9px;font-size:12.5px;color:var(--faint);">Eksik: ' +
+        missing.map(w => '<span class="w-need">' + esc(w) + '</span>').join(', ') + '</div>';
+    }
+    document.getElementById('userDiff').innerHTML = h;
+  }
+
+  document.getElementById('verdictZone').classList.remove('hidden');
+  document.getElementById('mTag').textContent = '🇩🇪 doğru çeviri';
+
+  // Glitch reveal
+  glitchTo(document.getElementById('correctDe'), current.de);
+  // Reel'de de almancasını göster
+  glitchReel(current.de);
+
+  document.getElementById('nextBtn').classList.remove('hidden');
+  if (rounds >= 2) document.getElementById('shareBtn').classList.remove('hidden');
+
+  updateScoreboard();
+  document.getElementById('tipLine').textContent = streak >= 3
+    ? '🔥 ' + streak + ' seri! Devam et, bonus puanlar artıyor.'
+    : 'Sıradaki cümleye geç →';
+}
+
+/* ── Glitch efektleri ── */
+function glitchTo(el, target) {
+  const chars = 'abcdefghijklmnopqrstuvwxyzäöüßABCDEFGHIJKLMNOPQRSTUVWXYZ#%&@?!';
+  const tc = target.split('');
+  let f = 0; const total = 16;
+  const iv = setInterval(() => {
+    f++;
+    let out = '';
+    for (let i = 0; i < tc.length; i++) {
+      if (tc[i] === ' ') { out += ' '; continue; }
+      const lock = Math.floor((i / tc.length) * total * 0.8);
+      out += (f >= lock) ? tc[i] : chars[Math.floor(Math.random() * chars.length)];
+    }
+    el.textContent = out;
+    if (f >= total) { clearInterval(iv); el.textContent = target; }
+  }, 42);
+}
+
+function glitchReel(target) {
+  const strip = document.getElementById('reelStrip');
+  strip.style.transition = 'none';
+  strip.style.transform = 'translateY(0)';
+  strip.innerHTML = '<div class="reel-item"><span class="reel-text" id="reelGlitch" style="color:var(--green)"></span></div>';
+  glitchTo(document.getElementById('reelGlitch'), target);
+}
+
+/* ── Skor tablosu ── */
+function updateScoreboard() {
+  document.getElementById('sc-score').textContent = score;
+  document.getElementById('sc-streak').innerHTML = streak > 0
+    ? streak + (streak >= 3 ? ' <span class="streak-fire">🔥</span>' : '') : '0';
+  document.getElementById('sc-best').textContent = best;
+}
+
+/* ── Konfeti ── */
+function confetti() {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = document.getElementById('confetti');
+  const cols = ['#FFB224','#FF8A3D','#4ADE80','#7C5CFF','#60A5FA'];
+  for (let i = 0; i < 34; i++) {
+    const c = document.createElement('div');
+    c.className = 'conf';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.top = '-20px';
+    c.style.background = cols[Math.floor(Math.random() * cols.length)];
+    c.style.animationDuration = (1.6 + Math.random() * 1.1) + 's';
+    c.style.animationDelay = (Math.random() * 0.25) + 's';
+    box.appendChild(c);
+    setTimeout(() => c.remove(), 3200);
+  }
+}
+
+/* ── Modal ── */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+/* ── Paylaşım ── */
+function openShare() {
+  const avg = rounds ? Math.round(totalPct / rounds) : 0;
+  let title, emoji;
+  if (avg >= 85) { title = 'Almancan uçuyor!'; emoji = '🏆'; }
+  else if (avg >= 65) { title = 'İyi gidiyorsun!'; emoji = '💪'; }
+  else if (avg >= 40) { title = 'Yolun başındasın'; emoji = '📚'; }
+  else { title = 'Pratik şart!'; emoji = '🌱'; }
+
+  document.getElementById('shBig').textContent = avg + '%';
+  document.getElementById('shOf').textContent = 'ortalama';
+  document.getElementById('shTitle').textContent = emoji + ' ' + title;
+  document.getElementById('shMeta').textContent = level + ' seviye · ' + rounds + ' cümle · ' + score + ' puan · rekor seri ' + best;
+  openModal('shareModal');
+}
+
+async function shareResult() {
+  const avg = rounds ? Math.round(totalPct / rounds) : 0;
+  const text = '🎰 Çeviri Oyunu\n' +
+    'Ortalamam: %' + avg + ' (' + level + ' seviye)\n' +
+    rounds + ' cümle · ' + score + ' puan · 🔥 rekor seri ' + best + '\n\n' +
+    'Sen kaç yaparsın?\ncheckyourwrite.com';
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'Çeviri Oyunu skorum', text: text });
+    } else {
+      await navigator.clipboard.writeText(text);
+      const b = event.target; const o = b.textContent;
+      b.textContent = '✓ Kopyalandı!';
+      setTimeout(() => b.textContent = o, 2000);
+    }
+  } catch (e) {}
+}
+
+/* ================================================================
+   STORY GÖRSELİ ÜRETİMİ (1080×1920, Instagram story boyutu)
+   Canvas ile markalı skor kartı çizer. İndirilir veya (mobilde)
+   direkt paylaşılır. Her görselde checkyourwrite.com gömülü gider.
+   ================================================================ */
+
+// Yuvarlak köşeli dikdörtgen yardımcısı
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+async function renderShareCanvas() {
+  const avg = rounds ? Math.round(totalPct / rounds) : 0;
+  let title, emoji;
+  if (avg >= 85) { title = 'Almancam uçuyor!'; emoji = '🏆'; }
+  else if (avg >= 65) { title = 'İyi gidiyorum!'; emoji = '💪'; }
+  else if (avg >= 40) { title = 'Yolun başındayım'; emoji = '📚'; }
+  else { title = 'Pratik şart!'; emoji = '🌱'; }
+
+  // Fontların yüklendiğinden emin ol (canvas yüklü fontları kullanabilsin)
+  try { await document.fonts.ready; } catch (e) {}
+
+  const cv = document.getElementById('shareCanvas');
+  const ctx = cv.getContext('2d');
+  const W = 1080, H = 1920;
+
+  // ── Zemin: koyu lacivert degrade ──
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0E1626');
+  bg.addColorStop(0.5, '#0A0E17');
+  bg.addColorStop(1, '#0D1020');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Amber ışık küresi (sağ üst) ──
+  let orb = ctx.createRadialGradient(920, 260, 0, 920, 260, 520);
+  orb.addColorStop(0, 'rgba(255,178,36,0.30)');
+  orb.addColorStop(1, 'rgba(255,178,36,0)');
+  ctx.fillStyle = orb;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Mor ışık küresi (sol alt) ──
+  orb = ctx.createRadialGradient(140, 1640, 0, 140, 1640, 560);
+  orb.addColorStop(0, 'rgba(124,92,255,0.28)');
+  orb.addColorStop(1, 'rgba(124,92,255,0)');
+  ctx.fillStyle = orb;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Kareli kağıt dokusu (hafif noktalar) ──
+  ctx.fillStyle = 'rgba(148,163,197,0.06)';
+  for (let y = 120; y < H - 120; y += 54) {
+    for (let x = 60; x < W - 40; x += 54) {
+      ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  ctx.textAlign = 'center';
+
+  // ── Üst marka: "check" (gri) + "yourwrite" (amber), ortalanmış ──
+  ctx.font = '700 44px "JetBrains Mono", monospace';
+  const w1 = ctx.measureText('check').width;
+  const w2 = ctx.measureText('yourwrite').width;
+  const logoStartX = W/2 - (w1 + w2) / 2;
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#8B94AB';
+  ctx.fillText('check', logoStartX, 232);
+  ctx.fillStyle = '#FFB224';
+  ctx.fillText('yourwrite', logoStartX + w1, 232);
+  ctx.textAlign = 'center';
+
+  // ── Oyun etiketi ──
+  ctx.font = '600 34px "Space Grotesk", sans-serif';
+  ctx.fillStyle = '#5A6379';
+  ctx.fillText('🎰  ÇEVİRİ OYUNU', W/2, 310);
+
+  // ── Büyük yüzde ──
+  ctx.font = '700 340px "Space Grotesk", sans-serif';
+  const grad = ctx.createLinearGradient(W/2 - 300, 0, W/2 + 300, 0);
+  grad.addColorStop(0, '#FFB224');
+  grad.addColorStop(1, '#FF8A3D');
+  ctx.fillStyle = grad;
+  ctx.fillText(avg + '%', W/2, 720);
+
+  ctx.font = '500 44px "Inter", sans-serif';
+  ctx.fillStyle = '#8B94AB';
+  ctx.fillText('ortalama başarı', W/2, 800);
+
+  // ── Başlık (emoji + metin) ──
+  ctx.font = '700 68px "Space Grotesk", sans-serif';
+  ctx.fillStyle = '#E8ECF6';
+  ctx.fillText(emoji + ' ' + title, W/2, 950);
+
+  // ── İstatistik kutuları ──
+  const stats = [
+    { n: level, l: 'SEVİYE' },
+    { n: String(rounds), l: 'CÜMLE' },
+    { n: String(score), l: 'PUAN' },
+    { n: String(best), l: 'REKOR SERİ' }
+  ];
+  const boxW = 220, boxH = 200, gap = 28;
+  const totalW = boxW * 2 + gap;
+  const startX = (W - totalW) / 2;
+  const startY = 1080;
+  stats.forEach((s, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = startX + col * (boxW + gap);
+    const y = startY + row * (boxH + gap);
+    ctx.fillStyle = 'rgba(21,27,42,0.72)';
+    roundRect(ctx, x, y, boxW, boxH, 24); ctx.fill();
+    ctx.strokeStyle = 'rgba(148,163,197,0.18)'; ctx.lineWidth = 2;
+    roundRect(ctx, x, y, boxW, boxH, 24); ctx.stroke();
+
+    ctx.font = '700 76px "Space Grotesk", sans-serif';
+    ctx.fillStyle = i === 3 ? '#A98BFF' : '#FFB224';
+    ctx.fillText(s.n, x + boxW/2, y + 108);
+    ctx.font = '500 26px "JetBrains Mono", monospace';
+    ctx.fillStyle = '#5A6379';
+    ctx.fillText(s.l, x + boxW/2, y + 158);
+  });
+
+  // ── Alt CTA ──
+  ctx.font = '700 60px "Space Grotesk", sans-serif';
+  ctx.fillStyle = '#E8ECF6';
+  ctx.fillText('Sen kaç yaparsın?', W/2, 1660);
+
+  // ── URL rozeti ──
+  const badgeW = 560, badgeH = 90, bx = (W - badgeW)/2, by = 1720;
+  const bgrad = ctx.createLinearGradient(bx, 0, bx + badgeW, 0);
+  bgrad.addColorStop(0, '#FFB224'); bgrad.addColorStop(1, '#FF8A3D');
+  ctx.fillStyle = bgrad;
+  roundRect(ctx, bx, by, badgeW, badgeH, 45); ctx.fill();
+  ctx.font = '700 40px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#14100A';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('checkyourwrite.com', W/2, by + badgeH/2 + 2);
+  ctx.textBaseline = 'alphabetic';
+
+  return cv;
+}
+
+// Canvas'ı blob'a çevir
+function canvasToBlob(cv) {
+  return new Promise(resolve => cv.toBlob(resolve, 'image/png'));
+}
+
+// Görseli indir (masaüstü + her yerde çalışır)
+async function downloadImage() {
+  const btn = event.target; const orig = btn.textContent;
+  btn.textContent = 'Hazırlanıyor…';
+  try {
+    const cv = await renderShareCanvas();
+    const blob = await canvasToBlob(cv);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ceviri-oyunu-skorum.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    btn.textContent = '✓ İndirildi!';
+  } catch (e) {
+    console.error(e);
+    btn.textContent = 'Hata, tekrar dene';
+  }
+  setTimeout(() => btn.textContent = orig, 2200);
+}
+
+// Görseli direkt paylaş (mobilde Instagram/WhatsApp'a story olarak gider)
+async function shareImage() {
+  const btn = document.getElementById('shareImgBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Hazırlanıyor…';
+  try {
+    const cv = await renderShareCanvas();
+    const blob = await canvasToBlob(cv);
+    const file = new File([blob], 'ceviri-oyunu-skorum.png', { type: 'image/png' });
+    const avg = rounds ? Math.round(totalPct / rounds) : 0;
+
+    // navigator.share ile görsel paylaşımı (mobil tarayıcılarda)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        text: '🎰 Çeviri Oyunu\'nda %' + avg + ' yaptım! Sen kaç yaparsın? checkyourwrite.com'
+      });
+      btn.textContent = orig;
+    } else {
+      // Görsel paylaşımı desteklenmiyorsa (çoğu masaüstü) → indir
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ceviri-oyunu-skorum.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      btn.textContent = '✓ İndirildi (story\'ne ekle)';
+      setTimeout(() => btn.textContent = orig, 2500);
+    }
+  } catch (e) {
+    console.error(e);
+    btn.textContent = orig;
+  }
+}
+
+/* ── Klavye + input ── */
+document.getElementById('answerInput').addEventListener('input', function() {
+  document.getElementById('charCount').textContent = this.value.length + ' karakter';
+});
+document.getElementById('answerInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); checkAnswer(); }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && state === 'result') { e.preventDefault(); spin(); }
+});
+
+
+ /* ═══════════════════════════════════════════════════════════════
+   HATA DEFTERİ  (v3 — Pro'da cihazlar arası senkron)
+   · Herkes: yanlış yaptığın cümle birkaç tur sonra tekrar gelir
+   · Pro:    defter sunucuda tutulur → telefon/tablet/bilgisayar aynı
+   · Bir cümleyi 2 kez doğru yaparsan "öğrenildi" olarak işaretlenir
+   Mevcut fonksiyonları sarmalıyor — üstteki kodun hiçbirine dokunmaz.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var MKEY = 'cyw_mistakes_v1';
+  var REPEAT_AFTER = 3;   // ilk tekrar kaç tur sonra
+  var MAX_QUEUE = 3;      // aynı anda en fazla kaç cümle tekrar beklesin
+  var MIN_GAP = 4;        // iki tekrar arasında en az kaç normal cümle
+  var MASTER_AT = 2;      // kaç doğrudan sonra öğrenilmiş sayılsın
+  var PASS = 65;          // bu yüzdenin altı "hata" sayılır
+  var SYNC_DELAY = 2500;  // değişiklikten kaç ms sonra sunucuya yazılsın
+
+  var notebook = {};      // { tr: {de, lvl, wrong, right, done, ts} }
+  var queue = [];
+  var drawCount = 0;
+  var lastRepeatAt = -99;
+  var isPro = false;
+  var notebookMode = false;
+  var pendingRepeat = false;
+  var syncTimer = null;
+  var syncState = '';     // '' | 'sync' | 'ok' | 'err'
+
+  try { notebook = JSON.parse(localStorage.getItem(MKEY)) || {}; } catch (e) { notebook = {}; }
+  function saveLocal() { try { localStorage.setItem(MKEY, JSON.stringify(notebook)); } catch (e) {} }
+
+  /* Öğrenilmiş (done) olanlar sayılmaz */
+  function activeKeys(lvl) {
+    return Object.keys(notebook).filter(function (k) {
+      var e = notebook[k];
+      return e && !e.done && (!lvl || e.lvl === lvl);
+    });
+  }
+  function count(lvl) { return activeKeys(lvl).length; }
+
+  /* ── Sunucu senkronu (sadece Pro) ── */
+  function token() { return localStorage.getItem('checkyourwrite_jwt_token'); }
+
+  function toArray() {
+    return Object.keys(notebook).map(function (k) {
+      var e = notebook[k];
+      return { tr: k, de: e.de, lvl: e.lvl, wrong: e.wrong || 0,
+               right: e.right || 0, done: !!e.done, ts: e.ts || 0 };
+    });
+  }
+
+  /* Sunucudan gelen listeyi yerelle birleştir — yeni zaman damgası kazanır */
+  function mergeIn(arr) {
+    (arr || []).forEach(function (r) {
+      if (!r || !r.tr) return;
+      var l = notebook[r.tr];
+      if (!l || (r.ts || 0) >= (l.ts || 0)) {
+        notebook[r.tr] = { de: r.de, lvl: r.lvl, wrong: r.wrong || 0,
+                           right: r.right || 0, done: !!r.done, ts: r.ts || 0 };
+      }
+    });
+    saveLocal();
+  }
+
+  function pushSoon() {
+    if (!isPro) return;
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(pushNow, SYNC_DELAY);
+  }
+
+  function pushNow() {
+    var t = token();
+    if (!isPro || !t) return;
+    syncState = 'sync'; render();
+    fetch('/api/user/mistakes', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t },
+      body: JSON.stringify({ mistakes: toArray() })
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (d && d.success && Array.isArray(d.mistakes)) {
+          notebook = {};
+          mergeIn(d.mistakes);
+          syncState = 'ok';
+        } else { syncState = 'err'; }
+        render();
+      })
+      .catch(function () { syncState = 'err'; render(); });
+  }
+
+  /* Açılışta: sunucudan çek → yerelle birleştir → birleşmiş hali geri yaz */
+  function pullThenPush() {
+    var t = token();
+    if (!t) return;
+    syncState = 'sync'; render();
+    fetch('/api/user/mistakes', { headers: { 'Authorization': 'Bearer ' + t } })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok) {                      // 403 → Pro değil, sessizce yerel devam
+          isPro = false; syncState = ''; render(); return;
+        }
+        isPro = true;
+        mergeIn(res.d.mistakes);
+        syncState = 'ok';
+        render();
+        pushNow();                          // yereldeki farkları sunucuya taşı
+      })
+      .catch(function () { syncState = ''; render(); });
+  }
+
+  /* ── Stil ── */
+  var st = document.createElement('style');
+  st.textContent =
+    '.mb-btn{font-family:var(--display);font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:9px;' +
+    'border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}' +
+    '.mb-btn:hover{color:var(--text);border-color:var(--muted);}' +
+    '.mb-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#14100A;border-color:transparent;}' +
+    '.mb-btn.pro{color:#A98BFF;border-color:rgba(124,92,255,.45);}' +
+    '.mb-btn.pro:hover{background:rgba(124,92,255,.12);border-color:#A98BFF;color:#C4AEFF;}' +
+    '.mb-sync{font-family:var(--mono);font-size:9.5px;margin-left:7px;}' +
+    '.mb-sync.ok{color:var(--green);} .mb-sync.err{color:var(--red);} .mb-sync.sync{color:var(--faint);}' +
+    '.mb-list{text-align:left;max-height:42vh;overflow-y:auto;margin-bottom:16px;}' +
+    '.mb-row{background:rgba(10,14,23,.45);border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:8px;}' +
+    '.mb-tr{font-size:14px;color:var(--text);margin-bottom:4px;}' +
+    '.mb-de{font-family:var(--display);font-size:14px;font-weight:600;color:var(--green);}' +
+    '.mb-meta{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:6px;letter-spacing:.06em;}' +
+    '.mb-empty{color:var(--faint);font-size:13.5px;padding:24px 0;text-align:center;}' +
+    '#mistakeBar{margin-top:-4px;}';
+  document.head.appendChild(st);
+
+  /* ── Sayaç çubuğu ── */
+  var bar = document.createElement('div');
+  bar.className = 'plays';
+  bar.id = 'mistakeBar';
+  var host = document.getElementById('playsBar');
+  if (host) host.insertAdjacentElement('afterend', bar);
+
+  /* ── Modal ── */
+  var modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'mbModal';
+  modal.innerHTML =
+    '<div class="modal-card">' +
+      '<div class="modal-icon" id="mbIcon">📕</div>' +
+      '<div class="modal-title" id="mbTitle">Hata Defterin</div>' +
+      '<div class="modal-sub" id="mbSub"></div>' +
+      '<div class="mb-list" id="mbList"></div>' +
+      '<div id="mbCta"></div>' +
+      '<button class="modal-2nd" id="mbClose">Kapat</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+  document.getElementById('mbClose').onclick = function () { modal.classList.remove('show'); };
+  modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.remove('show'); });
+
+  /* ── Çubuğu çiz ── */
+  function render() {
+    var n = count();
+    var sync = '';
+    if (isPro && syncState) {
+      sync = '<span class="mb-sync ' + syncState + '">' +
+        (syncState === 'sync' ? '⟳ eşitleniyor' : syncState === 'ok' ? '✓ eşitlendi' : '⚠ eşitlenemedi') +
+      '</span>';
+    }
+    var right;
+    if (isPro) {
+      right = '<button class="mb-btn' + (notebookMode ? ' on' : '') + '" id="mbToggle">' +
+              (notebookMode ? '✓ Sadece hatalarım' : '🔁 Sadece hatalarım') + '</button>' +
+              '<button class="mb-btn pro" id="mbOpen">Defteri aç</button>';
+    } else {
+      right = '<button class="mb-btn pro" id="mbOpen">🔒 Pro</button>';
+    }
+    bar.innerHTML =
+      '<span class="plays-lbl">📕 Hata defterin · <b style="color:var(--accent)">' + n + '</b> cümle' + sync + '</span>' +
+      '<div style="display:flex;gap:6px;align-items:center;">' + right + '</div>';
+    var t = document.getElementById('mbToggle'); if (t) t.onclick = toggleMode;
+    var o = document.getElementById('mbOpen');   if (o) o.onclick = openBook;
+  }
+
+  /* ── "Sadece hatalarım" modu (Pro) ── */
+  function toggleMode() {
+    if (!isPro || state === 'prompt') return;
+    var tip = document.getElementById('tipLine');
+    if (!notebookMode && count(level) === 0) {
+      if (tip) tip.textContent = level + ' seviyesinde henüz hatan yok — normal moda devam 👌';
+      return;
+    }
+    notebookMode = !notebookMode;
+    if (tip) tip.textContent = notebookMode
+      ? '📕 Hata defteri modu açık — sadece kaçırdığın cümleler gelecek'
+      : 'Normal moda döndün — tüm cümleler karışık gelecek';
+    render();
+  }
+
+  /* ── Defteri aç ── */
+  function openBook() {
+    var list = document.getElementById('mbList');
+    var sub  = document.getElementById('mbSub');
+    var cta  = document.getElementById('mbCta');
+    var ttl  = document.getElementById('mbTitle');
+
+    if (!isPro) {
+      ttl.textContent = 'Hata Defteri — Pro özelliği';
+      sub.innerHTML = 'Kaçırdığın cümleler şu an sadece bu cihazda ve bu oturumda tutuluyor. ' +
+        '<b>Pro</b> ile defterin hesabına kaydedilir: telefon, tablet, bilgisayar — nereden girersen gir aynı liste.';
+      list.innerHTML = '<div class="mb-empty">Şu anda ' + count() + ' cümlelik bir hata geçmişin var.<br>' +
+        'Pro ile bunları her cihazdan takip edebilirsin.</div>';
+      cta.innerHTML = '<a href="/index.html?plans=1" class="modal-cta">✦ Pro\'ya Geç · €5.99/ay</a>';
+      modal.classList.add('show');
+      return;
+    }
+
+    ttl.textContent = 'Hata Defterin';
+    cta.innerHTML = '';
+    var keys = activeKeys().sort(function (a, b) { return notebook[b].wrong - notebook[a].wrong; });
+    var learned = Object.keys(notebook).filter(function (k) { return notebook[k].done; }).length;
+    sub.textContent = keys.length
+      ? 'Bir cümleyi ' + MASTER_AT + ' kez doğru yaparsan listeden çıkar.' +
+        (learned ? ' Şu ana kadar ' + learned + ' cümle öğrendin ✅' : '')
+      : (learned ? learned + ' cümle öğrendin ✅' : '');
+    if (!keys.length) {
+      list.innerHTML = '<div class="mb-empty">Defterin tertemiz ✨<br>Yanlış yaptığın cümleler burada birikecek.</div>';
+    } else {
+      list.innerHTML = keys.map(function (k) {
+        var e = notebook[k];
+        return '<div class="mb-row">' +
+          '<div class="mb-tr">' + esc(k) + '</div>' +
+          '<div class="mb-de">' + esc(e.de) + '</div>' +
+          '<div class="mb-meta">' + esc(e.lvl || '') + ' · ' + e.wrong + ' kez kaçırdın' +
+          (e.right ? ' · ' + e.right + '/' + MASTER_AT + ' doğru' : '') + '</div>' +
+        '</div>';
+      }).join('');
+    }
+    modal.classList.add('show');
+  }
+
+  /* ── Cümle çekme ──
+     Tekrarlar seviyeye göre filtrelenir ve iki tekrar arasında en az
+     MIN_GAP normal cümle gelmesi zorunludur (döngüyü engeller). */
+  var _draw = drawSentence;
+  drawSentence = function (lvl) {
+    pendingRepeat = false;
+    drawCount++;
+
+    if (notebookMode && isPro) {
+      var ks = activeKeys(lvl);
+      if (ks.length) {
+        var k = ks[Math.floor(Math.random() * ks.length)];
+        pendingRepeat = true;
+        return [k, notebook[k].de];
+      }
+      notebookMode = false;
+      render();
+    }
+
+    if (drawCount - lastRepeatAt >= MIN_GAP) {
+      for (var j = 0; j < queue.length; j++) {
+        if (queue[j].lvl === lvl && drawCount >= queue[j].dueAt) {
+          var q = queue.splice(j, 1)[0];
+          pendingRepeat = true;
+          lastRepeatAt = drawCount;
+          return [q.tr, q.de];
+        }
+      }
+    }
+    return _draw(lvl);
+  };
+
+  /* ── Tekrar cümlesinde etiket ── */
+  var _spin = spin;
+  spin = function () {
+    _spin();
+    setTimeout(function () {
+      if (pendingRepeat && state === 'prompt') {
+        var tag = document.getElementById('mTag');
+        if (tag) tag.textContent = '🔁 daha önce kaçırdığın cümle';
+      }
+    }, 2260);
+  };
+
+  /* ── Sonucu deftere işle ── */
+  var _evaluate = evaluate;
+  evaluate = function (userText, gaveUp, inputMode) {
+    if (state === 'result') return _evaluate(userText, gaveUp, inputMode);
+    var cur = current;
+    var lvl = level;
+    _evaluate(userText, gaveUp, inputMode);
+    if (!cur) return;
+
+    var pct = 0;
+    if (!gaveUp) {
+      var cw = words(cur.de), need = {}, hits = 0;
+      cw.forEach(function (w) { need[w] = (need[w] || 0) + 1; });
+      String(userText || '').trim().split(/\s+/).filter(Boolean).forEach(function (o) {
+        var n = norm(o);
+        if (n && need[n] > 0) { need[n]--; hits++; }
+      });
+      pct = cw.length ? Math.round(hits / cw.length * 100) : 0;
+    }
+
+    var key = cur.tr;
+    var changed = false;
+
+    if (!gaveUp && pct >= PASS) {
+      var ex = notebook[key];
+      if (ex && !ex.done) {
+        ex.right = (ex.right || 0) + 1;
+        ex.ts = Date.now();
+        changed = true;
+        if (ex.right >= MASTER_AT) {
+          ex.done = true;            // silmiyoruz — silsek diğer cihazdan geri gelir
+          var tip = document.getElementById('tipLine');
+          if (tip) tip.textContent = '✅ Bu cümleyi öğrendin — defterden çıktı!';
+        }
+      }
+    } else {
+      var e = notebook[key] || { wrong: 0, right: 0 };
+      e.de = cur.de; e.lvl = lvl;
+      e.wrong = (e.wrong || 0) + 1;
+      e.right = 0;
+      e.done = false;
+      e.ts = Date.now();
+      notebook[key] = e;
+      changed = true;
+
+      var already = false;
+      for (var i = 0; i < queue.length; i++) { if (queue[i].tr === key) { already = true; break; } }
+      if (!already) {
+        if (queue.length >= MAX_QUEUE) queue.shift();
+        var gap = Math.min(REPEAT_AFTER + (e.wrong - 1) * 3, 12);
+        queue.push({ tr: key, de: cur.de, lvl: lvl, dueAt: drawCount + gap });
+      }
+    }
+
+    if (changed) { saveLocal(); pushSoon(); }
+    render();
+  };
+
+  /* Sayfa kapanırken bekleyen değişikliği kaçırma */
+  window.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && syncTimer) {
+      clearTimeout(syncTimer); syncTimer = null; pushNow();
+    }
+  });
+
+  /* ── Başlat ── */
+  render();
+  pullThenPush();
+
+})();
+ /* ── Başlat ── */
+loadBest();
+updateScoreboard();
+updatePlays();
+checkPlan();
+
+// SpeechSynthesis seslerini önceden yükle (bazı tarayıcılar geç yüklüyor)
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+</script>
+
+</body>
+</html>
