@@ -202,6 +202,36 @@
   .back-link:hover{ color:var(--ink); }
   .footnote{ font-size:12px; color:var(--muted); line-height:1.5; }
   :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  /* ── AI geri bildirim kartı ── */
+  .ai-loading{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13.5px; padding:16px 0; }
+  .spinner-sm{ width:15px; height:15px; border:2px solid var(--line-strong); border-top-color:var(--accent); border-radius:50%; animation:spin .65s linear infinite; display:inline-block; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .ai-fb-card{ margin-top:6px; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:18px 20px; animation:fadeUp .4s ease both; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  .ai-note{ font-size:12.5px; color:var(--muted); background:var(--warm-soft); border:1px solid rgba(251,191,36,.2); border-radius:8px; padding:8px 12px; margin-bottom:14px; }
+  .ai-top{ display:flex; align-items:flex-start; gap:16px; margin-bottom:16px; }
+  .ai-score{ flex-shrink:0; width:60px; height:60px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; }
+  .ai-score.sc-great,.ai-label.sc-great{ color:var(--good); } .ai-score.sc-great{ background:rgba(74,222,128,.12); }
+  .ai-score.sc-good,.ai-label.sc-good{ color:#60A5FA; } .ai-score.sc-good{ background:rgba(96,165,250,.12); }
+  .ai-score.sc-avg,.ai-label.sc-avg{ color:var(--warm); } .ai-score.sc-avg{ background:var(--warm-soft); }
+  .ai-score.sc-weak,.ai-label.sc-weak{ color:var(--danger); } .ai-score.sc-weak{ background:var(--danger-soft); }
+  .ai-label{ font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; margin-bottom:4px; }
+  .ai-summary{ font-size:13.5px; color:var(--muted); line-height:1.6; }
+  .ai-section-title{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.07em; margin:18px 0 10px; }
+  .crit-row{ padding:11px 0; border-bottom:1px solid var(--line); }
+  .crit-row:last-of-type{ border-bottom:0; }
+  .crit-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:5px; }
+  .crit-name{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px; color:var(--ink); }
+  .crit-dots{ display:flex; gap:4px; flex-shrink:0; }
+  .crit-dots .dot{ width:9px; height:9px; border-radius:50%; background:var(--line-strong); }
+  .crit-dots .dot.on{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); }
+  .crit-comment{ font-size:13px; color:var(--muted); line-height:1.55; }
+  .ai-strengths{ margin:0; padding-left:20px; font-size:13.5px; color:var(--ink); line-height:1.8; }
+  .imp-row{ background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:11px 14px; margin-bottom:9px; }
+  .imp-point{ font-size:13.5px; color:var(--ink); margin-bottom:6px; }
+  .imp-example{ font-size:13px; color:var(--accent); font-family:'JetBrains Mono',monospace; line-height:1.6; background:var(--accent-soft); border-radius:7px; padding:8px 11px; }
+  .ai-next{ margin-top:16px; padding:12px 15px; background:var(--accent-soft); border:1px solid rgba(255,178,36,.2); border-radius:9px; font-size:13.5px; color:var(--ink); line-height:1.55; }
 </style>
 
 <!-- Admin olmayan ziyaretçiler için "geliştirme aşamasında" ekranı -->
@@ -763,11 +793,105 @@ function copyTranscript(){
   const text = buildTranscriptText();
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(text)
-      .then(()=>toast("Kopyalandı — Claude sohbetine yapıştırabilirsin."))
+      .then(()=>toast("Transkript kopyalandı."))
       .catch(()=>toast("Kopyalanamadı, metni elle seçip kopyalayabilirsin."));
   } else {
     toast("Tarayıcı panoyu desteklemiyor, metni elle seçip kopyala.");
   }
+}
+
+/* ---------- AI geri bildirimi (api/oral-feedback) ---------- */
+let lastAiFeedback = null;
+async function getAiFeedback(){
+  const slot = document.getElementById("ai-feedback-slot");
+  const btn = document.querySelector('[data-action="get-ai-feedback"]');
+  if(!slot) return;
+
+  const token = localStorage.getItem("checkyourwrite_jwt_token");
+  if(!token){
+    toast("AI geri bildirimi için giriş yapman gerekiyor.");
+    return;
+  }
+
+  const text = buildTranscriptText();
+  if(!text || text.trim().length < 20){
+    toast("Değerlendirilecek konuşma çok kısa.");
+    return;
+  }
+
+  if(btn){ btn.disabled = true; }
+  slot.innerHTML = '<div class="ai-loading"><span class="spinner-sm"></span> AI konuşmanı değerlendiriyor… (birkaç saniye)</div>';
+
+  const modeLabel = ({
+    full:"Tam Sınav Simülasyonu", praesentation:"Sadece Präsentation",
+    rueckfragen:"Sadece Rückfragen", diskussion:"Sadece Diskussion", warmup:"Günlük Isınma"
+  })[flow && flow.kind] || "Sözlü prova";
+  const topicLabel = (flow && flow.topic) ? (flow.topic.category || "") : "";
+
+  try{
+    const res = await fetch("/api/oral-feedback", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+token },
+      body: JSON.stringify({ transcript:text, mode:modeLabel, topic:topicLabel })
+    });
+    const data = await res.json();
+    if(data.error){ slot.innerHTML = ""; toast(data.error); if(btn){ btn.disabled = false; } return; }
+    lastAiFeedback = data;
+    slot.innerHTML = renderAiFeedback(data);
+    slot.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  }catch(e){
+    slot.innerHTML = "";
+    toast("Bir hata oluştu, tekrar dene.");
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = "🤖 Yeniden Değerlendir"; }
+  }
+}
+
+function scoreColorClass(s){
+  if(s >= 85) return "sc-great";
+  if(s >= 70) return "sc-good";
+  if(s >= 50) return "sc-avg";
+  return "sc-weak";
+}
+function bar5(n){
+  n = Math.max(0, Math.min(5, Number(n)||0));
+  let dots = "";
+  for(let i=1;i<=5;i++){ dots += '<span class="dot'+(i<=n?' on':'')+'"></span>'; }
+  return dots;
+}
+function renderAiFeedback(d){
+  const cls = scoreColorClass(d.overallScore);
+  const crit = (d.criteria||[]).map(c => `
+    <div class="crit-row">
+      <div class="crit-head">
+        <span class="crit-name">${esc(c.name)}</span>
+        <span class="crit-dots">${bar5(c.score)}</span>
+      </div>
+      <div class="crit-comment">${esc(c.comment||"")}</div>
+    </div>`).join("");
+  const strengths = (d.strengths||[]).map(s => `<li>${esc(s)}</li>`).join("");
+  const improvements = (d.improvements||[]).map(i => `
+    <div class="imp-row">
+      <div class="imp-point">${esc(i.point||"")}</div>
+      ${i.example ? `<div class="imp-example">${esc(i.example)}</div>` : ""}
+    </div>`).join("");
+
+  return `
+    <div class="ai-fb-card">
+      ${d.cleanedNote ? `<div class="ai-note">📝 ${esc(d.cleanedNote)}</div>` : ""}
+      <div class="ai-top">
+        <div class="ai-score ${cls}">${d.overallScore ?? "—"}</div>
+        <div>
+          <div class="ai-label ${cls}">${esc(d.overallLabel||"")}</div>
+          <div class="ai-summary">${esc(d.summary||"")}</div>
+        </div>
+      </div>
+      <div class="ai-section-title">Kriterler</div>
+      ${crit}
+      ${strengths ? `<div class="ai-section-title">✅ Güçlü yönler</div><ul class="ai-strengths">${strengths}</ul>` : ""}
+      ${improvements ? `<div class="ai-section-title">🎯 Geliştir</div>${improvements}` : ""}
+      ${d.nextFocus ? `<div class="ai-next">👉 <strong>Sonraki odak:</strong> ${esc(d.nextFocus)}</div>` : ""}
+    </div>`;
 }
 
 /* ---------- render: shell pieces ---------- */
@@ -1037,11 +1161,13 @@ function renderResult(){
         <textarea id="result-notes" rows="3" placeholder="Neyi zor buldun, hangi kelime aklına gelmedi…">${esc(flow.notes||"")}</textarea>
       </div>
       <div class="btn-row">
-        <button class="btn btn-accent" data-action="save-session">💾 Oturumu Kaydet</button>
-        <button class="btn btn-warm" data-action="copy-transcript">📋 Transkripti Kopyala</button>
+        <button class="btn btn-accent" data-action="get-ai-feedback">🤖 AI Geri Bildirimi Al</button>
+        <button class="btn btn-ghost" data-action="save-session">💾 Oturumu Kaydet</button>
+        <button class="btn btn-ghost" data-action="copy-transcript">📋 Transkripti Kopyala</button>
         <button class="btn btn-ghost" data-action="go-home">Ana Sayfa</button>
       </div>
-      <p class="footnote">Bu transkripti kopyaladıktan sonra Claude ile olan bu sohbete yapıştır — cümlelerindeki hatalara ve daha akademik ifadelere, senin söylediklerinden örnekler vererek geri bildirim veririm.</p>
+      <div id="ai-feedback-slot"></div>
+      <p class="footnote">🤖 AI Geri Bildirimi: konuşmanı telc C1 kriterlerine göre (Aussprache, Wortschatz, Grammatik, Aufbau, Interaktion) değerlendirir, senin cümlelerinden örneklerle geliştirme önerileri sunar. Konuşma tanıma hataları not olarak dikkate alınmaz.</p>
     </div>`;
 }
 
@@ -1079,6 +1205,7 @@ document.getElementById("app").addEventListener("click", (e)=>{
   else if(action === "listen-current"){ const meta = questionMeta(); if(meta) speak(meta.text); }
   else if(action === "save-session"){ saveSession(); }
   else if(action === "copy-transcript"){ copyTranscript(); }
+  else if(action === "get-ai-feedback"){ getAiFeedback(); }
 });
 document.getElementById("app").addEventListener("input", (e)=>{
   if(e.target.id === "prep-notes"){ flow.prepNotes = e.target.value; }
