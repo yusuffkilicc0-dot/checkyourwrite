@@ -98,6 +98,38 @@ const correctionSchema = new mongoose.Schema({
   },
 });
 
+const oralSessionSchema = new mongoose.Schema({
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  mode: String,        // 'full' | 'praesentation' | 'rueckfragen' | 'diskussion' | 'warmup'
+  mode_label: String,  // görünen ad
+  topic: String,       // konu kategorisi
+  ai_score: Number,    // AI genel puanı (0-100)
+  ai_label: String,    // Almanca etiket
+  ai_summary: String,  // Türkçe kısa özet
+  ai_criteria: [       // 5 telc kriteri
+    {
+      name: String,
+      score: Number,
+    },
+  ],
+  self_ratings: {      // öz-değerlendirme (1-5)
+    aussprache: Number,
+    wortschatz: Number,
+    grammatik: Number,
+    aufbau: Number,
+    interaktion: Number,
+  },
+  notes: String,
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 // Vercel serverless function'lar aynı process'i yeniden kullanabildiği için
 // "OverwriteModelError" almamak adına model zaten tanımlıysa onu kullanıyoruz.
 export const User = mongoose.models.User || mongoose.model('User', userSchema);
@@ -105,3 +137,5 @@ export const Subscription =
   mongoose.models.Subscription || mongoose.model('Subscription', subscriptionSchema);
 export const Correction =
   mongoose.models.Correction || mongoose.model('Correction', correctionSchema);
+export const OralSession =
+  mongoose.models.OralSession || mongoose.model('OralSession', oralSessionSchema);
