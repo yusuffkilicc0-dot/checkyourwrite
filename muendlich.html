@@ -759,20 +759,16 @@ function computeStats(){
   const days = new Set(sessions.map(s=> new Date(s.date).toDateString()));
   let streak = 0, cursor = new Date();
   while(days.has(cursor.toDateString())){ streak++; cursor.setDate(cursor.getDate()-1); }
-  const rated = sessions.filter(s=>s.ratings).slice(-5);
+  const rated = sessions.filter(s=> typeof s.aiScore === "number").slice(-5);
   let avg = null;
   if(rated.length){
-    const sum = rated.reduce((acc,s)=>{
-      const vals = Object.values(s.ratings);
-      return acc + vals.reduce((a,b)=>a+b,0)/vals.length;
-    },0);
-    avg = sum/rated.length;
+    avg = rated.reduce((acc,s)=> acc + s.aiScore, 0) / rated.length;
   }
   return { total, thisWeek, streak, avg };
 }
 
 /* ---------- session save / export ---------- */
-function saveSession(){
+async function saveSession(){
   const rec = {
     id: "s"+Date.now(),
     date: new Date().toISOString(),
@@ -782,12 +778,71 @@ function saveSession(){
     timing: flow.timing,
     ratings: flow.ratings,
     notes: flow.notes,
-    transcriptPreview: buildTranscriptText().slice(0, 4000)
+    // AI değerlendirmesi (varsa) — geçmişte AI puanı esas alınacak
+    aiScore: lastAiFeedback ? lastAiFeedback.overallScore : null,
+    aiLabel: lastAiFeedback ? lastAiFeedback.overallLabel : null,
+    aiSummary: lastAiFeedback ? lastAiFeedback.summary : null
   };
+
+  // MongoDB'ye kaydet (hesaba bağlı kalıcı geçmiş)
+  const token = localStorage.getItem("checkyourwrite_jwt_token");
+  const modeLabels = { full:"Tam Sınav Simülasyonu", praesentation:"Sadece Präsentation", rueckfragen:"Sadece Rückfragen", diskussion:"Sadece Diskussion", warmup:"Günlük Isınma" };
+  if(token){
+    try{
+      const res = await fetch("/api/oral-sessions", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+token },
+        body: JSON.stringify({
+          mode: flow.kind,
+          mode_label: modeLabels[flow.kind] || flow.kind,
+          topic: rec.topicTitle || rec.topicCategory,
+          ai_score: rec.aiScore,
+          ai_label: rec.aiLabel,
+          ai_summary: rec.aiSummary,
+          ai_criteria: lastAiFeedback ? (lastAiFeedback.criteria||[]).map(c=>({name:c.name, score:c.score})) : [],
+          self_ratings: flow.ratings,
+          notes: flow.notes
+        })
+      });
+      const data = await res.json();
+      if(data.success){ if(data.id) rec.id = data.id; toast("Prova kaydedildi."); }
+      else { toast(data.error || "Kayıt sunucuya yazılamadı, yerel olarak saklandı."); }
+    }catch(e){ toast("Sunucuya kaydedilemedi, yerel olarak saklandı."); }
+  }
+
+  // Yerel state'e de ekle (anında görünsün + çevrimdışı yedek)
   state.sessions.push(rec);
   persistState();
+  lastAiFeedback = null;
   flow = null;
   go("history");
+}
+
+// Sunucudan geçmiş provaları çekip yerel state ile birleştir
+async function loadOralSessionsFromServer(){
+  const token = localStorage.getItem("checkyourwrite_jwt_token");
+  if(!token) return;
+  try{
+    const res = await fetch("/api/oral-sessions", { headers:{ "Authorization":"Bearer "+token } });
+    if(!res.ok) return;
+    const data = await res.json();
+    if(!data.success || !Array.isArray(data.sessions)) return;
+    // Sunucu kayıtlarını yerel formata çevir
+    state.sessions = data.sessions.map(s=>({
+      id: s._id,
+      date: s.created_at,
+      mode: s.mode,
+      topicCategory: s.topic,
+      topicTitle: s.topic,
+      ratings: s.self_ratings || {},
+      notes: s.notes || "",
+      aiScore: (typeof s.ai_score === "number") ? s.ai_score : null,
+      aiLabel: s.ai_label || null,
+      aiSummary: s.ai_summary || null
+    }));
+    // Görünürdeyse geçmişi/istatistikleri tazele
+    if(view === "history" || view === "home") render();
+  }catch(e){ /* sessizce yerel state ile devam */ }
 }
 function copyTranscript(){
   const text = buildTranscriptText();
@@ -921,7 +976,7 @@ function renderHome(){
         <div class="stat-tile"><div class="num mono">${st.total}</div><div class="lbl">Toplam prova</div></div>
         <div class="stat-tile"><div class="num mono">${st.thisWeek}</div><div class="lbl">Bu hafta</div></div>
         <div class="stat-tile"><div class="num mono">${st.streak}</div><div class="lbl">Gün üst üste</div></div>
-        <div class="stat-tile"><div class="num mono">${st.avg!==null ? st.avg.toFixed(1) : "—"}</div><div class="lbl">Son provaların ort. puanı</div></div>
+        <div class="stat-tile"><div class="num mono">${st.avg!==null ? Math.round(st.avg) : "—"}</div><div class="lbl">Son provaların ort. AI puanı</div></div>
       </div>
 
       <div class="card">
@@ -978,13 +1033,13 @@ function renderHistory(){
   }
   const modeLabels = { full:"Tam Sınav", praesentation:"Präsentation", rueckfragen:"Rückfragen", diskussion:"Diskussion", warmup:"Isınma" };
   const rows = sessions.map(s=>{
-    const avg = s.ratings ? (Object.values(s.ratings).reduce((a,b)=>a+b,0)/Object.values(s.ratings).length).toFixed(1) : "—";
+    const score = (typeof s.aiScore === "number") ? s.aiScore : "—";
     const pillClass = s.mode === "full" ? "mode-full" : (s.mode === "warmup" ? "mode-warmup" : "");
     return `<tr>
       <td class="mono" style="white-space:nowrap;">${esc(fmtDate(s.date))}</td>
       <td><span class="pill ${pillClass}">${esc(modeLabels[s.mode]||s.mode)}</span></td>
       <td>${esc(s.topicTitle || s.topicCategory || "-")}</td>
-      <td class="mono">${avg}</td>
+      <td class="mono">${score}</td>
     </tr>`;
   }).join("");
   return `
@@ -992,7 +1047,7 @@ function renderHistory(){
       <div class="eyebrow">Geçmiş provalar</div>
       <div class="table-wrap" style="margin-top:12px;">
         <table class="history">
-          <thead><tr><th>Tarih</th><th>Mod</th><th>Konu</th><th>Puan</th></tr></thead>
+          <thead><tr><th>Tarih</th><th>Mod</th><th>Konu</th><th>AI Puanı</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -1229,5 +1284,6 @@ document.getElementById("tabs").addEventListener("click", (e)=>{
 
 /* ---------- init ---------- */
 render();
+loadOralSessionsFromServer();
 })();
 </script>
