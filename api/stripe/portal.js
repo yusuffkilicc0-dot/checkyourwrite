@@ -50,7 +50,7 @@ export default async function handler(req, res) {
     const { flow } = req.body || {};
     const params = {
       customer: customerId,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/hesabim`,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard.html `,
     };
 
     if (flow === 'cancel' && subscriptionId) {
