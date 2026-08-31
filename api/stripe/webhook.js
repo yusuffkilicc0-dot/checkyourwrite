@@ -202,6 +202,8 @@ async function setUserPlan({ email, plan, stripeCustomerId, stripeSubscriptionId
         stripe_customer_id: stripeCustomerId,
         plan,
         status: 'active',
+        // Yeni/yenilenen aktif abonelikte iptal bayragi kalkar.
+        cancel_at_period_end: false,
       };
       // Tarihleri sadece gecerliyse yaz (gecersiz Date CastError firlatir).
       if (currentPeriodStart) doc.current_period_start = currentPeriodStart;
@@ -321,7 +323,28 @@ export default async function handler(req, res) {
       }
     }
 
-    // ── 3) Abonelik iptal edildi / sona erdi ──
+    // ── 3) Abonelik guncellendi (donem sonunda iptal planlandi / plan degisti) ──
+    // Portaldan "iptal et" denince Stripe aboneligi hemen silmez; once
+    // cancel_at_period_end = true yapip bu event'i gonderir. Plan donem
+    // sonuna kadar aktif kalir, biz sadece iptal bayragini isaretliyoruz.
+    if (event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object;
+      const cancelAtPeriodEnd = !!subscription.cancel_at_period_end;
+      try {
+        const period = getPeriod(subscription);
+        const update = { cancel_at_period_end: cancelAtPeriodEnd };
+        if (period.end) update.current_period_end = period.end;
+        await Subscription.findOneAndUpdate(
+          { stripe_subscription_id: subscription.id },
+          update
+        );
+        console.log(`🔄 abonelik ${subscription.id} -> cancel_at_period_end: ${cancelAtPeriodEnd}`);
+      } catch (e) {
+        console.error('Abonelik guncelleme kaydi yazilamadi:', e.message);
+      }
+    }
+
+    // ── 4) Abonelik iptal edildi / sona erdi ──
     if (event.type === 'customer.subscription.deleted') {
       const subscription = event.data.object;
       const customerId = typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id;
@@ -339,7 +362,7 @@ export default async function handler(req, res) {
       try {
         await Subscription.findOneAndUpdate(
           { stripe_subscription_id: subscription.id },
-          { status: 'canceled' }
+          { status: 'canceled', cancel_at_period_end: false }
         );
       } catch (e) {
         console.error('Abonelik iptal kaydi yazilamadi:', e.message);
