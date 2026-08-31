@@ -886,9 +886,34 @@ function logout() {
   }
 }
 function upgradePlan() { window.location.href = '/index.html?plans=1'; }
+
 function cancelSubscription() {
-  if (confirm('Aboneliğini iptal etmek istediğine emin misin?')) {
-    showToast('Şimdilik destek için bize ulaş.', 'info');
+  portalAc('cancel');
+}
+
+async function portalAc(flow) {
+  const token = localStorage.getItem('checkyourwrite_jwt_token');
+  if (!token) {
+    showToast('Bu işlem için giriş yapmalısın.', 'error');
+    return;
+  }
+  try {
+    const res = await fetch('/api/stripe/portal', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ flow })
+    });
+    const data = await res.json();
+    if (res.ok && data.url) {
+      window.location.href = data.url;
+    } else {
+      showToast(data.error || 'Bir şeyler ters gitti. Lütfen tekrar deneyin.', 'error');
+    }
+  } catch (e) {
+    showToast('Bağlantı hatası. Lütfen tekrar deneyin.', 'error');
   }
 }
 
