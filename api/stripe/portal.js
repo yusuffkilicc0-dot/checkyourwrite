@@ -1,56 +1,64 @@
 // api/stripe/portal.js
-// Kullanıcıyı Stripe müşteri portalına yönlendirir.
-// flow_data ile direkt "iptal" veya "plan değiştir" ekranına açar.
+// Kullaniciyi Stripe musteri portalina yonlendirir.
+// flow_data ile direkt "iptal" veya "plan degistir" ekranina acar.
 // Body: { flow: 'cancel' } | { flow: 'update' } | {}
+//
+// NOT: Auth, sitenin geri kalaniyla ayni sistemi kullanir:
+// verifyAuth(req) -> JWT dogrular -> auth.userId ile Mongo'dan kullanici bulunur.
 
 import Stripe from 'stripe';
-import { createClient } from '@supabase/supabase-js';
+import { connectDB } from '../_lib/db.js';
+import { User } from '../_lib/models.js';
+import { verifyAuth } from '../_lib/auth.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-async function getUserFromRequest(req) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token) return null;
-  const { data, error } = await supabaseAdmin.auth.getUser(token);
-  if (error || !data?.user) return null;
-  return { email: data.user.email, id: data.user.id };
-}
+const ALLOWED_ORIGIN = 'https://www.checkyourwrite.com';
 
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Yalnızca POST destekleniyor.' });
+    return res.status(405).json({ error: 'Yalnizca POST destekleniyor.' });
   }
 
-  try {
-    const user = await getUserFromRequest(req);
-    if (!user) return res.status(401).json({ error: 'Bu işlem için giriş yapmalısınız.' });
+  // 1) Kullaniciyi dogrula (site geneliyle ayni JWT sistemi)
+  const auth = verifyAuth(req);
+  if (!auth) return res.status(401).json({ error: 'Bu islem icin giris yapmalisiniz.' });
 
-    // 1) Kullanıcının Stripe customer kaydını e-postasıyla bul
-    let customerId = null;
-    if (user.email) {
+  try {
+    await connectDB();
+
+    const user = await User.findById(auth.userId).select('email stripe_customer_id');
+    if (!user) return res.status(404).json({ error: 'Kullanici bulunamadi.' });
+
+    // 2) Stripe customer'i bul:
+    //    once Mongo'daki kayitli ID'yi kullan, yoksa email ile Stripe'ta ara.
+    let customerId = user.stripe_customer_id || null;
+
+    if (!customerId && user.email) {
       const existing = await stripe.customers.list({ email: user.email, limit: 1 });
       if (existing.data.length > 0) customerId = existing.data[0].id;
     }
+
     if (!customerId) {
-      return res.status(404).json({ error: 'Aktif bir aboneliğiniz bulunamadı.' });
+      return res.status(404).json({ error: 'Aktif bir aboneliginiz bulunamadi.' });
     }
 
-    // 2) Aktif aboneliği bul (flow_data için gerekli)
+    // 3) Aktif aboneligi bul (flow_data icin gerekli)
     let subscriptionId = null;
     const subs = await stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1 });
     if (subs.data.length > 0) subscriptionId = subs.data[0].id;
 
-    // 3) Portal oturumu — flow'a göre direkt ilgili ekrana aç
+    // 4) Portal oturumu — flow'a gore direkt ilgili ekrana ac
     const { flow } = req.body || {};
     const params = {
       customer: customerId,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard.html `,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard.html`,
     };
 
     if (flow === 'cancel' && subscriptionId) {
@@ -70,8 +78,8 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('[stripe/portal] hata:', err?.message, err?.raw?.code);
     if (err?.raw?.code === 'resource_missing') {
-      return res.status(404).json({ error: 'Abonelik kaydınıza ulaşılamadı.' });
+      return res.status(404).json({ error: 'Abonelik kaydiniza ulasilamadi.' });
     }
-    return res.status(500).json({ error: 'Bir şeyler ters gitti. Lütfen tekrar deneyin.' });
+    return res.status(500).json({ error: 'Bir seyler ters gitti. Lutfen tekrar deneyin.' });
   }
 }
