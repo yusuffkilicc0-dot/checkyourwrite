@@ -324,21 +324,28 @@ export default async function handler(req, res) {
     }
 
     // ── 3) Abonelik guncellendi (donem sonunda iptal planlandi / plan degisti) ──
-    // Portaldan "iptal et" denince Stripe aboneligi hemen silmez; once
-    // cancel_at_period_end = true yapip bu event'i gonderir. Plan donem
-    // sonuna kadar aktif kalir, biz sadece iptal bayragini isaretliyoruz.
+    // Portaldan "iptal et" denince Stripe aboneligi hemen silmez; iptali
+    // donem sonuna planlar. Plan donem sonuna kadar aktif kalir, biz sadece
+    // iptal bayragini isaretliyoruz.
+    //
+    // NOT (API surumu 2026-04-22.dahlia): Yeni surumde "donem sonunda iptal"
+    // artik cancel_at_period_end = true YAPMIYOR; bunun yerine cancel_at
+    // alanina iptal tarihini (timestamp) yaziyor. Bu yuzden iptali su
+    // sekilde tespit ediyoruz: cancel_at dolu VEYA cancel_at_period_end true.
+    // Boylece hem yeni hem eski API surumunde dogru calisir.
     if (event.type === 'customer.subscription.updated') {
       const subscription = event.data.object;
-      const cancelAtPeriodEnd = !!subscription.cancel_at_period_end;
+      const cancelScheduled =
+        !!subscription.cancel_at_period_end || subscription.cancel_at != null;
       try {
         const period = getPeriod(subscription);
-        const update = { cancel_at_period_end: cancelAtPeriodEnd };
+        const update = { cancel_at_period_end: cancelScheduled };
         if (period.end) update.current_period_end = period.end;
         await Subscription.findOneAndUpdate(
           { stripe_subscription_id: subscription.id },
           update
         );
-        console.log(`🔄 abonelik ${subscription.id} -> cancel_at_period_end: ${cancelAtPeriodEnd}`);
+        console.log(`🔄 abonelik ${subscription.id} -> cancel_at_period_end: ${cancelScheduled}`);
       } catch (e) {
         console.error('Abonelik guncelleme kaydi yazilamadi:', e.message);
       }
