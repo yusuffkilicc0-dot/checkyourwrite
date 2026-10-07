@@ -1,8 +1,9 @@
 import { User } from './models.js';
 
 /* Mündlich Pratik — günlük AI değerlendirme hakkı.
-   null = sınırsız. Sadece AI değerlendirmesi (api/oral-feedback) hak düşer. */
-export const ORAL_DAILY_LIMITS = { free: 3, premium: 10, pro: null };
+   null = sınırsız (sadece admin). Pro için 50 = adil kullanım sınırı (API maliyetini korur).
+   Sadece AI değerlendirmesi (api/oral-feedback) hak düşer. */
+export const ORAL_DAILY_LIMITS = { free: 3, premium: 10, pro: 50 };
 const ADMIN_EMAILS = ['yusuffkilicc0@gmail.com'];
 
 function todayKey() {

@@ -6,8 +6,9 @@ import { consumeOral, refundOral } from './_lib/oralQuota.js';
 const ALLOWED_ORIGIN = 'https://www.checkyourwrite.com';
 
 const LIMIT_MESSAGES = {
-  free: 'Bugünkü 3 ücretsiz AI değerlendirme hakkın doldu. Premium ile günde 10, Pro ile sınırsız değerlendirme alabilirsin.',
-  premium: 'Bugünkü 10 AI değerlendirme hakkın doldu. Pro ile sınırsız değerlendirme alabilirsin.',
+  free: 'Bugünkü 3 ücretsiz AI değerlendirme hakkın doldu. Premium ile günde 10, Pro ile günde 50 değerlendirme alabilirsin.',
+  premium: 'Bugünkü 10 AI değerlendirme hakkın doldu. Pro ile günde 50 değerlendirme alabilirsin.',
+  pro: 'Bugünkü 50 AI değerlendirme hakkın doldu (adil kullanım sınırı). Hakkın yarın yenilenir.',
 };
 
 export default async function handler(req, res) {
@@ -34,7 +35,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Değerlendirilecek konuşma çok kısa. Önce bir prova yapıp konuşman gerekiyor.' });
   }
 
-  // ── Günlük hak (ücretsiz 3 / Premium 10 / Pro sınırsız) ──
+  // ── Günlük hak (ücretsiz 3 / Premium 10 / Pro 50) ──
   let user, usage;
   try {
     await connectDB();

@@ -93,6 +93,7 @@
   .eyebrow{ text-transform:uppercase; letter-spacing:.08em; font-size:11px; color:var(--muted); font-weight:600; }
 
   .mode-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:16px; }
+  .mode-card, .option-card{ color:var(--ink); } /* <button> varsayılan siyah yazı rengini almasın */
   .mode-card{
     text-align:left; cursor:pointer; border:1px solid var(--line); background:var(--surface);
     border-radius:var(--radius); padding:18px; display:flex; flex-direction:column; gap:8px;
@@ -255,7 +256,7 @@
       telc C1 Hochschule sözlü sınavını mikrofonla prova et, AI'dan telc kriterlerine göre geri bildirim al.
     </p>
     <p style="color:#8B94AB; font-size:14px; line-height:1.6; margin-bottom:26px;">
-      Ücretsiz hesapla günde <strong style="color:#FFB224;">3 AI değerlendirmesi</strong>. Premium ile günde 10, Pro ile sınırsız.
+      Ücretsiz hesapla günde <strong style="color:#FFB224;">3 AI değerlendirmesi</strong>. Premium ile günde 10, Pro ile günde 50.
     </p>
     <a href="/?login=1&next=muendlich" style="display:inline-block; padding:12px 24px; background:linear-gradient(135deg,#FFB224,#FF8A3D); color:#14100A; text-decoration:none; border-radius:11px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;">Giriş yap / Ücretsiz hesap aç →</a>
   </div>
@@ -888,11 +889,11 @@ function quotaHtml(){
     return '<div class="hint quota-line">🤖 AI değerlendirme: <strong>sınırsız</strong></div>';
   }
   const out = oralUsage.remaining <= 0;
-  const upsell = out
-    ? (oralUsage.plan === "premium"
-        ? ' · <a href="/dashboard.html" style="color:var(--accent);">Pro ile sınırsız →</a>'
-        : ' · <a href="/dashboard.html" style="color:var(--accent);">Premium ile günde 10, Pro ile sınırsız →</a>')
-    : "";
+  const upsell = !out ? ""
+    : oralUsage.plan === "pro" ? ' · yarın yenilenir'
+    : oralUsage.plan === "premium"
+      ? ' · <a href="/dashboard.html" style="color:var(--accent);">Pro ile günde 50 →</a>'
+      : ' · <a href="/dashboard.html" style="color:var(--accent);">Premium ile günde 10, Pro ile günde 50 →</a>';
   return '<div class="hint quota-line">🤖 Bugün kalan AI değerlendirme: <strong'+(out?' style="color:var(--danger);"':'')+'>'+
     oralUsage.remaining+'/'+oralUsage.limit+'</strong>'+upsell+'</div>';
 }
@@ -1089,7 +1090,7 @@ function renderHome(){
           </label>
         </div>
         <hr class="divider">
-        <p class="footnote">Prova yapmak sınırsız ve ücretsiz. Prova bitince "AI Geri Bildirimi Al" ile konuşmanı telc C1 kriterlerine göre değerlendirtebilirsin; günlük hak sadece bu değerlendirmeden düşer (ücretsiz hesapta 3, Premium'da 10, Pro'da sınırsız). Konuşma tanıma için Chrome veya Edge önerilir.</p>
+        <p class="footnote">Prova yapmak sınırsız ve ücretsiz. Prova bitince "AI Geri Bildirimi Al" ile konuşmanı telc C1 kriterlerine göre değerlendirtebilirsin; günlük hak sadece bu değerlendirmeden düşer (ücretsiz hesapta 3, Premium'da 10, Pro'da 50). Konuşma tanıma için Chrome veya Edge önerilir.</p>
       </div>
     </div>`;
 }
