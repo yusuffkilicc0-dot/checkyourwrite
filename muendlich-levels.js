@@ -6,6 +6,8 @@
          Teil 2 Über ein Thema sprechen (~6'), Teil 3 Gemeinsam etwas planen (~6').
    - B2  telc Deutsch B2: 20' hazırlık; Einander kennenlernen (puansız), Teil 1 Über Erfahrungen
          sprechen (~5'), Teil 2 Diskussion (~5'), Teil 3 Gemeinsam etwas planen (~5').
+   Tüm konu, metin ve replikler bu site için özgün olarak yazılmıştır; telc materyalinden
+   alıntı yoktur (yalnızca sınavın bölüm yapısı ve görev tipleri telc formatına uyar).
    Gerçek sınav çift kişiliktir; tek kişilik sınavda partnerin rolünü bir sınav görevlisi
    üstlenir. Simülasyonda partner rolünü uygulama (sesli) oynar.
 
@@ -43,46 +45,46 @@
   ];
 
   const A2_T2 = [
-    { theme: "Tagesablauf", hint: "Was machen Sie normalerweise am Morgen, am Mittag, am Abend?",
-      cards: ["Wann …?", "Was …?", "Wo …?", "Wie lange …?", "…?"],
-      example: "Ich habe die Karte „Wie oft …?“. Ich kann also fragen: Wie oft am Tag essen Sie?",
-      partnerQs: ["Wann stehst du normalerweise auf?", "Was isst du gern zum Frühstück?", "Wo arbeitest oder lernst du am Nachmittag?"],
-      partnerReplies: ["Ich stehe meistens um halb sieben auf, am Wochenende später.", "Normalerweise mache ich das zu Hause, manchmal auch in der Bibliothek.", "Ungefähr eine Stunde, dann bin ich müde und gehe ins Bett."] },
+    { theme: "Freizeit und Hobbys", hint: "Was machen Sie gern, wenn Sie frei haben?",
+      cards: ["Was …?", "Wo …?", "Mit wem …?", "Seit wann …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Wie viel Zeit …?“ könnte man fragen: Wie viel Zeit haben Sie pro Woche für Ihr Hobby?",
+      partnerQs: ["Was machst du am liebsten nach der Arbeit?", "Wo triffst du deine Freunde?", "Seit wann hast du dein Hobby?"],
+      partnerReplies: ["Ich spiele Gitarre und gehe zweimal pro Woche ins Fitnessstudio.", "Meistens in einem Café in der Innenstadt.", "Ungefähr seit fünf Jahren. Ein Freund hat es mir gezeigt."] },
     { theme: "Wochenende", hint: "Was machen Sie am Samstag und am Sonntag?",
       cards: ["Was …?", "Mit wem …?", "Wohin …?", "Wann …?", "…?"],
-      example: "Ich habe die Karte „Wie lange …?“. Ich kann also fragen: Wie lange schlafen Sie am Sonntag?",
+      example: "Ein Beispiel: Mit der Karte „Wie lange …?“ könnte man fragen: Wie lange schlafen Sie am Sonntag?",
       partnerQs: ["Was machst du gern am Samstag?", "Mit wem verbringst du dein Wochenende?", "Wohin fährst du am Sonntag manchmal?"],
       partnerReplies: ["Am Samstag gehe ich meistens einkaufen und am Abend treffe ich Freunde.", "Meistens mit meiner Familie, manchmal auch mit Kollegen.", "Am liebsten an einen See oder in den Park."] },
     { theme: "Essen und Trinken", hint: "Was essen und trinken Sie gern? Wo und wann?",
       cards: ["Was …?", "Wo …?", "Wie oft …?", "Wer …?", "…?"],
-      example: "Ich habe die Karte „Wann …?“. Ich kann also fragen: Wann essen Sie zu Mittag?",
+      example: "Ein Beispiel: Mit der Karte „Wann …?“ könnte man fragen: Wann essen Sie zu Mittag?",
       partnerQs: ["Was kochst du gern?", "Wie oft gehst du ins Restaurant?", "Was trinkst du am Morgen?"],
       partnerReplies: ["Ich esse sehr gern Nudeln mit Gemüse.", "Ungefähr einmal im Monat, das ist ziemlich teuer.", "Bei uns kocht meistens mein Mann, er kocht besser als ich."] },
     { theme: "Wohnen", hint: "Wie und wo wohnen Sie?",
       cards: ["Wo …?", "Wie groß …?", "Mit wem …?", "Was …?", "…?"],
-      example: "Ich habe die Karte „Wie viele …?“. Ich kann also fragen: Wie viele Zimmer hat Ihre Wohnung?",
+      example: "Ein Beispiel: Mit der Karte „Wie viele …?“ könnte man fragen: Wie viele Zimmer hat Ihre Wohnung?",
       partnerQs: ["Wo wohnst du genau?", "Wie groß ist deine Wohnung?", "Mit wem wohnst du zusammen?"],
       partnerReplies: ["Ich wohne in der Nähe vom Bahnhof, im dritten Stock.", "Meine Wohnung hat zwei Zimmer, eine Küche und einen kleinen Balkon.", "Am liebsten mag ich mein Wohnzimmer, da ist viel Licht."] },
     { theme: "Einkaufen", hint: "Wo, wann und was kaufen Sie ein?",
       cards: ["Wo …?", "Wann …?", "Was …?", "Wie viel …?", "…?"],
-      example: "Ich habe die Karte „Wie oft …?“. Ich kann also fragen: Wie oft gehen Sie in den Supermarkt?",
+      example: "Ein Beispiel: Mit der Karte „Wie oft …?“ könnte man fragen: Wie oft gehen Sie in den Supermarkt?",
       partnerQs: ["Wo kaufst du am liebsten ein?", "Wann gehst du meistens einkaufen?", "Was kaufst du gern im Internet?"],
       partnerReplies: ["Ich kaufe meistens im Supermarkt in meiner Straße ein.", "Am Samstagvormittag, dann habe ich Zeit.", "Für Lebensmittel brauche ich ungefähr siebzig Euro pro Woche."] },
     { theme: "Urlaub und Reisen", hint: "Wohin reisen Sie gern? Wie und mit wem?",
       cards: ["Wohin …?", "Wie …?", "Mit wem …?", "Wie lange …?", "…?"],
-      example: "Ich habe die Karte „Wann …?“. Ich kann also fragen: Wann machen Sie Urlaub?",
+      example: "Ein Beispiel: Mit der Karte „Wann …?“ könnte man fragen: Wann machen Sie Urlaub?",
       partnerQs: ["Wohin bist du zuletzt gereist?", "Wie reist du am liebsten – mit dem Zug, dem Auto oder dem Flugzeug?", "Mit wem machst du gern Urlaub?"],
       partnerReplies: ["Letzten Sommer war ich in Spanien am Meer.", "Am liebsten mit dem Zug, das ist bequem.", "Meistens zwei Wochen im Sommer."] }
   ];
 
   const A2_T3 = [
-    { title: "Ein neues Hobby", task: "Sie suchen ein neues Hobby. Was können Sie zusammen machen? Was? Wann? Warum? Warum nicht? Finden Sie zwei passende Aktivitäten.",
-      mine: ["Singen", "Tanzen", "Malen", "Fußball spielen", "…?"],
+    { title: "Ein Sonntag in der Stadt", task: "Am Sonntag haben Sie beide frei und wollen zusammen etwas in Ihrer Stadt unternehmen. Sprechen Sie über Ihre Ideen und einigen Sie sich auf zwei Aktivitäten.",
+      mine: ["Zoo", "Picknick im Park", "Stadtführung", "Minigolf", "…?"],
       partnerLines: [
-        "Ich möchte gern Musik machen. Spielst du ein Instrument? Was meinst du?",
-        "Hmm. Was möchtest du denn gern machen? Was steht auf deinem Blatt?",
-        "Gute Idee! Wann hast du Zeit? Ich kann am Dienstagabend oder am Samstag.",
-        "Super. Was machen wir als zweite Aktivität?"
+        "Ich habe Lust auf einen Flohmarkt. Da kann man schöne Sachen finden. Kommst du mit?",
+        "Okay, und was ist deine Idee? Was möchtest du gern machen?",
+        "Das klingt gut! Um wie viel Uhr wollen wir anfangen? Ich schlafe am Sonntag gern lange.",
+        "Prima. Und was machen wir danach, am Nachmittag?"
       ] },
     { title: "Ein Wochenende in Hamburg", task: "Sie wollen zusammen ein Wochenende nach Hamburg fahren und dort etwas unternehmen. Jeder hat andere Vorschläge. Finden Sie passende Aktivitäten.",
       mine: ["Hafenrundfahrt", "Museum", "Einkaufen gehen", "Fischmarkt", "…?"],
@@ -90,7 +92,7 @@
         "Ich möchte gern in ein Musical gehen. Hast du Lust?",
         "Ach so. Was möchtest du lieber machen?",
         "Okay! Und wann machen wir das – am Samstag oder am Sonntag?",
-        "Gut. Wissen wir jetzt, wann und wo genau wir uns treffen?"
+        "Gut. Dann müssen wir noch festlegen: Um wie viel Uhr und wo treffen wir uns?"
       ] },
     { title: "Ein Geburtstagsgeschenk", task: "Eine Freundin aus dem Deutschkurs hat bald Geburtstag. Sie wollen zusammen ein Geschenk kaufen. Was kaufen Sie? Wie viel kostet es? Wer kauft es?",
       mine: ["Blumen", "ein Buch", "Kinokarten", "einen Kuchen", "…?"],
@@ -123,10 +125,10 @@
       const extra = pickN(A2_EXTRA_QS, 2);
       return {
         key: "t1", name: "Teil 1 · Sich vorstellen", dur: "ca. 3 Min.",
-        card: { title: "Sich vorstellen", lines: ["Name?", "Alter?", "Land?", "Wohnort?", "Sprachen?", "Beruf?", "Hobby?"] },
+        card: { title: "Über mich", lines: ["Name · Herkunft · Wohnort", "Familie · Alter", "Arbeit oder Schule", "Sprachen · Freizeit"] },
         topic: "Sich vorstellen",
         turns: [
-          { who: "Prüfer", say: "Willkommen bei der Mündlichen Prüfung telc Deutsch A2. Am Anfang wollen wir uns ein bisschen kennenlernen. Bitte stellen Sie sich kurz vor.", task: "Kartlardaki başlıkları kullanarak kendini tanıt (isim, yaş, ülke, şehir, diller, meslek, hobi).", kind: "monologue", target: 60 },
+          { who: "Prüfer", say: "Hallo und herzlich willkommen! Zuerst möchten wir Sie ein wenig kennenlernen. Erzählen Sie bitte etwas über sich.", task: "Karttaki başlıkları kullanarak kendini tanıt (isim, nereden geldiğin, şehir, aile, iş/okul, diller, boş zaman).", kind: "monologue", target: 60 },
           { who: "Prüfer", say: extra[0], task: "Sınav görevlisinin ek sorusunu cevapla.", kind: "answer", target: 30 },
           { who: "Prüfer", say: extra[1], task: "İkinci ek soruyu cevapla.", kind: "answer", target: 30 },
           { who: "Partner", say: "Hallo, ich bin Lena. Ich komme aus Österreich und wohne jetzt in Köln. Ich bin Krankenschwester.", task: "Partnerine kendisiyle ilgili bir soru sor.", kind: "ask", target: 20,
@@ -142,7 +144,7 @@
         card: { title: "Thema: " + t.theme, lines: ["Senin kartların: " + myCards.join("  ·  "), "(„…?“ = Joker: istediğin soruyu sor)"] },
         topic: t.theme,
         turns: [
-          { who: "Prüfer", say: "Wir kommen nun zum zweiten Teil. Sie sollen ein kurzes Gespräch miteinander führen. Das Thema ist: " + t.theme + ". " + t.hint + " " + t.example, task: "Örnek soruyu cevapla, böylece görevi anladığını göster.", kind: "answer", target: 20 },
+          { who: "Prüfer", say: "Danke. Jetzt sprechen Sie zusammen über ein Alltagsthema: " + t.theme + ". " + t.hint + " Sie stellen einander Fragen mit Ihren Karten. " + t.example, task: "Örnek soruyu cevapla, böylece görevi anladığını göster.", kind: "answer", target: 20 },
           { who: "Partner", say: t.partnerQs[0], task: "Partnerinin sorusunu cevapla.", kind: "answer", target: 25 },
           { who: "Partner", say: "", task: "Kartın: „" + myCards[0] + "“ — bu kelimeyle konuya uygun bir soru sor.", kind: "ask", target: 15, reply: t.partnerReplies[0] },
           { who: "Partner", say: t.partnerQs[1], task: "Partnerinin sorusunu cevapla.", kind: "answer", target: 25 },
@@ -158,7 +160,7 @@
       card: { title: t.title, lines: [t.task, "Senin önerilerin: " + t.mine.join("  ·  ")] },
       topic: t.title,
       turns: [
-        { who: "Prüfer", say: "Danke schön. Wir kommen zum dritten Teil. " + t.task, task: "Görevi dinle. Partnerinle birlikte karar vereceksiniz.", kind: "listen" },
+        { who: "Prüfer", say: "Sehr gut. Zum Schluss treffen Sie zusammen eine Entscheidung. " + t.task, task: "Görevi dinle. Partnerinle birlikte karar vereceksiniz.", kind: "listen" },
         { who: "Partner", say: t.partnerLines[0], task: "Partnerinin önerisine tepki ver (kabul et ya da nedeniyle reddet).", kind: "answer", target: 25 },
         { who: "Partner", say: t.partnerLines[1], task: "Kendi kartından bir öneri yap ve nedenini söyle.", kind: "answer", target: 30 },
         { who: "Partner", say: t.partnerLines[2], task: "Zaman/ayrıntı konusunda anlaş.", kind: "answer", target: 25 },
@@ -176,12 +178,12 @@
   ];
 
   const B1_T2 = [
-    { theme: "Gruppenreisen",
-      mine: { name: "Sabine, 33, Bürokauffrau", quote: "Ich verreise gern in einer Gruppe. Allein reisen macht mir keinen Spaß. Bei Gruppenreisen lernt man neue Leute kennen und ein Reiseführer zeigt einem die Sehenswürdigkeiten." },
-      partner: { name: "Jens, 39, Physiker", quote: "In einer Gruppe gibt es meist ein festes Programm. Deshalb reise ich immer allein – ganz nach Lust und Laune." },
-      partnerLines: ["Auf meinem Blatt sagt Jens, dass er immer allein reist. In einer Gruppe gibt es ein festes Programm, und er möchte lieber selbst entscheiden, wann er ausschläft oder etwas besichtigt.",
-        "Hast du selbst schon einmal eine Gruppenreise gemacht? Wie war das?",
-        "Ich verstehe dich. Aber findest du nicht, dass man allein flexibler ist? Was denkst du?"] },
+    { theme: "Selbst kochen oder Essen bestellen?",
+      mine: { name: "Lukas, 31, Pfleger", quote: "Nach der Schicht bin ich oft zu müde zum Kochen. Dann bestelle ich mir einfach etwas. Das spart Zeit, und es gibt so viel Auswahl – heute Pizza, morgen Sushi." },
+      partner: { name: "Ayla, 44, Buchhalterin", quote: "Ich koche jeden Abend frisch für meine Familie. Das ist gesünder und viel billiger als Essen vom Lieferdienst. Und zusammen kochen macht auch Spaß." },
+      partnerLines: ["Auf meinem Blatt erzählt Ayla, dass sie jeden Abend frisch kocht. Sie findet, das ist gesünder und billiger als ein Lieferdienst, und mit der Familie zusammen zu kochen macht ihr Spaß.",
+        "Wie ist das bei dir? Kochst du selbst oder bestellst du oft Essen?",
+        "Ich verstehe das. Aber auf Dauer ist Bestellen doch ziemlich teuer und oft nicht so gesund, oder? Was meinst du?"] },
     { theme: "Handy in der Schule",
       mine: { name: "Murat, 41, Vater von zwei Kindern", quote: "Handys sollten in der Schule verboten sein. Die Kinder spielen in der Pause nur noch am Handy und reden nicht mehr miteinander." },
       partner: { name: "Clara, 16, Schülerin", quote: "Mit dem Handy können wir im Unterricht schnell Informationen suchen. Man sollte lernen, das Handy sinnvoll zu benutzen, statt es zu verbieten." },
@@ -215,9 +217,9 @@
   ];
 
   const B1_T3 = [
-    { title: "Abschiedsparty", situation: "Sie haben im Urlaub nette Deutsche kennengelernt. Bevor alle nach Hause fahren, möchten Sie eine Abschiedsparty feiern. Planen Sie die Party zusammen.",
-      points: ["Wann?", "Wo?", "Essen", "Getränke", "Wer bezahlt wofür?", "…"],
-      partnerLines: ["Ich schlage vor, wir feiern am Freitagabend. Passt dir das?", "Wo sollen wir feiern? Ich dachte an den Garten vom Hotel.", "Und was machen wir mit dem Essen? Sollen alle etwas mitbringen?", "Gut. Wer kümmert sich um die Getränke und wer bezahlt was?"] },
+    { title: "Grillabend im Hof", situation: "In Ihrem Haus sind in letzter Zeit viele neue Mieter eingezogen. Sie möchten einen Grillabend im Hof organisieren, damit sich alle Nachbarn kennenlernen.",
+      points: ["Termin", "Einladung", "Grill und Essen", "Getränke und Musik", "Aufräumen", "…"],
+      partnerLines: ["Ich würde den Grillabend an einem Samstag machen, dann haben die meisten Zeit. Wie findest du das?", "Wie laden wir die Nachbarn ein? Mit einem Zettel im Treppenhaus oder persönlich?", "Was ist mit dem Essen? Kaufen wir alles oder bringt jede Familie etwas mit?", "Und wer kümmert sich danach ums Aufräumen?"] },
     { title: "Geburtstag einer Kollegin", situation: "Eine Kollegin hat nächste Woche Geburtstag. Sie möchten zusammen eine kleine Überraschung im Büro organisieren.",
       points: ["Wann?", "Was für eine Überraschung?", "Geschenk", "Essen/Kuchen", "Wer macht was?", "…"],
       partnerLines: ["Ich finde, wir sollten in der Mittagspause feiern. Was meinst du?", "Was für ein Geschenk könnten wir kaufen?", "Sollen wir einen Kuchen backen oder kaufen?", "Wer sagt den anderen Kollegen Bescheid und wer kauft das Geschenk?"] },
@@ -237,10 +239,10 @@
       const extra = pick(B1_EXTRA);
       return {
         key: "t1", name: "Teil 1 · Einander kennenlernen", dur: "ca. 3 Min.",
-        card: { title: "Einander kennenlernen", lines: ["Name", "Woher sie/er kommt", "Wie sie/er wohnt (Wohnung, Haus …)", "Familie", "Wo sie/er Deutsch gelernt hat", "Was sie/er macht (Schule, Studium, Beruf …)", "Sprachen (welche? wie lange? warum?)"] },
+        card: { title: "Gesprächsthemen", lines: ["Herkunft und Heimatstadt", "Wohnsituation und Familie", "Deutschlernen: seit wann? wo?", "Arbeit, Ausbildung oder Studium", "Weitere Sprachen und Interessen"] },
         topic: "Einander kennenlernen",
         turns: [
-          { who: "Prüfer", say: "Willkommen bei der Mündlichen Prüfung telc Deutsch B1. Die Prüfung hat drei Teile. Beginnen wir mit Teil 1: Bitte lernen Sie sich gegenseitig kennen.", task: "Sınav başlıyor — dinle.", kind: "listen" },
+          { who: "Prüfer", say: "Guten Tag und herzlich willkommen! Wir starten mit dem ersten Teil. Unterhalten Sie sich bitte ein paar Minuten und erfahren Sie etwas über Ihr Gegenüber.", task: "Sınav başlıyor — dinle.", kind: "listen" },
           { who: "Partner", say: "Hallo, ich heiße Tom. Ich komme aus England, aus Manchester. Und du? Wie heißt du und woher kommst du?", task: "Partnerine adını ve nereden geldiğini anlat.", kind: "answer", target: 25 },
           { who: "Partner", say: "Und wie wohnst du hier? In einer Wohnung oder in einem Haus? Mit deiner Familie?", task: "Nasıl yaşadığını ve aileni anlat.", kind: "answer", target: 30 },
           { who: "Partner", say: "", task: "Şimdi sen Tom'a soru sor (ör. ailesi, işi, Almanca'yı nerede öğrendiği).", kind: "ask", target: 20,
@@ -257,9 +259,9 @@
         card: { title: "Thema: „" + t.theme + "“", lines: ["Senin metnin — " + t.mine.name + ":", "„" + t.mine.quote + "“", "Görev: Metnindeki görüşü partnerine anlat, sonra kendi fikrini ve deneyimlerini söyle."] },
         topic: t.theme,
         turns: [
-          { who: "Prüfer", say: "Vielen Dank. Nun kommen wir zu Teil 2. Sie haben beide unterschiedliche Aufgabenblätter mit Meinungen zum Thema „" + t.theme + "“ bekommen. Möchten Sie anfangen? Worum geht es auf Ihrem Blatt?", task: "Metnindeki kişinin görüşünü kendi cümlelerinle özetle (okuma, anlat).", kind: "monologue", target: 60 },
+          { who: "Prüfer", say: "Danke. Im zweiten Teil geht es um das Thema „" + t.theme + "“. Jeder von Ihnen hat eine andere Meinung dazu gelesen. Erzählen Sie bitte zuerst, was die Person auf Ihrem Blatt denkt.", task: "Metnindeki kişinin görüşünü kendi cümlelerinle özetle (okuma, anlat).", kind: "monologue", target: 60 },
           { who: "Partner", say: t.partnerLines[0], task: "Partnerinin metnini dinle.", kind: "listen" },
-          { who: "Prüfer", say: "Wie sehen Sie beide das? Wie ist Ihre Meinung dazu?", task: "Kendi fikrini gerekçeleriyle söyle.", kind: "answer", target: 45 },
+          { who: "Prüfer", say: "Und was denken Sie selbst über dieses Thema?", task: "Kendi fikrini gerekçeleriyle söyle.", kind: "answer", target: 45 },
           { who: "Partner", say: t.partnerLines[1], task: "Kendi deneyiminden anlat.", kind: "answer", target: 40 },
           { who: "Partner", say: t.partnerLines[2], task: "Partnerinin itirazına tepki ver; katılıyorsan ya da katılmıyorsan nedenini söyle.", kind: "answer", target: 40 },
           { who: "Partner", say: "", task: "Partnerine konuyla ilgili bir soru sor (ör. onun deneyimi ya da fikri).", kind: "ask", target: 20,
@@ -273,7 +275,7 @@
       card: { title: t.title, lines: [t.situation, "Notlar: " + t.points.join("  ·  ")] },
       topic: t.title,
       turns: [
-        { who: "Prüfer", say: "Vielen Dank. Nun machen wir weiter mit Teil 3. Sie sollen gemeinsam etwas planen: " + t.situation + " Zum Schluss einigen Sie sich bitte darüber, was zu tun ist und wer welche Aufgabe übernimmt.", task: "Görevi dinle.", kind: "listen" },
+        { who: "Prüfer", say: "Danke schön. Im letzten Teil planen Sie etwas zusammen. " + t.situation + " Am Ende sollten Sie wissen, welche Aufgaben es gibt und wer sie übernimmt.", task: "Görevi dinle.", kind: "listen" },
         { who: "Partner", say: t.partnerLines[0], task: "Öneriye tepki ver; gerekirse başka bir öneri yap ve gerekçelendir.", kind: "answer", target: 35 },
         { who: "Partner", say: t.partnerLines[1], task: "Kendi fikrini söyle ve öner.", kind: "answer", target: 35 },
         { who: "Partner", say: t.partnerLines[2], task: "Bu noktayı birlikte netleştir.", kind: "answer", target: 35 },
@@ -333,8 +335,8 @@
         card: { title: "Thema: " + t.topic, lines: ["Yaklaşık 1,5 dakika bu konudaki deneyimlerini anlat. Sonra partnerinin sorularını cevapla.", "Partnerin de kendi konusunu anlatacak — dinleyip ona soru soracaksın."] },
         topic: t.topic,
         turns: [
-          { who: "Prüfer", say: "Willkommen bei der Mündlichen Prüfung telc Deutsch B2. Darf ich Sie bitten, sich am Anfang kurz miteinander bekannt zu machen?", task: "Isınma (puanlanmaz): kendini kısaca tanıt.", kind: "answer", target: 30 },
-          { who: "Prüfer", say: "Vielen Dank. Wir beginnen mit Teil 1. Bitte erzählen Sie über Ihre Erfahrungen zum Thema: " + t.topic + ".", task: "Yaklaşık 1,5 dakika deneyimlerini anlat (giriş – ayrıntı/örnek – değerlendirme).", kind: "monologue", target: 90 },
+          { who: "Prüfer", say: "Herzlich willkommen. Bevor es richtig losgeht: Stellen Sie sich bitte kurz gegenseitig vor.", task: "Isınma (puanlanmaz): kendini kısaca tanıt.", kind: "answer", target: 30 },
+          { who: "Prüfer", say: "Danke. Im ersten Teil berichten Sie über eigene Erfahrungen. Ihr Thema lautet: " + t.topic + ".", task: "Yaklaşık 1,5 dakika deneyimlerini anlat (giriş – ayrıntı/örnek – değerlendirme).", kind: "monologue", target: 90 },
           { who: "Partner", say: t.qs[0], task: "Partnerinin sorusunu cevapla.", kind: "answer", target: 35 },
           { who: "Partner", say: t.qs[1], task: "İkinci soruyu cevapla.", kind: "answer", target: 35 },
           { who: "Partner", say: p.text, task: "Partnerin " + p.topic + " hakkında konuşuyor — dikkatle dinle.", kind: "listen" },
@@ -350,21 +352,21 @@
         card: { title: t.title, lines: [t.text] },
         topic: t.title,
         turns: [
-          { who: "Prüfer", say: "Wir kommen zu Teil 2. Sie haben beide den Text „" + t.title + "“ gelesen. Sprechen Sie zunächst über den Inhalt: Welche Argumente oder Aspekte finden Sie interessant?", task: "Metnin içeriğini özetle ve seni en çok ilgilendiren noktayı söyle.", kind: "monologue", target: 60 },
+          { who: "Prüfer", say: "Weiter geht es mit der Diskussion. Grundlage ist der Text „" + t.title + "“. Fassen Sie bitte kurz zusammen, worum es geht, und sagen Sie, welcher Punkt Sie am meisten anspricht.", task: "Metnin içeriğini özetle ve seni en çok ilgilendiren noktayı söyle.", kind: "monologue", target: 60 },
           { who: "Partner", say: t.partnerArgs[0], task: "Kendi görüşünü gerekçe ve örnekle söyle.", kind: "answer", target: 45 },
           { who: "Partner", say: t.partnerArgs[1], task: "Karşı argümana yanıt ver.", kind: "answer", target: 45 },
           { who: "Partner", say: t.partnerArgs[2], task: "Görüşünü geliştir; kendi deneyiminden bir örnek ver.", kind: "answer", target: 45 },
-          { who: "Prüfer", say: "Gibt es einen Kompromiss oder eine Lösung, die für beide Seiten akzeptabel wäre?", task: "Bir uzlaşma ya da çözüm öner.", kind: "answer", target: 40 }
+          { who: "Prüfer", say: "Zum Abschluss dieses Teils: Wie könnte ein Mittelweg aussehen, mit dem beide Seiten leben können?", task: "Bir uzlaşma ya da çözüm öner.", kind: "answer", target: 40 }
         ]
       };
     }
     const t = pick(B2_T3);
     return {
       key: "t3", name: "Teil 3 · Gemeinsam etwas planen", dur: "ca. 5 Min.",
-      card: { title: t.title, lines: [t.situation, "Yardımcı sorular: Was? Wer? Wann? Wo? Essen/Trinken? Kosten?"] },
+      card: { title: t.title, lines: [t.situation, "Düşünebileceğin noktalar: program, yer ve zaman, ulaşım, yiyecek-içecek, bütçe, görev paylaşımı"] },
       topic: t.title,
       turns: [
-        { who: "Prüfer", say: "Wir kommen zum letzten Teil. Sie sollen gemeinsam etwas planen: " + t.situation, task: "Görevi dinle.", kind: "listen" },
+        { who: "Prüfer", say: "Jetzt der letzte Teil. Ihre gemeinsame Aufgabe: " + t.situation, task: "Görevi dinle.", kind: "listen" },
         { who: "Partner", say: t.partnerLines[0], task: "Öneriye tepki ver; katılmıyorsan alternatif öner ve gerekçelendir.", kind: "answer", target: 35 },
         { who: "Partner", say: t.partnerLines[1], task: "Kendi önerini yap.", kind: "answer", target: 35 },
         { who: "Partner", say: t.partnerLines[2], task: "Bu konuyu birlikte çöz.", kind: "answer", target: 35 },
