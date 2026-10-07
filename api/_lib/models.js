@@ -135,6 +135,20 @@ const oralSessionSchema = new mongoose.Schema({
   },
 });
 
+// Hız sınırı sayaçları (ör. kod gönderme spam'i). _id = "<anahtar>:<zaman dilimi>".
+// expiresAt geçince MongoDB TTL index'i kaydı kendiliğinden siler.
+const rateLimitSchema = new mongoose.Schema({
+  _id: String,
+  count: {
+    type: Number,
+    default: 0,
+  },
+  expiresAt: {
+    type: Date,
+    expires: 0,
+  },
+});
+
 // Vercel serverless function'lar aynı process'i yeniden kullanabildiği için
 // "OverwriteModelError" almamak adına model zaten tanımlıysa onu kullanıyoruz.
 export const User = mongoose.models.User || mongoose.model('User', userSchema);
@@ -144,3 +158,5 @@ export const Correction =
   mongoose.models.Correction || mongoose.model('Correction', correctionSchema);
 export const OralSession =
   mongoose.models.OralSession || mongoose.model('OralSession', oralSessionSchema);
+export const RateLimit =
+  mongoose.models.RateLimit || mongoose.model('RateLimit', rateLimitSchema);

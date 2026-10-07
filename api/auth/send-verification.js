@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { connectDB } from '../_lib/db.js';
 import { User } from '../_lib/models.js';
+import { hit, clientIp, hashKey } from '../_lib/rateLimit.js';
 
 const ALLOWED_ORIGIN = 'https://www.checkyourwrite.com';
 
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
 
   const { email } = req.body || {};
 
-  if (!email || typeof email !== 'string' || !email.includes('@')) {
+  if (!email || typeof email !== 'string' || !email.includes('@') || email.length > 254) {
     return res.status(400).json({ success: false, message: 'Geçerli bir email adresi gir.' });
   }
 
@@ -36,6 +37,20 @@ export default async function handler(req, res) {
 
   try {
     await connectDB();
+
+    // ── Spam koruması ──
+    // Aynı adrese: 60 sn'de 1, saatte 5 kod. Aynı IP'den: saatte 20 istek
+    // (farklı adreslerle Gmail gönderim kotasını doldurmayı engeller).
+    const emailKey = hashKey(normalizedEmail);
+    if (!(await hit(`send-email-1m:${emailKey}`, 1, 60))) {
+      return res.status(429).json({ success: false, message: 'Kod az önce gönderildi. Yeni kod için 1 dakika bekle.' });
+    }
+    if (!(await hit(`send-email-1h:${emailKey}`, 5, 3600))) {
+      return res.status(429).json({ success: false, message: 'Bu adrese çok fazla kod istendi. Lütfen daha sonra tekrar dene.' });
+    }
+    if (!(await hit(`send-ip-1h:${clientIp(req)}`, 20, 3600))) {
+      return res.status(429).json({ success: false, message: 'Çok fazla istek gönderildi. Lütfen daha sonra tekrar dene.' });
+    }
 
     const code = generateCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 dakika
