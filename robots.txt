@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard.html
+Disallow: /muendlich.html
+
+Sitemap: https://www.checkyourwrite.com/sitemap.xml
