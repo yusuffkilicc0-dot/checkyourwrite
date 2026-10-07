@@ -29,7 +29,7 @@ export default async function handler(req, res) {
   const { email } = req.body || {};
 
   if (!email || typeof email !== 'string' || !email.includes('@')) {
-    return res.status(400).json({ success: false, message: 'Gecerli bir email gir' });
+    return res.status(400).json({ success: false, message: 'Geçerli bir email adresi gir.' });
   }
 
   const normalizedEmail = email.trim().toLowerCase();
@@ -160,9 +160,9 @@ export default async function handler(req, res) {
       `,
     });
 
-    return res.status(200).json({ success: true, message: 'Kod gonderildi' });
+    return res.status(200).json({ success: true, message: 'Kod gönderildi' });
   } catch (error) {
     console.error('send-verification hatasi:', error);
-    return res.status(500).json({ success: false, message: 'Sunucu hatasi' });
+    return res.status(500).json({ success: false, message: 'Sunucu hatası, lütfen tekrar dene.' });
   }
 }

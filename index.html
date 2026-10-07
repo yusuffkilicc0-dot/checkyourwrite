@@ -2027,7 +2027,15 @@ async function verifyCode() {
       // Toast görünsün, sonra arayüzü giriş durumuna göre yenile
       setTimeout(() => location.reload(), 1200);
     } else {
-      showToast('Kod yanlış: ' + (data.message || ''), 'error');
+      showToast(data.message || 'Kod doğrulanamadı.', 'error');
+      // Kod artık geçersizse (çok fazla deneme / süre doldu) kullanıcıyı
+      // kod kutusunda bekletme: "Kod Gönder" adımına geri döndür.
+      if (response.status === 429 || data.expired) {
+        document.getElementById('verification-code-input').value = '';
+        document.getElementById('verification-code-div').style.display = 'none';
+        document.getElementById('verify-code-btn').style.display = 'none';
+        document.getElementById('email-submit-btn').style.display = 'block';
+      }
     }
   } catch (error) {
     console.error('Hata:', error);

@@ -27,11 +27,11 @@ export default async function handler(req, res) {
     const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
-      return res.status(404).json({ success: false, message: 'Kullanici bulunamadi' });
+      return res.status(404).json({ success: false, message: 'Bu email ile kayıtlı hesap bulunamadı. Önce kod iste.' });
     }
 
     if (!user.verification_token) {
-      return res.status(400).json({ success: false, message: 'Kod yanlis' });
+      return res.status(400).json({ success: false, expired: true, message: 'Geçerli bir kod yok. Lütfen yeni kod iste.' });
     }
 
     // ── Brute-force korumasi ──
@@ -56,11 +56,11 @@ export default async function handler(req, res) {
         { _id: user._id, verification_token: user.verification_token },
         { $set: { verification_token: null, verification_token_expires: null } }
       );
-      return res.status(429).json({ success: false, message: 'Cok fazla yanlis deneme. Lutfen yeni kod iste.' });
+      return res.status(429).json({ success: false, message: 'Çok fazla yanlış deneme. Lütfen yeni kod iste.' });
     }
 
     if (!user.verification_token_expires || new Date() > user.verification_token_expires) {
-      return res.status(400).json({ success: false, message: 'Kod suresi doldu' });
+      return res.status(400).json({ success: false, expired: true, message: 'Kodun süresi doldu. Lütfen yeni kod iste.' });
     }
 
     if (user.verification_token !== String(code)) {
@@ -69,9 +69,9 @@ export default async function handler(req, res) {
           { _id: user._id, verification_token: user.verification_token },
           { $set: { verification_token: null, verification_token_expires: null } }
         );
-        return res.status(429).json({ success: false, message: 'Cok fazla yanlis deneme. Lutfen yeni kod iste.' });
+        return res.status(429).json({ success: false, message: 'Çok fazla yanlış deneme. Lütfen yeni kod iste.' });
       }
-      return res.status(400).json({ success: false, message: 'Kod yanlis' });
+      return res.status(400).json({ success: false, message: 'Kod yanlış, tekrar dene.' });
     }
 
     user.is_verified = true;
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
 
     if (!process.env.JWT_SECRET) {
       console.error('JWT_SECRET tanimli degil.');
-      return res.status(500).json({ success: false, message: 'Sunucu hatasi' });
+      return res.status(500).json({ success: false, message: 'Sunucu hatası, lütfen tekrar dene.' });
     }
 
     const token = jwt.sign(
@@ -96,10 +96,10 @@ export default async function handler(req, res) {
       success: true,
       token,
       plan: user.subscription_plan,
-      message: 'Dogrulama basarili',
+      message: 'Doğrulama başarılı',
     });
   } catch (error) {
     console.error('verify-code hatasi:', error);
-    return res.status(500).json({ success: false, message: 'Sunucu hatasi' });
+    return res.status(500).json({ success: false, message: 'Sunucu hatası, lütfen tekrar dene.' });
   }
 }
