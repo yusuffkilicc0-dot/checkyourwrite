@@ -74,7 +74,42 @@
       cards: ["Wohin …?", "Wie …?", "Mit wem …?", "Wie lange …?", "…?"],
       example: "Ein Beispiel: Mit der Karte „Wann …?“ könnte man fragen: Wann machen Sie Urlaub?",
       partnerQs: ["Wohin bist du zuletzt gereist?", "Wie reist du am liebsten – mit dem Zug, dem Auto oder dem Flugzeug?", "Mit wem machst du gern Urlaub?"],
-      partnerReplies: ["Letzten Sommer war ich in Spanien am Meer.", "Am liebsten mit dem Zug, das ist bequem.", "Meistens zwei Wochen im Sommer."] }
+      partnerReplies: ["Letzten Sommer war ich in Spanien am Meer.", "Am liebsten mit dem Zug, das ist bequem.", "Meistens zwei Wochen im Sommer."] },
+    { theme: "Arbeit und Beruf", hint: "Was arbeiten Sie und wie sieht Ihr Arbeitstag aus?",
+      cards: ["Wo …?", "Wann …?", "Was …?", "Wie …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Wie viele Stunden …?“ könnte man fragen: Wie viele Stunden arbeiten Sie pro Woche?",
+      partnerQs: ["Wo arbeitest du?", "Wann fängt deine Arbeit an?", "Was machst du in der Mittagspause?"],
+      partnerReplies: ["Ich arbeite in einer Bäckerei in der Altstadt.", "Meistens um sechs Uhr morgens, das ist sehr früh.", "Mit dem Fahrrad, das dauert nur zehn Minuten."] },
+    { theme: "Familie", hint: "Erzählen Sie von Ihrer Familie.",
+      cards: ["Wer …?", "Wo …?", "Wie oft …?", "Was …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Wie viele …?“ könnte man fragen: Wie viele Geschwister haben Sie?",
+      partnerQs: ["Wo wohnt deine Familie?", "Wie oft siehst du deine Eltern?", "Was macht ihr gern zusammen?"],
+      partnerReplies: ["Meine Eltern wohnen in Wien, mein Bruder wohnt in Berlin.", "Leider nur zweimal im Jahr, an Weihnachten und im Sommer.", "Wir kochen zusammen und spielen Karten."] },
+    { theme: "Gesundheit", hint: "Was machen Sie für Ihre Gesundheit?",
+      cards: ["Was …?", "Wie oft …?", "Wann …?", "Warum …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Wie lange …?“ könnte man fragen: Wie lange schlafen Sie normalerweise?",
+      partnerQs: ["Was machst du, wenn du erkältet bist?", "Wie oft gehst du zum Arzt?", "Isst du gesund?"],
+      partnerReplies: ["Ich gehe jeden Tag eine halbe Stunde spazieren.", "Nur wenn ich wirklich krank bin, vielleicht einmal im Jahr.", "Ich trinke viel Tee und bleibe im Bett."] },
+    { theme: "Unterwegs in der Stadt", hint: "Wie kommen Sie in Ihrer Stadt von A nach B?",
+      cards: ["Wie …?", "Wie lange …?", "Wie viel …?", "Wohin …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Wie oft …?“ könnte man fragen: Wie oft fahren Sie mit der U-Bahn?",
+      partnerQs: ["Wie kommst du zur Arbeit oder zum Kurs?", "Hast du ein Auto oder ein Fahrrad?", "Wohin fährst du am liebsten in der Stadt?"],
+      partnerReplies: ["Ich fahre mit der Straßenbahn, das ist am bequemsten.", "Ungefähr zwanzig Minuten, wenn kein Stau ist.", "Ich habe ein Monatsticket, das kostet neunundvierzig Euro."] },
+    { theme: "Feste und Geburtstage", hint: "Wie feiern Sie gern?",
+      cards: ["Wann …?", "Wo …?", "Mit wem …?", "Was …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Welches …?“ könnte man fragen: Welches Fest ist Ihnen am wichtigsten?",
+      partnerQs: ["Wann hast du Geburtstag?", "Wie feierst du deinen Geburtstag?", "Was war dein schönstes Geschenk?"],
+      partnerReplies: ["Am liebsten feiere ich zu Hause mit ein paar Freunden.", "Meistens mit meiner Familie und meinen besten Freunden.", "Es gibt immer einen großen Kuchen und viel Musik."] },
+    { theme: "Kleidung und Einkaufen", hint: "Was ziehen Sie gern an und wo kaufen Sie Kleidung?",
+      cards: ["Was …?", "Wo …?", "Wie viel …?", "Welche Farbe …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Wann …?“ könnte man fragen: Wann kaufen Sie neue Kleidung?",
+      partnerQs: ["Was trägst du am liebsten?", "Wo kaufst du deine Kleidung?", "Welche Farbe magst du am meisten?"],
+      partnerReplies: ["Ich trage am liebsten Jeans und T-Shirts.", "Oft in Second-Hand-Läden, das ist billiger.", "Für eine Jacke gebe ich höchstens achtzig Euro aus."] },
+    { theme: "Wetter und Jahreszeiten", hint: "Welches Wetter mögen Sie? Was machen Sie bei Regen oder Sonne?",
+      cards: ["Welche …?", "Was …?", "Wohin …?", "Warum …?", "…?"],
+      example: "Ein Beispiel: Mit der Karte „Wie …?“ könnte man fragen: Wie ist das Wetter in Ihrem Heimatland im Winter?",
+      partnerQs: ["Welche Jahreszeit magst du am liebsten?", "Was machst du, wenn es regnet?", "Wie ist das Wetter in deiner Heimat?"],
+      partnerReplies: ["Ich mag den Herbst, die Farben sind so schön.", "Dann bleibe ich zu Hause und lese ein Buch.", "Im Sommer fahre ich gern an die Ostsee."] }
   ];
 
   const A2_T3 = [
@@ -117,6 +152,46 @@
         "Was machst du lieber?",
         "Gute Idee. Wann können wir das machen? Ich habe am Mittwoch frei.",
         "Und wo treffen wir uns?"
+      ] },
+    { title: "Ein Kinoabend", task: "Sie wollen diese Woche zusammen etwas am Abend unternehmen. Sprechen Sie über Ihre Ideen und finden Sie einen passenden Abend und ein Programm.",
+      mine: ["Kino", "Konzert", "Bowling", "Restaurant", "…?"],
+      partnerLines: [
+        "Ich möchte gern ins Theater gehen. Magst du Theater?",
+        "Hm, was möchtest du lieber machen?",
+        "Gute Idee. Welcher Tag passt dir? Ich kann am Donnerstag oder am Freitag.",
+        "Okay. Wo und um wie viel Uhr treffen wir uns?"
+      ] },
+    { title: "Eine Freundin im Krankenhaus besuchen", task: "Eine Freundin aus dem Kurs liegt im Krankenhaus. Sie wollen sie zusammen besuchen. Was bringen Sie mit? Wann gehen Sie hin?",
+      mine: ["Obst", "Zeitschriften", "Schokolade", "eine Karte", "…?"],
+      partnerLines: [
+        "Ich denke, wir bringen ihr Blumen mit. Was meinst du?",
+        "Was möchtest du ihr mitbringen?",
+        "Wann können wir hingehen? Die Besuchszeit ist von 14 bis 18 Uhr.",
+        "Gut. Fahren wir zusammen mit dem Bus?"
+      ] },
+    { title: "Eine Fahrradtour", task: "Am Wochenende soll das Wetter schön sein. Sie wollen zusammen eine Fahrradtour machen. Wohin fahren Sie? Was nehmen Sie mit?",
+      mine: ["zum See", "Picknick mitnehmen", "Samstagmorgen", "Fotos machen", "…?"],
+      partnerLines: [
+        "Ich würde gern in den Wald fahren. Da ist es schön ruhig. Wie findest du das?",
+        "Und was ist deine Idee?",
+        "Wann fahren wir los? Ich stehe am Wochenende nicht so gern früh auf.",
+        "Was nehmen wir zum Essen mit?"
+      ] },
+    { title: "Eine Party im Deutschkurs", task: "Ihr Deutschkurs ist bald zu Ende. Sie wollen zusammen eine kleine Party im Kursraum machen. Was brauchen Sie? Wer macht was?",
+      mine: ["Getränke", "Kuchen", "Musik", "Spiele", "…?"],
+      partnerLines: [
+        "Ich kann einen Salat machen. Was bringst du mit?",
+        "Und was machen wir mit der Musik?",
+        "Wer kauft die Getränke? Ich habe kein Auto.",
+        "Gut. Und wer fragt die Lehrerin, ob wir den Raum benutzen dürfen?"
+      ] },
+    { title: "Einem Freund beim Umzug helfen", task: "Ein Freund zieht am Samstag um. Sie wollen ihm zusammen helfen. Was machen Sie? Wann kommen Sie?",
+      mine: ["Kisten tragen", "Küche einpacken", "Essen kaufen", "Auto mieten", "…?"],
+      partnerLines: [
+        "Ich kann am Samstagmorgen kommen. Wann kannst du?",
+        "Was möchtest du lieber machen – tragen oder einpacken?",
+        "Wer kümmert sich um das Essen für alle?",
+        "Super. Wann treffen wir uns genau?"
       ] }
   ];
 
@@ -213,7 +288,67 @@
       partner: { name: "Elke, 47, Ärztin", quote: "Fitnessstudios sind teuer. Ich mache lieber Sport draußen, zum Beispiel Joggen oder Radfahren – das kostet nichts und man ist an der frischen Luft." },
       partnerLines: ["Elke auf meinem Blatt sagt, Fitnessstudios sind zu teuer. Sie macht lieber draußen Sport, zum Beispiel Joggen, das kostet nichts.",
         "Wie und wo machst du selbst Sport?",
-        "Aber im Winter ist es draußen kalt und dunkel. Was macht man dann?"] }
+        "Aber im Winter ist es draußen kalt und dunkel. Was macht man dann?"] },
+    { theme: "Taschengeld für Kinder",
+      mine: { name: "Stefan, 42, Elektriker", quote: "Meine Kinder bekommen jede Woche Taschengeld. So lernen sie früh, mit Geld umzugehen und für etwas zu sparen." },
+      partner: { name: "Monika, 38, Erzieherin", quote: "Ich gebe meinen Kindern kein festes Taschengeld. Wenn sie etwas brauchen, sprechen wir darüber. Geld sollte man sich verdienen, zum Beispiel mit Hilfe im Haushalt." },
+      partnerLines: ["Monika auf meinem Blatt gibt ihren Kindern kein festes Taschengeld. Sie findet, Kinder sollten sich Geld verdienen, zum Beispiel durch Hilfe im Haushalt.",
+        "Hast du als Kind Taschengeld bekommen? Wie viel war das ungefähr?",
+        "Aber wenn Kinder für Hausarbeit Geld bekommen, helfen sie dann nur noch für Geld? Was meinst du?"] },
+    { theme: "Kinder und Fernsehen",
+      mine: { name: "Jana, 35, Grafikerin", quote: "Meine Kinder dürfen jeden Tag eine Stunde fernsehen. Es gibt gute Sendungen, bei denen sie viel lernen, und ich habe auch mal Zeit für mich." },
+      partner: { name: "Paul, 50, Grundschullehrer", quote: "Kinder sitzen viel zu viel vor dem Bildschirm. Sie sollten lieber draußen spielen, lesen oder Sport machen. Bei uns gibt es unter der Woche kein Fernsehen." },
+      partnerLines: ["Paul auf meinem Blatt ist Lehrer. Er findet, dass Kinder zu viel vor dem Bildschirm sitzen. Bei ihm zu Hause gibt es unter der Woche gar kein Fernsehen.",
+        "Wie war das bei dir früher? Durftest du viel fernsehen?",
+        "Aber heute haben Kinder doch Tablets und Handys. Kann man das überhaupt noch kontrollieren?"] },
+    { theme: "Schuluniform",
+      mine: { name: "Derya, 40, Krankenschwester", quote: "Ich bin für Schuluniformen. Dann gibt es keinen Streit um teure Markenkleidung, und alle Kinder sind gleich." },
+      partner: { name: "Max, 17, Schüler", quote: "Eine Uniform finde ich schrecklich. Mit meiner Kleidung zeige ich, wer ich bin. Das sollte man Jugendlichen nicht wegnehmen." },
+      partnerLines: ["Max ist Schüler. Er findet Schuluniformen schrecklich, weil man mit Kleidung zeigt, wer man ist, und das möchte er nicht verlieren.",
+        "Gab es in deiner Schule eine Uniform? Wie fandest du das?",
+        "Aber Uniformen kosten auch Geld. Ist das für Familien mit wenig Geld nicht ein Problem?"] },
+    { theme: "Vegetarisch leben",
+      mine: { name: "Lea, 26, Studentin", quote: "Ich esse seit drei Jahren kein Fleisch mehr. Ich fühle mich gesünder, und es ist auch besser für die Tiere und die Umwelt." },
+      partner: { name: "Frank, 55, Metzger", quote: "Ein gutes Stück Fleisch gehört für mich zu einem richtigen Essen. Wichtig ist nur, dass das Fleisch aus der Region kommt und die Tiere gut leben." },
+      partnerLines: ["Frank auf meinem Blatt ist Metzger. Für ihn gehört Fleisch zu einem guten Essen, aber er sagt, es sollte aus der Region kommen und die Tiere sollten gut leben.",
+        "Wie ist das bei dir? Isst du Fleisch, und wie wichtig ist dir das?",
+        "Aber vegetarisch essen ist oft teurer und man muss viel kochen. Ist das nicht schwierig?"] },
+    { theme: "Computerspiele",
+      mine: { name: "Tim, 22, Azubi", quote: "Ich spiele jeden Abend online mit Freunden. Das ist für mich Entspannung, und man trainiert dabei auch Konzentration und Teamarbeit." },
+      partner: { name: "Sandra, 46, Mutter", quote: "Mein Sohn sitzt stundenlang vor dem Computer und vergisst alles andere. Ich finde, Computerspiele machen einsam und manche Spiele sind zu brutal." },
+      partnerLines: ["Sandra auf meinem Blatt ist Mutter. Ihr Sohn spielt stundenlang am Computer. Sie glaubt, dass Spiele einsam machen und manche zu brutal sind.",
+        "Spielst du selbst Computer- oder Handyspiele?",
+        "Wie viel Zeit am Tag findest du für Spiele in Ordnung, besonders für Kinder?"] },
+    { theme: "Bei den Eltern wohnen oder ausziehen?",
+      mine: { name: "Elif, 24, Bankkauffrau", quote: "Ich wohne noch bei meinen Eltern. Ich spare viel Geld für die Miete, und wir verstehen uns gut. Warum sollte ich ausziehen?" },
+      partner: { name: "Jonas, 23, Student", quote: "Ich bin mit 19 ausgezogen. Allein zu wohnen hat mich selbstständig gemacht: Ich koche, wasche und bezahle meine Rechnungen selbst." },
+      partnerLines: ["Jonas ist mit neunzehn ausgezogen. Er sagt, dass er dadurch selbstständig geworden ist, weil er jetzt alles allein machen muss.",
+        "Wie war das bei dir? Wann bist du von zu Hause ausgezogen, oder wohnst du noch bei deiner Familie?",
+        "In vielen Städten sind die Mieten sehr hoch. Können junge Leute überhaupt noch allein wohnen?"] },
+    { theme: "Hausarbeit teilen",
+      mine: { name: "Nadine, 34, Ärztin", quote: "Bei uns macht jeder die Hälfte im Haushalt. Wir haben einen Plan: Wer kocht, muss nicht abwaschen. So gibt es keinen Streit." },
+      partner: { name: "Herr Schulz, 61, Rentner", quote: "Ein fester Plan ist mir zu kompliziert. Jeder macht das, was er gut kann. Meine Frau kocht, und ich repariere Sachen und mache den Garten." },
+      partnerLines: ["Herr Schulz findet einen festen Plan zu kompliziert. Bei ihm macht jeder, was er gut kann: Seine Frau kocht, er repariert Sachen und kümmert sich um den Garten.",
+        "Wie ist das bei dir zu Hause oder in deiner WG?",
+        "Aber ist es nicht unfair, wenn einer immer die unangenehmen Arbeiten machen muss?"] },
+    { theme: "Urlaub: Camping oder Hotel?",
+      mine: { name: "Björn, 37, Förster", quote: "Ich fahre immer zum Campen. Man ist in der Natur, es ist billig, und man trifft nette Leute auf dem Campingplatz." },
+      partner: { name: "Irina, 45, Sekretärin", quote: "Im Urlaub möchte ich mich erholen. Im Hotel habe ich ein bequemes Bett, ein eigenes Bad und muss nicht kochen. Camping ist mir zu anstrengend." },
+      partnerLines: ["Irina macht lieber Urlaub im Hotel. Sie möchte sich erholen, ein bequemes Bett haben und nicht kochen müssen. Camping findet sie zu anstrengend.",
+        "Wie machst du am liebsten Urlaub? Warst du schon einmal campen?",
+        "Und was machst du, wenn es beim Camping eine Woche lang regnet?"] },
+    { theme: "Ehrenamtlich arbeiten",
+      mine: { name: "Carla, 29, Bürokauffrau", quote: "Ich helfe jeden Samstag bei der Tafel und verteile Lebensmittel. Es tut gut, anderen Menschen zu helfen, und ich habe dort viele Freunde gefunden." },
+      partner: { name: "Murat, 35, Taxifahrer", quote: "Ich arbeite fünfzig Stunden pro Woche. Für ein Ehrenamt habe ich keine Zeit. Ich finde, für soziale Aufgaben ist der Staat zuständig." },
+      partnerLines: ["Murat auf meinem Blatt arbeitet sehr viel und hat keine Zeit für ein Ehrenamt. Er meint, dass der Staat für soziale Aufgaben zuständig ist.",
+        "Hast du dich schon einmal ehrenamtlich engagiert, zum Beispiel in einem Verein?",
+        "Sollte man Menschen, die ehrenamtlich arbeiten, nicht ein bisschen Geld bezahlen? Was denkst du?"] },
+    { theme: "Bio-Lebensmittel",
+      mine: { name: "Sophie, 31, Yogalehrerin", quote: "Ich kaufe fast nur Bio-Produkte. Sie sind gesünder, und die Bauern gehen besser mit Tieren und Natur um." },
+      partner: { name: "Ralf, 48, Lagerarbeiter", quote: "Bio ist mir zu teuer. Ich habe eine Familie mit drei Kindern und muss auf den Preis achten. Ob Bio wirklich gesünder ist, weiß doch niemand genau." },
+      partnerLines: ["Ralf auf meinem Blatt findet Bio-Produkte zu teuer. Er hat drei Kinder und muss sparen, und er glaubt nicht sicher, dass Bio gesünder ist.",
+        "Kaufst du Bio-Produkte? Bei welchen Lebensmitteln achtest du darauf?",
+        "Wenn alle nur noch Bio kaufen würden, wäre das Essen dann nicht für viele zu teuer?"] }
   ];
 
   const B1_T3 = [
@@ -231,7 +366,22 @@
       partnerLines: ["Ich denke, ein Samstag im Juni wäre gut. Was denkst du?", "Was für ein Programm könnten wir für Kinder und Erwachsene machen?", "Was machen wir mit dem Essen? Grillen vielleicht?", "Wer fragt die Nachbarn, ob sie helfen können?"] },
     { title: "Besuch aus dem Ausland", situation: "Eine gemeinsame Freundin aus dem Ausland besucht Sie für ein Wochenende. Planen Sie zusammen das Programm.",
       points: ["Abholen", "Übernachtung", "Programm Samstag", "Programm Sonntag", "Kosten", "…"],
-      partnerLines: ["Sie kommt am Freitagabend am Bahnhof an. Kannst du sie abholen?", "Wo kann sie übernachten? Ich habe leider nur ein kleines Zimmer.", "Was zeigen wir ihr am Samstag?", "Und was machen wir am Sonntag, bevor sie wieder fährt?"] }
+      partnerLines: ["Sie kommt am Freitagabend am Bahnhof an. Kannst du sie abholen?", "Wo kann sie übernachten? Ich habe leider nur ein kleines Zimmer.", "Was zeigen wir ihr am Samstag?", "Und was machen wir am Sonntag, bevor sie wieder fährt?"] },
+    { title: "Überraschungsparty für einen Freund", situation: "Ein guter Freund wird 30. Sie möchten zusammen eine Überraschungsparty für ihn organisieren.",
+      points: ["Wann und wo?", "Gäste einladen", "Essen und Getränke", "Geschenk", "Wie bleibt es eine Überraschung?", "…"],
+      partnerLines: ["Ich finde, wir sollten am Samstag vor seinem Geburtstag feiern. Was denkst du?", "Wo können wir feiern, ohne dass er etwas merkt?", "Was schenken wir ihm? Vielleicht etwas zusammen mit allen Gästen?", "Gut. Wer kümmert sich um die Einladungen und wer um das Essen?"] },
+    { title: "Kinderfest im Kindergarten", situation: "Der Kindergarten Ihrer Kinder feiert ein Sommerfest. Die Eltern sollen helfen. Sie beide planen einen Teil des Festes.",
+      points: ["Spiele für Kinder", "Kuchen und Getränke", "Dekoration", "Was passiert bei Regen?", "Wer hilft wann?", "…"],
+      partnerLines: ["Ich hätte die Idee, dass wir Spiele für die Kinder machen, zum Beispiel Sackhüpfen. Was meinst du?", "Was brauchen wir zum Essen und Trinken?", "Und was machen wir, wenn es regnet?", "Wer ist wann am Stand? Ich kann nur am Nachmittag."] },
+    { title: "Eine Kollegin verabschieden", situation: "Eine beliebte Kollegin geht in Rente. Sie beide sollen eine kleine Abschiedsfeier im Betrieb organisieren.",
+      points: ["Termin", "Raum", "Geschenk", "Rede", "Essen", "…"],
+      partnerLines: ["Ich schlage vor, wir feiern an ihrem letzten Arbeitstag nach der Arbeit. Passt das?", "Was für ein Geschenk könnte ihr gefallen?", "Sollte jemand eine kleine Rede halten? Wer?", "Was machen wir mit dem Essen, und wer sammelt das Geld ein?"] },
+    { title: "Wochenendausflug mit Freunden", situation: "Sie möchten mit einer Gruppe von Freunden ein Wochenende in die Berge fahren. Sie beide übernehmen die Planung.",
+      points: ["Ziel", "Anreise", "Unterkunft", "Programm", "Kosten", "…"],
+      partnerLines: ["Ich würde gern in den Schwarzwald fahren. Hast du eine andere Idee?", "Wie fahren wir hin – mit dem Zug oder mit Autos?", "Wo übernachten wir? Eine Ferienwohnung ist vielleicht günstiger als ein Hotel.", "Was machen wir dort am Samstag, und wer bucht was?"] },
+    { title: "Hilfe für eine kranke Nachbarin", situation: "Ihre ältere Nachbarin hat sich das Bein gebrochen und kann zwei Wochen nicht aus dem Haus. Sie beide möchten ihr helfen.",
+      points: ["Einkaufen", "Arztbesuche", "Haustier versorgen", "Besuche", "Wer macht was wann?", "…"],
+      partnerLines: ["Ich kann am Montag und Mittwoch für sie einkaufen. Wann hast du Zeit?", "Sie hat einen Hund. Wer geht mit ihm spazieren?", "Am Donnerstag hat sie einen Termin beim Arzt. Wie kommt sie dorthin?", "Sollten wir auch ihre Familie informieren? Was meinst du?"] }
   ];
 
   function buildB1Part(part) {
@@ -293,11 +443,16 @@
     { topic: "Ihre Erfahrungen mit dem Deutschlernen", qs: ["Was war für dich am schwierigsten?", "Welche Methode hat dir am meisten geholfen?"] },
     { topic: "Ein Hobby, das Ihnen wichtig ist", qs: ["Wie bist du zu diesem Hobby gekommen?", "Wie viel Zeit investierst du ungefähr pro Woche?"] },
     { topic: "Eine Person, die Sie geprägt hat", qs: ["Was genau hast du von dieser Person gelernt?", "Habt ihr heute noch Kontakt?"] },
-    { topic: "Ihre Erfahrungen mit einem Umzug", qs: ["Was war beim Umzug das größte Problem?", "Wie lange hat es gedauert, bis du dich zu Hause gefühlt hast?"] }
+    { topic: "Ihre Erfahrungen mit einem Umzug", qs: ["Was war beim Umzug das größte Problem?", "Wie lange hat es gedauert, bis du dich zu Hause gefühlt hast?"] },
+    { topic: "Ein Sportereignis, das Sie erlebt haben", qs: ["Was hat dich an diesem Ereignis besonders begeistert?", "Machst du selbst auch Sport? Welchen?"] },
+    { topic: "Ein Konzert oder eine Musikveranstaltung", qs: ["Wie war die Stimmung beim Konzert?", "Welche Musik hörst du im Alltag am liebsten?"] },
+    { topic: "Ein Erlebnis, das Ihr Leben verändert hat", qs: ["Was hast du aus dieser Erfahrung gelernt?", "Würdest du heute etwas anders machen?"] }
   ];
   const B2_PARTNER_T1 = [
     { topic: "eine Sprachreise nach Spanien", text: "Ich möchte über meine Sprachreise nach Valencia erzählen. Ich war drei Wochen dort und habe bei einer Gastfamilie gewohnt. Am Anfang war es schwierig, weil die Familie sehr schnell gesprochen hat. Aber nach einer Woche habe ich viel mehr verstanden. Am meisten habe ich nicht im Kurs gelernt, sondern beim Abendessen mit der Familie. Deshalb würde ich jedem empfehlen, bei einer Gastfamilie zu wohnen." },
-    { topic: "ein Ehrenamt im Tierheim", text: "Ich erzähle von meinem Ehrenamt im Tierheim. Seit zwei Jahren gehe ich jeden Samstag dorthin und gehe mit den Hunden spazieren. Am Anfang dachte ich, das ist nur ein Hobby. Inzwischen habe ich gemerkt, dass ich dadurch viel ruhiger geworden bin. Außerdem habe ich dort Menschen kennengelernt, die heute gute Freunde sind." }
+    { topic: "ein Ehrenamt im Tierheim", text: "Ich erzähle von meinem Ehrenamt im Tierheim. Seit zwei Jahren gehe ich jeden Samstag dorthin und gehe mit den Hunden spazieren. Am Anfang dachte ich, das ist nur ein Hobby. Inzwischen habe ich gemerkt, dass ich dadurch viel ruhiger geworden bin. Außerdem habe ich dort Menschen kennengelernt, die heute gute Freunde sind." },
+    { topic: "mein erster Halbmarathon", text: "Ich erzähle von meinem ersten Halbmarathon. Vor zwei Jahren konnte ich kaum fünf Kilometer laufen. Dann habe ich mit einer Laufgruppe trainiert, dreimal pro Woche, auch im Winter. Beim Lauf selbst hatte ich nach fünfzehn Kilometern große Probleme, aber die Zuschauer haben mich angefeuert. Als ich ins Ziel kam, war ich unglaublich stolz. Seitdem weiß ich, dass man mit Geduld fast alles schaffen kann." },
+    { topic: "ein Open-Air-Konzert", text: "Ich möchte von einem Open-Air-Konzert im letzten Sommer erzählen. Meine Lieblingsband hat in einem Park gespielt, und ich war mit meiner Schwester dort. Zuerst hat es stark geregnet und wir waren total nass. Aber dann kam die Sonne raus, und alle haben zusammen gesungen und getanzt. Diese Atmosphäre werde ich nie vergessen. Seitdem gehe ich viel öfter auf Konzerte, statt nur Musik zu Hause zu hören." }
   ];
 
   const B2_T2 = [
@@ -310,7 +465,23 @@
     { title: "Kostenloser Nahverkehr in Städten?", text: "Einige europäische Städte bieten Busse und Bahnen inzwischen kostenlos an. Befürworter sagen, so würden mehr Menschen das Auto stehen lassen, die Luft würde sauberer und auch Menschen mit wenig Geld wären mobil. Gegner verweisen auf die hohen Kosten, die am Ende über Steuern bezahlt werden müssten. Außerdem seien Busse und Bahnen in vielen Städten schon jetzt überfüllt. Wichtiger als ein kostenloses Angebot seien deshalb mehr Verbindungen und pünktliche Züge.",
       partnerArgs: ["Für mich klingt das super. Wenn es nichts kostet, fahren doch viel mehr Leute mit dem Bus. Meinst du nicht?", "Aber wer bezahlt das am Ende? Die Steuerzahler, also wir alle. Ist das fair?", "Was ist deiner Meinung nach wichtiger: niedrige Preise oder ein besseres Angebot?"] },
     { title: "Smartphones erst ab 14?", text: "Immer mehr Eltern in Deutschland schließen sich Initiativen an, die ihren Kindern erst ab 14 Jahren ein eigenes Smartphone geben wollen. Sie verweisen auf Studien, nach denen eine hohe Bildschirmzeit Schlaf, Konzentration und das Selbstwertgefühl beeinträchtigen kann. Andere Eltern halten das für unrealistisch: Wer als Einziger in der Klasse kein Handy habe, werde schnell ausgeschlossen. Außerdem müssten Kinder früh lernen, mit digitalen Medien verantwortungsvoll umzugehen.",
-      partnerArgs: ["Ich finde, Kinder brauchen heute einfach ein Handy, schon wegen der Sicherheit. Wie siehst du das?", "Andererseits sieht man ja überall Kinder, die nur noch auf den Bildschirm starren. Macht dir das keine Sorgen?", "Wer sollte deiner Meinung nach die Regeln festlegen – die Eltern, die Schule oder der Staat?"] }
+      partnerArgs: ["Ich finde, Kinder brauchen heute einfach ein Handy, schon wegen der Sicherheit. Wie siehst du das?", "Andererseits sieht man ja überall Kinder, die nur noch auf den Bildschirm starren. Macht dir das keine Sorgen?", "Wer sollte deiner Meinung nach die Regeln festlegen – die Eltern, die Schule oder der Staat?"] },
+    { title: "Tattoos im Berufsleben", text: "Fast jeder vierte Erwachsene in Deutschland hat inzwischen ein Tattoo. In vielen Branchen sind sichtbare Tattoos längst kein Problem mehr. Dennoch gibt es Berufe, in denen Arbeitgeber erwarten, dass Tätowierungen verdeckt werden – etwa in Banken, bei der Polizei oder im Hotelempfang. Befürworter strenger Regeln argumentieren, dass Kundinnen und Kunden ein seriöses Erscheinungsbild erwarten. Kritiker halten dagegen, dass Tattoos nichts über die Qualität der Arbeit aussagen und Ausdruck der Persönlichkeit seien.",
+      partnerArgs: ["Ich finde, Tattoos sind heute völlig normal. Warum sollte ein Arbeitgeber das verbieten dürfen?", "Andererseits: Wenn ich zu einem Anwalt gehe, erwarte ich schon ein bestimmtes Auftreten. Verstehst du die Firmen nicht ein bisschen?", "Wo genau würdest du die Grenze ziehen – bei der Größe, beim Motiv oder beim Beruf?"] },
+    { title: "Massentourismus – Fluch oder Segen?", text: "Beliebte Reiseziele wie Venedig, Barcelona oder Mallorca leiden unter dem Ansturm von Touristen. Anwohner klagen über steigende Mieten, Lärm und überfüllte Straßen. Einige Städte erheben deshalb Eintrittsgebühren oder begrenzen die Zahl der Kreuzfahrtschiffe. Auf der anderen Seite lebt die Wirtschaft vieler Regionen vom Tourismus; Hotels, Restaurants und Geschäfte sichern tausende Arbeitsplätze. Experten fordern, Besucherströme besser zu verteilen und den Tourismus nachhaltiger zu gestalten.",
+      partnerArgs: ["Ich finde Eintrittsgebühren für Städte übertrieben. Reisen sollte doch für alle möglich sein, oder?", "Aber wenn die Einheimischen sich keine Wohnung mehr leisten können, läuft doch etwas falsch. Wie siehst du das?", "Was kann jeder Einzelne tun, um verantwortungsvoller zu reisen?"] },
+    { title: "Bargeldlos bezahlen", text: "Immer mehr Menschen in Deutschland bezahlen mit Karte oder Smartphone, selbst kleine Beträge beim Bäcker. Das ist schnell, hygienisch und praktisch. Einige Geschäfte akzeptieren bereits gar kein Bargeld mehr. Datenschützer warnen jedoch: Jede digitale Zahlung hinterlässt Spuren, aus denen sich Gewohnheiten ablesen lassen. Zudem haben ältere Menschen oder Personen ohne Bankkonto Schwierigkeiten. Auch bei Stromausfällen oder technischen Störungen sei man ohne Bargeld hilflos.",
+      partnerArgs: ["Ich zahle fast nur noch mit dem Handy. Bargeld ist doch unpraktisch. Wie ist das bei dir?", "Aber die Sache mit dem Datenschutz macht mich schon nachdenklich. Wer weiß, was mit den Daten passiert?", "Sollte es ein Gesetz geben, dass Geschäfte Bargeld annehmen müssen?"] },
+    { title: "Künstliche Intelligenz im Alltag", text: "Programme mit künstlicher Intelligenz schreiben Texte, übersetzen in Sekunden und beantworten Fragen rund um die Uhr. Viele Menschen nutzen sie bereits im Beruf und im Studium. Befürworter sehen darin eine enorme Zeitersparnis und neue Chancen, etwa in der Medizin. Kritiker befürchten dagegen, dass viele Arbeitsplätze wegfallen und Menschen verlernen, selbst nachzudenken. Außerdem seien die Antworten nicht immer zuverlässig, und es bleibe oft unklar, woher die Informationen stammen.",
+      partnerArgs: ["Ich nutze KI fast jeden Tag, sie spart mir viel Zeit. Siehst du darin eher Vorteile oder Nachteile?", "Aber was ist mit den Arbeitsplätzen? Übersetzer zum Beispiel haben schon jetzt weniger Aufträge. Macht dir das keine Sorgen?", "Sollte man in der Schule lernen, wie man mit KI umgeht, oder sollte sie dort verboten sein?"] },
+    { title: "Ausbildung oder Studium?", text: "Seit Jahren beginnen in Deutschland mehr junge Menschen ein Studium als eine Berufsausbildung. Viele Eltern sehen im Studium den sicheren Weg zu einem guten Einkommen. Gleichzeitig suchen Handwerksbetriebe dringend Nachwuchs, und gut ausgebildete Fachkräfte verdienen inzwischen oft mehr als manche Akademiker. Zudem verdient man in der Ausbildung von Anfang an Geld. Experten raten deshalb, die Entscheidung von den eigenen Interessen und nicht vom Ansehen eines Berufs abhängig zu machen.",
+      partnerArgs: ["Für mich war immer klar, dass ich studieren will. Ein Abschluss öffnet doch mehr Türen, oder nicht?", "Andererseits kenne ich Handwerker, die heute ihre eigene Firma haben und sehr gut verdienen. Wird die Ausbildung unterschätzt?", "Was sollten Schulen tun, damit Jugendliche die richtige Entscheidung treffen?"] },
+    { title: "Online-Unterricht statt Klassenzimmer?", text: "Seit der Pandemie bieten viele Schulen und Hochschulen Kurse auch online an. Lernende schätzen die Flexibilität: Sie sparen Fahrtzeit und können Aufzeichnungen mehrmals ansehen. Lehrkräfte berichten jedoch, dass die Motivation vor dem Bildschirm schnell sinkt und der persönliche Kontakt fehlt. Besonders Kinder aus Familien ohne ruhigen Arbeitsplatz oder gute Internetverbindung seien benachteiligt. Viele Bildungsexperten halten deshalb eine Mischung aus Präsenz- und Online-Unterricht für sinnvoll.",
+      partnerArgs: ["Ich lerne online viel effektiver, weil ich mein eigenes Tempo habe. Geht dir das auch so?", "Aber in einem Online-Kurs findet man kaum Freunde. Ist das nicht ein großer Nachteil?", "Für welche Fächer oder Kurse eignet sich Online-Unterricht deiner Meinung nach am besten?"] },
+    { title: "Mehr Videoüberwachung auf öffentlichen Plätzen?", text: "Nach mehreren Überfällen fordern Politiker in einigen Städten mehr Kameras an Bahnhöfen und auf öffentlichen Plätzen. Die Aufnahmen könnten helfen, Täter schneller zu finden, und sollen abschreckend wirken. Bürgerrechtler warnen dagegen vor einer zunehmenden Überwachung unbescholtener Menschen. Studien zeigen außerdem, dass Kameras Straftaten nicht unbedingt verhindern, sondern sie oft nur an andere Orte verlagern. Mehr Polizeipräsenz und eine bessere Beleuchtung seien wirksamer.",
+      partnerArgs: ["Ich fühle mich sicherer, wenn es Kameras gibt. Wer nichts zu verbergen hat, muss sich doch keine Sorgen machen, oder?", "Andererseits finde ich die Vorstellung unangenehm, dass ich ständig gefilmt werde. Wo hört Sicherheit auf und fängt Überwachung an?", "Welche anderen Maßnahmen könnten Plätze sicherer machen?"] },
+    { title: "Wohnen in einer WG – auch im Alter?", text: "Wohngemeinschaften sind längst nicht mehr nur etwas für Studierende. Immer mehr Berufstätige und sogar Seniorinnen und Senioren entscheiden sich, gemeinsam zu wohnen. Sie teilen sich Miete und Haushalt und sind seltener einsam. Gerade für ältere Menschen kann eine WG eine Alternative zum Pflegeheim sein. Allerdings entstehen auch Konflikte, etwa um Sauberkeit, Lautstärke oder Besuch. Nicht jeder ist bereit, Privatsphäre aufzugeben.",
+      partnerArgs: ["Ich könnte mir gut vorstellen, auch später in einer WG zu wohnen. Allein zu leben finde ich langweilig. Und du?", "Aber gerade beim Thema Sauberkeit gibt es doch ständig Streit. Hast du damit Erfahrungen?", "Wie müsste eine WG organisiert sein, damit das Zusammenleben gut funktioniert?"] }
   ];
 
   const B2_T3 = [
@@ -323,7 +494,15 @@
     { title: "Ein Benefizlauf", situation: "Ihr Verein möchte einen Spendenlauf für ein soziales Projekt organisieren. Sie beide sind für die Planung verantwortlich.",
       partnerLines: ["Für welches Projekt sollen wir eigentlich Geld sammeln? Hast du eine Idee?", "Wo könnte der Lauf stattfinden? Wir brauchen eine Genehmigung.", "Wie machen wir Werbung, damit möglichst viele mitlaufen?", "Wer übernimmt was am Tag selbst?"] },
     { title: "Ein Betriebsausflug", situation: "Sie sollen für Ihre Abteilung (ca. 20 Personen) einen Betriebsausflug organisieren.",
-      partnerLines: ["Ich hätte Lust auf etwas Aktives, zum Beispiel Kanufahren. Was meinst du?", "Was machen wir, wenn das Wetter schlecht ist?", "Wie kommen alle dorthin?", "Wer kümmert sich um Reservierungen und das Budget?"] }
+      partnerLines: ["Ich hätte Lust auf etwas Aktives, zum Beispiel Kanufahren. Was meinst du?", "Was machen wir, wenn das Wetter schlecht ist?", "Wie kommen alle dorthin?", "Wer kümmert sich um Reservierungen und das Budget?"] },
+    { title: "Eine Präsentation für den Kurs", situation: "Sie sollen gemeinsam eine 15-minütige Präsentation über ein Thema Ihrer Wahl für Ihren Kurs vorbereiten.",
+      partnerLines: ["Welches Thema sollen wir nehmen? Ich hätte Lust auf etwas über Umweltschutz. Was meinst du?", "Wie teilen wir uns die Arbeit auf – recherchiert jeder einen Teil?", "Wann und wo treffen wir uns zum Üben?", "Sollen wir mit Folien arbeiten oder lieber mit Plakaten?"] },
+    { title: "Ein Flohmarkt für einen guten Zweck", situation: "Ihre Nachbarschaft möchte einen Flohmarkt veranstalten. Der Erlös soll an ein Kinderheim gehen. Sie beide übernehmen die Organisation.",
+      partnerLines: ["Ich denke, der Schulhof wäre ein guter Ort. Wie siehst du das?", "Wie bekommen wir genug Verkäuferinnen und Verkäufer?", "Sollte es auch Kaffee und Kuchen geben? Wer backt?", "Wie stellen wir sicher, dass das Geld wirklich beim Kinderheim ankommt?"] },
+    { title: "Ein Sprachcafé gründen", situation: "Sie möchten in Ihrer Stadt ein monatliches Sprachcafé gründen, in dem sich Deutschlernende und Muttersprachler treffen.",
+      partnerLines: ["Wo könnten wir uns treffen? Ein Café oder lieber die Stadtbibliothek?", "Wie finden wir Muttersprachler, die mitmachen wollen?", "Wie soll ein Abend ablaufen – mit Themen oder ganz frei?", "Brauchen wir Geld für irgendetwas, und wenn ja, woher bekommen wir es?"] },
+    { title: "Ein Hochzeitsgeschenk", situation: "Gemeinsame Freunde heiraten in einem Monat. Sie möchten zusammen mit anderen Freunden ein besonderes Geschenk organisieren.",
+      partnerLines: ["Ich fände ein gemeinsames Geldgeschenk für die Hochzeitsreise gut. Oder hast du eine kreativere Idee?", "Wie viele Leute fragen wir, und wie viel soll jeder beitragen?", "Sollen wir bei der Feier auch etwas vorführen, zum Beispiel ein Video?", "Wer sammelt das Geld ein und wer kümmert sich um die Verpackung?"] }
   ];
 
   function buildB2Part(part, opts) {
