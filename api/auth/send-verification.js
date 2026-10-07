@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { connectDB } from '../_lib/db.js';
 import { User } from '../_lib/models.js';
@@ -5,7 +6,8 @@ import { User } from '../_lib/models.js';
 const ALLOWED_ORIGIN = 'https://www.checkyourwrite.com';
 
 function generateCode() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  // Kriptografik olarak guvenli rastgele kod (Math.random tahmin edilebilir)
+  return crypto.randomInt(100000, 1000000).toString();
 }
 
 const transporter = nodemailer.createTransport({
@@ -50,6 +52,7 @@ export default async function handler(req, res) {
           $set: {
             verification_token: code,
             verification_token_expires: expiresAt,
+            verification_attempts: 0,
           },
           $setOnInsert: {
             email: normalizedEmail,
@@ -72,6 +75,7 @@ export default async function handler(req, res) {
             $set: {
               verification_token: code,
               verification_token_expires: expiresAt,
+              verification_attempts: 0,
             },
           }
         );

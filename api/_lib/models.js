@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
   },
   verification_token: String,
   verification_token_expires: Date,
+  // Mevcut kod icin yapilan deneme sayisi (brute-force korumasi; yeni kodda sifirlanir)
+  verification_attempts: {
+    type: Number,
+    default: 0,
+  },
   last_login: Date,
   // Sunucu tarafli gunluk kullanim takibi (free plan limiti icin)
   usage_date: String, // 'YYYY-MM-DD'
