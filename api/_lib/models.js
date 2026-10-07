@@ -141,6 +141,19 @@ const oralSessionSchema = new mongoose.Schema({
   },
 });
 
+// §312k BGB "Verträge hier kündigen" üzerinden gelen fesih beyanları (ispat için saklanır).
+const cancellationRequestSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  kind: { type: String, enum: ['ordentlich', 'ausserordentlich'] },
+  reason: String,
+  requested_date: String,        // kullanıcı belirli bir tarih istediyse (YYYY-MM-DD)
+  received_at: { type: Date, default: Date.now },
+  matched: Boolean,              // e-postaya ait aktif abonelik bulundu mu
+  subscriptions: [{ id: String, plan: String, ends_at: Date }],
+  ip: String,
+});
+
 // Hız sınırı sayaçları (ör. kod gönderme spam'i). _id = "<anahtar>:<zaman dilimi>".
 // expiresAt geçince MongoDB TTL index'i kaydı kendiliğinden siler.
 const rateLimitSchema = new mongoose.Schema({
@@ -164,5 +177,7 @@ export const Correction =
   mongoose.models.Correction || mongoose.model('Correction', correctionSchema);
 export const OralSession =
   mongoose.models.OralSession || mongoose.model('OralSession', oralSessionSchema);
+export const CancellationRequest =
+  mongoose.models.CancellationRequest || mongoose.model('CancellationRequest', cancellationRequestSchema);
 export const RateLimit =
   mongoose.models.RateLimit || mongoose.model('RateLimit', rateLimitSchema);

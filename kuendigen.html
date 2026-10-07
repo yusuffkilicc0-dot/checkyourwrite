@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verträge hier kündigen – CheckYourWrite</title>
+<meta name="description" content="Kündigen Sie Ihr CheckYourWrite-Abonnement (Premium oder Pro) online – ohne Login.">
+<link rel="canonical" href="https://www.checkyourwrite.com/kuendigen.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0A0E17">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+  :root{
+    --bg:#0A0E17; --surface:#151B2A; --ink:#E8ECF6; --muted:#8B94AB; --line:rgba(148,163,197,0.18);
+    --accent:#FFB224; --accent-2:#FF8A3D; --danger:#F87171; --good:#4ADE80;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; line-height:1.6; }
+  .wrap{ max-width:620px; margin:0 auto; padding:28px 16px 60px; }
+  .logo{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; color:var(--ink); text-decoration:none; }
+  .logo span{ color:var(--accent); }
+  h1{ font-family:'Space Grotesk',sans-serif; font-size:26px; margin:28px 0 6px; }
+  .tr{ color:var(--muted); font-size:13.5px; }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px; margin-top:20px; }
+  label{ display:block; font-size:13.5px; font-weight:600; margin:16px 0 6px; }
+  label .opt{ font-weight:400; color:var(--muted); }
+  input[type=text], input[type=email], input[type=date], textarea{
+    width:100%; padding:11px 13px; border-radius:10px; border:1px solid var(--line); background:#0E1420; color:var(--ink); font:inherit;
+  }
+  textarea{ min-height:80px; resize:vertical; }
+  .radio{ display:flex; gap:10px; align-items:flex-start; margin:8px 0; font-size:14px; font-weight:400; cursor:pointer; }
+  .radio input{ margin-top:5px; }
+  .btn{ display:inline-block; border:0; border-radius:11px; padding:13px 22px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; cursor:pointer; }
+  .btn-primary{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#14100A; width:100%; margin-top:22px; }
+  .btn:disabled{ opacity:.6; cursor:not-allowed; }
+  .hint{ font-size:12.5px; color:var(--muted); margin-top:10px; }
+  .err{ color:var(--danger); font-size:14px; margin-top:12px; }
+  .ok h2{ font-family:'Space Grotesk',sans-serif; color:var(--good); font-size:20px; margin-bottom:8px; }
+  .ok dl{ display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:14px; margin:14px 0; }
+  .ok dt{ color:var(--muted); }
+  a{ color:var(--accent); }
+  .print{ background:transparent; color:var(--ink); border:1px solid var(--line); margin-top:8px; }
+  @media print{ body{ background:#fff; color:#000; } .card{ border-color:#ccc; background:#fff; } .no-print{ display:none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/" class="logo">check<span>yourwrite</span></a>
+
+  <h1>Verträge hier kündigen</h1>
+  <p class="tr">Aboneliğini buradan, giriş yapmadan iptal edebilirsin (Premium veya Pro). İptal, ödenmiş dönemin sonunda geçerli olur; o zamana kadar tüm özellikler açık kalır.</p>
+
+  <div class="card" id="form-card">
+    <form id="kform" novalidate>
+      <label for="name">Vor- und Nachname</label>
+      <input type="text" id="name" name="name" autocomplete="name" required>
+
+      <label for="email">E-Mail-Adresse Ihres Kontos <span class="opt">(hesabının e-postası)</span></label>
+      <input type="email" id="email" name="email" autocomplete="email" required>
+
+      <label>Art der Kündigung</label>
+      <label class="radio"><input type="radio" name="kind" value="ordentlich" checked> Ordentliche Kündigung zum nächstmöglichen Zeitpunkt <span class="opt">(normal iptal, dönem sonunda)</span></label>
+      <label class="radio"><input type="radio" name="kind" value="ausserordentlich"> Außerordentliche Kündigung <span class="opt">(olağanüstü fesih — gerekçe gerekli)</span></label>
+
+      <div id="reason-wrap" style="display:none;">
+        <label for="reason">Grund der außerordentlichen Kündigung</label>
+        <textarea id="reason" name="reason"></textarea>
+      </div>
+
+      <label for="date">Gewünschter Kündigungszeitpunkt <span class="opt">(optional — boş bırakırsan en erken tarih)</span></label>
+      <input type="date" id="date" name="date">
+
+      <button type="submit" class="btn btn-primary" id="submit">Jetzt kündigen</button>
+      <p class="hint">Nach dem Klick erhalten Sie sofort eine Bestätigung hier auf der Seite und per E-Mail. · Tıkladıktan sonra onay hem bu sayfada hem e-postayla gelir.</p>
+      <p class="err" id="err" role="alert"></p>
+    </form>
+  </div>
+
+  <div class="card ok" id="ok-card" style="display:none;" aria-live="polite">
+    <h2>✓ Ihre Kündigung ist eingegangen</h2>
+    <p>Wir haben Ihre Kündigungserklärung erhalten und eine Bestätigung an Ihre E-Mail-Adresse gesendet.</p>
+    <dl id="ok-details"></dl>
+    <p class="tr">İptal talebin alındı. Onay e-postası gönderildi. Bu sayfayı kayıt için yazdırabilir veya kaydedebilirsin.</p>
+    <button class="btn print no-print" onclick="window.print()">Bestätigung drucken / speichern</button>
+  </div>
+
+  <p class="hint" style="margin-top:22px;">Fragen? Antworten Sie einfach auf die Bestätigungs-E-Mail. · <a href="/">Zur Startseite</a> · <a href="/privacy.html">Datenschutz</a></p>
+</div>
+
+<script>
+(function () {
+  const form = document.getElementById('kform');
+  const reasonWrap = document.getElementById('reason-wrap');
+  form.addEventListener('change', function (e) {
+    if (e.target.name === 'kind') reasonWrap.style.display = e.target.value === 'ausserordentlich' ? 'block' : 'none';
+  });
+  // Giriş yapmış kullanıcı için e-postayı önceden doldur (zorunlu değil)
+  try { const em = localStorage.getItem('checkyourwrite_current_email'); if (em) document.getElementById('email').value = em; } catch (e) {}
+
+  function esc(s) { return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const err = document.getElementById('err');
+    const btn = document.getElementById('submit');
+    err.textContent = '';
+    const data = {
+      name: form.elements.name.value.trim(),
+      email: form.elements.email.value.trim(),
+      kind: form.elements.kind.value,
+      reason: form.elements.reason.value.trim(),
+      date: form.elements.date.value
+    };
+    if (!data.name || !data.email.includes('@')) { err.textContent = 'Bitte Namen und E-Mail-Adresse angeben.'; return; }
+    if (data.kind === 'ausserordentlich' && !data.reason) { err.textContent = 'Bitte einen Grund für die außerordentliche Kündigung angeben.'; return; }
+
+    btn.disabled = true; btn.textContent = 'Wird gesendet …';
+    try {
+      const res = await fetch('/api/stripe/kuendigung', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const out = await res.json();
+      if (!out.success) throw new Error(out.message || 'Fehler');
+      document.getElementById('ok-details').innerHTML =
+        '<dt>Eingang</dt><dd>' + esc(out.received_at_text) + '</dd>' +
+        '<dt>Name</dt><dd>' + esc(data.name) + '</dd>' +
+        '<dt>E-Mail</dt><dd>' + esc(data.email) + '</dd>' +
+        '<dt>Art</dt><dd>' + (data.kind === 'ausserordentlich' ? 'Außerordentliche Kündigung' : 'Ordentliche Kündigung zum nächstmöglichen Zeitpunkt') + '</dd>' +
+        (data.date ? '<dt>Wunschtermin</dt><dd>' + esc(data.date) + '</dd>' : '');
+      document.getElementById('form-card').style.display = 'none';
+      document.getElementById('ok-card').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (ex) {
+      err.textContent = ex.message;
+      btn.disabled = false; btn.textContent = 'Jetzt kündigen';
+    }
+  });
+})();
+</script>
+</body>
+</html>
