@@ -1,0 +1,5 @@
+# Eski Express sunucusu ve ortam dosyalari asla yayinlanmasin
+backend/
+.env
+**/.env
+CLAUDE.md
