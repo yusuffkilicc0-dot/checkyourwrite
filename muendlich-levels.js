@@ -26,6 +26,22 @@
   "use strict";
 
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  /* Son kullanılanları tekrar seçmeyen rastgele seçim. Geçmiş tarayıcıda saklanır,
+     böylece sayfa yenilense de aynı konu art arda gelmez. Dizinin yarısı (en fazla 8)
+     kadar son konu "dinlenmede" tutulur. */
+  function pickFresh(key, arr) {
+    const storeKey = "cyw_mdl_recent:" + key;
+    let recent = [];
+    try { recent = JSON.parse(localStorage.getItem(storeKey)) || []; } catch (e) { recent = []; }
+    recent = recent.filter(i => Number.isInteger(i) && i < arr.length);
+    const keep = Math.min(8, Math.floor(arr.length / 2));
+    recent = recent.slice(-keep);
+    const allowed = arr.map((_, i) => i).filter(i => !recent.includes(i));
+    const idx = allowed.length ? allowed[Math.floor(Math.random() * allowed.length)] : Math.floor(Math.random() * arr.length);
+    recent.push(idx);
+    try { localStorage.setItem(storeKey, JSON.stringify(recent.slice(-keep))); } catch (e) { /* gizli sekme */ }
+    return arr[idx];
+  }
   function pickN(arr, n) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
@@ -41,7 +57,25 @@
     "Haben Sie Geschwister?",
     "Wie lange lernen Sie schon Deutsch?",
     "Was essen Sie besonders gern?",
-    "Wie kommen Sie normalerweise zur Arbeit oder zum Kurs?"
+    "Wie kommen Sie normalerweise zur Arbeit oder zum Kurs?",
+    "Was haben Sie letztes Wochenende gemacht?",
+    "Wie sieht Ihre Wohnung aus?",
+    "Was ist Ihr Lieblingsessen aus Ihrem Heimatland?",
+    "Welche Sprachen sprechen Sie in Ihrer Familie?"
+  ];
+
+  // Teil 1'de kendini tanıtan partner (her sınavda farklı biri)
+  const A2_PARTNERS = [
+    { intro: "Hallo, ich bin Lena. Ich komme aus Österreich und wohne jetzt in Köln. Ich bin Krankenschwester.", reply: "Ich lerne Deutsch für meine Arbeit. In meiner Freizeit gehe ich gern schwimmen." },
+    { intro: "Guten Tag, mein Name ist Ahmed. Ich komme aus Syrien und wohne seit einem Jahr in Leipzig. Ich bin Elektriker.", reply: "Ich habe zwei Kinder. Am Wochenende spielen wir oft Fußball im Park." },
+    { intro: "Hallo, ich heiße Maria. Ich bin 29 Jahre alt und komme aus Portugal. Ich arbeite in einem Hotel.", reply: "Ich wohne mit meiner Freundin in einer kleinen Wohnung. Ich koche sehr gern." },
+    { intro: "Hi, ich bin Kenji aus Japan. Ich studiere Informatik in München.", reply: "Ich lerne seit acht Monaten Deutsch. Am liebsten höre ich deutsche Musik." },
+    { intro: "Hallo, ich bin Olga. Ich komme aus der Ukraine und wohne in Dresden. Ich bin Lehrerin.", reply: "Meine Familie wohnt noch in Kiew. Ich telefoniere jeden Tag mit meiner Mutter." },
+    { intro: "Guten Tag, ich heiße Carlos. Ich komme aus Mexiko und arbeite als Koch in Hamburg.", reply: "In meiner Freizeit tanze ich Salsa und treffe Freunde." },
+    { intro: "Hallo, mein Name ist Fatma. Ich bin 35 und komme aus der Türkei. Ich wohne in Dortmund.", reply: "Ich habe drei Kinder und arbeite halbtags in einem Supermarkt." },
+    { intro: "Hallo, ich bin Pierre aus Frankreich. Ich bin 24 und mache eine Ausbildung als Mechaniker.", reply: "Ich fahre sehr gern Fahrrad, auch zur Arbeit." },
+    { intro: "Hallo, ich heiße Priya. Ich komme aus Indien und arbeite als Programmiererin in Berlin.", reply: "Ich spreche Hindi, Englisch und jetzt ein bisschen Deutsch." },
+    { intro: "Guten Tag, ich bin Tomasz aus Polen. Ich wohne in Frankfurt und bin Busfahrer.", reply: "Am Wochenende gehe ich gern angeln oder wandern." }
   ];
 
   const A2_T2 = [
@@ -198,6 +232,7 @@
   function buildA2Part(part) {
     if (part === 1) {
       const extra = pickN(A2_EXTRA_QS, 2);
+      const partner = pickFresh("A2-partner", A2_PARTNERS);
       return {
         key: "t1", name: "Teil 1 · Sich vorstellen", dur: "ca. 3 Min.",
         card: { title: "Über mich", lines: ["Name · Herkunft · Wohnort", "Familie · Alter", "Arbeit oder Schule", "Sprachen · Freizeit"] },
@@ -206,13 +241,13 @@
           { who: "Prüfer", say: "Hallo und herzlich willkommen! Zuerst möchten wir Sie ein wenig kennenlernen. Erzählen Sie bitte etwas über sich.", task: "Karttaki başlıkları kullanarak kendini tanıt (isim, nereden geldiğin, şehir, aile, iş/okul, diller, boş zaman).", kind: "monologue", target: 60 },
           { who: "Prüfer", say: extra[0], task: "Sınav görevlisinin ek sorusunu cevapla.", kind: "answer", target: 30 },
           { who: "Prüfer", say: extra[1], task: "İkinci ek soruyu cevapla.", kind: "answer", target: 30 },
-          { who: "Partner", say: "Hallo, ich bin Lena. Ich komme aus Österreich und wohne jetzt in Köln. Ich bin Krankenschwester.", task: "Partnerine kendisiyle ilgili bir soru sor.", kind: "ask", target: 20,
-            reply: "Ich lerne Deutsch für meine Arbeit. In meiner Freizeit gehe ich gern schwimmen." }
+          { who: "Partner", say: partner.intro, task: "Partnerine kendisiyle ilgili bir soru sor.", kind: "ask", target: 20,
+            reply: partner.reply }
         ]
       };
     }
     if (part === 2) {
-      const t = pick(A2_T2);
+      const t = pickFresh("A2-t2", A2_T2);
       const myCards = pickN(t.cards.slice(0, 4), 2).concat(["…?"]);
       return {
         key: "t2", name: "Teil 2 · Ein Alltagsgespräch führen", dur: "ca. 4 Min.",
@@ -229,7 +264,7 @@
         ]
       };
     }
-    const t = pick(A2_T3);
+    const t = pickFresh("A2-t3", A2_T3);
     return {
       key: "t3", name: "Teil 3 · Etwas aushandeln", dur: "ca. 4 Min.",
       card: { title: t.title, lines: [t.task, "Senin önerilerin: " + t.mine.join("  ·  ")] },
@@ -249,7 +284,60 @@
     "Wie verbringen Sie normalerweise Ihr Wochenende?",
     "Welche Hobbys haben Sie?",
     "Was möchten Sie mit Ihren Deutschkenntnissen später machen?",
-    "Was gefällt Ihnen an der Stadt, in der Sie wohnen, und was nicht?"
+    "Was gefällt Ihnen an der Stadt, in der Sie wohnen, und was nicht?",
+    "Was war für Sie am Anfang in Deutschland besonders schwierig?",
+    "Wie sieht ein ganz normaler Tag bei Ihnen aus?",
+    "Was vermissen Sie aus Ihrem Heimatland am meisten?",
+    "Welche Pläne haben Sie für die nächsten Jahre?",
+    "Wie halten Sie Kontakt zu Familie und Freunden im Ausland?",
+    "Was machen Sie, um Ihr Deutsch zu verbessern?",
+    "Erzählen Sie von einem schönen Erlebnis im letzten Jahr.",
+    "Wie haben Sie Ihre Wohnung gefunden?"
+  ];
+
+  // Teil 1: Partner (her sınavda farklı biri). greet → isim/köken sorusu,
+  // home → yaşam/aile sorusu, reply → kullanıcının sorusuna cevap, lang → dil sorusu
+  const B1_PARTNERS = [
+    { name: "Tom", greet: "Hallo, ich heiße Tom. Ich komme aus England, aus Manchester. Und du? Wie heißt du und woher kommst du?",
+      home: "Und wie wohnst du hier? In einer Wohnung oder in einem Haus? Mit deiner Familie?",
+      reply: "Ich arbeite als Koch in einem Restaurant. Deutsch habe ich zuerst in der Volkshochschule gelernt, jetzt lerne ich vor allem bei der Arbeit.",
+      lang: "Wo hast du Deutsch gelernt? Und welche Sprachen sprichst du noch?" },
+    { name: "Sara", greet: "Hallo! Ich bin Sara und komme aus Italien, aus der Nähe von Neapel. Wie heißt du denn, und woher kommst du?",
+      home: "Wohnst du allein oder mit anderen zusammen? Ich wohne in einer WG mit zwei Studentinnen.",
+      reply: "Ich studiere Medizin hier in Heidelberg. Meine Familie ist in Italien, aber meine Schwester kommt mich oft besuchen.",
+      lang: "Wie lange lernst du schon Deutsch? Und warum hast du angefangen?" },
+    { name: "Yusuf", greet: "Hallo, ich bin Yusuf. Ich komme aus Marokko und lebe seit drei Jahren in Bremen. Und du, woher kommst du?",
+      home: "Hast du Familie hier in Deutschland, oder bist du allein hergekommen?",
+      reply: "Ich bin Pflegefachkraft in einem Altenheim. Die Arbeit ist anstrengend, aber sie macht mir Spaß.",
+      lang: "Welche Sprachen sprichst du? Ich spreche Arabisch, Französisch und jetzt Deutsch." },
+    { name: "Anna", greet: "Guten Tag, ich heiße Anna und komme aus Polen. Wie heißen Sie, und wo kommen Sie her?",
+      home: "Wie gefällt Ihnen Ihre Wohnung hier? Ich suche gerade eine neue, das ist gar nicht so einfach.",
+      reply: "Ich bin Bürokauffrau in einer Spedition. In meiner Freizeit singe ich in einem Chor.",
+      lang: "Wo haben Sie Deutsch gelernt? In einem Kurs oder allein?" },
+    { name: "Daniel", greet: "Hi, ich bin Daniel aus Brasilien. Ich bin vor einem Jahr nach Stuttgart gekommen. Und du, wie heißt du?",
+      home: "Wohnst du in der Stadt oder eher außerhalb?",
+      reply: "Ich bin Ingenieur bei einem Autozulieferer. Meine Frau und ich haben eine kleine Tochter.",
+      lang: "Was war beim Deutschlernen für dich am schwierigsten? Für mich sind es die Artikel!" },
+    { name: "Mei", greet: "Hallo, mein Name ist Mei. Ich komme aus China, aus Shanghai. Wie ist dein Name und woher kommst du?",
+      home: "Was machst du beruflich? Oder studierst du noch?",
+      reply: "Ich mache gerade meinen Master in Wirtschaft. Nebenbei arbeite ich in einem Café.",
+      lang: "Welche Sprachen sprichst du außer Deutsch?" },
+    { name: "Lukas", greet: "Servus, ich bin Lukas und komme aus Österreich. Ich arbeite hier in München. Und wer bist du?",
+      home: "Erzähl mal von deiner Familie. Hast du Geschwister?",
+      reply: "Ich bin Physiotherapeut. Meine Freundin kommt aus Spanien, deshalb lerne ich gerade Spanisch.",
+      lang: "Wie hast du Deutsch gelernt – im Kurs, mit Apps oder bei der Arbeit?" },
+    { name: "Amira", greet: "Hallo, ich bin Amira. Ich komme aus Ägypten und wohne seit sechs Monaten in Köln. Woher kommst du?",
+      home: "Wie wohnst du? Ich wohne bei einer Gastfamilie, das ist sehr nett.",
+      reply: "Ich bin Zahnärztin und warte gerade auf die Anerkennung meines Abschlusses.",
+      lang: "Brauchst du Deutsch für deinen Beruf? Ich brauche für meine Arbeit das Niveau C1." },
+    { name: "Ivan", greet: "Guten Tag, ich heiße Ivan und komme aus Bulgarien. Wie heißen Sie?",
+      home: "Und wie sieht Ihre Familie aus? Sind Sie verheiratet?",
+      reply: "Ich arbeite als Lkw-Fahrer und bin deshalb oft unterwegs. Am Wochenende bin ich bei meiner Familie.",
+      lang: "Welche Sprachen sprechen Sie? Ich spreche auch etwas Russisch." },
+    { name: "Elena", greet: "Hallo zusammen! Ich bin Elena aus Spanien. Und du? Erzähl mal, woher kommst du?",
+      home: "Wo wohnst du hier genau? Gefällt dir das Viertel?",
+      reply: "Ich arbeite als Erzieherin in einem Kindergarten. Die Kinder helfen mir sehr beim Deutschlernen!",
+      lang: "Wo und wie lange hast du Deutsch gelernt?" }
   ];
 
   const B1_T2 = [
@@ -386,24 +474,25 @@
 
   function buildB1Part(part) {
     if (part === 1) {
-      const extra = pick(B1_EXTRA);
+      const extra = pickFresh("B1-extra", B1_EXTRA);
+      const partner = pickFresh("B1-partner", B1_PARTNERS);
       return {
         key: "t1", name: "Teil 1 · Einander kennenlernen", dur: "ca. 3 Min.",
         card: { title: "Gesprächsthemen", lines: ["Herkunft und Heimatstadt", "Wohnsituation und Familie", "Deutschlernen: seit wann? wo?", "Arbeit, Ausbildung oder Studium", "Weitere Sprachen und Interessen"] },
         topic: "Einander kennenlernen",
         turns: [
           { who: "Prüfer", say: "Guten Tag und herzlich willkommen! Wir starten mit dem ersten Teil. Unterhalten Sie sich bitte ein paar Minuten und erfahren Sie etwas über Ihr Gegenüber.", task: "Sınav başlıyor — dinle.", kind: "listen" },
-          { who: "Partner", say: "Hallo, ich heiße Tom. Ich komme aus England, aus Manchester. Und du? Wie heißt du und woher kommst du?", task: "Partnerine adını ve nereden geldiğini anlat.", kind: "answer", target: 25 },
-          { who: "Partner", say: "Und wie wohnst du hier? In einer Wohnung oder in einem Haus? Mit deiner Familie?", task: "Nasıl yaşadığını ve aileni anlat.", kind: "answer", target: 30 },
-          { who: "Partner", say: "", task: "Şimdi sen Tom'a soru sor (ör. ailesi, işi, Almanca'yı nerede öğrendiği).", kind: "ask", target: 20,
-            reply: "Ich arbeite als Koch in einem Restaurant. Deutsch habe ich zuerst in der Volkshochschule gelernt, jetzt lerne ich vor allem bei der Arbeit." },
-          { who: "Partner", say: "Wo hast du Deutsch gelernt? Und welche Sprachen sprichst du noch?", task: "Almanca'yı nerede öğrendiğini ve bildiğin dilleri anlat.", kind: "answer", target: 30 },
+          { who: "Partner", say: partner.greet, task: "Partnerine adını ve nereden geldiğini anlat.", kind: "answer", target: 25 },
+          { who: "Partner", say: partner.home, task: "Partnerinin sorusunu cevapla (yaşam, aile, iş).", kind: "answer", target: 30 },
+          { who: "Partner", say: "", task: "Şimdi sen partnerine (" + partner.name + ") bir soru sor (ör. ailesi, işi, boş zamanı).", kind: "ask", target: 20,
+            reply: partner.reply },
+          { who: "Partner", say: partner.lang, task: "Almanca öğrenme sürecini ve bildiğin dilleri anlat.", kind: "answer", target: 30 },
           { who: "Prüfer", say: extra, task: "Sınav görevlisinin ek sorusunu cevapla.", kind: "answer", target: 30 }
         ]
       };
     }
     if (part === 2) {
-      const t = pick(B1_T2);
+      const t = pickFresh("B1-t2", B1_T2);
       return {
         key: "t2", name: "Teil 2 · Über ein Thema sprechen", dur: "ca. 6 Min.",
         card: { title: "Thema: „" + t.theme + "“", lines: ["Senin metnin — " + t.mine.name + ":", "„" + t.mine.quote + "“", "Görev: Metnindeki görüşü partnerine anlat, sonra kendi fikrini ve deneyimlerini söyle."] },
@@ -419,7 +508,7 @@
         ]
       };
     }
-    const t = pick(B1_T3);
+    const t = pickFresh("B1-t3", B1_T3);
     return {
       key: "t3", name: "Teil 3 · Gemeinsam etwas planen", dur: "ca. 6 Min.",
       card: { title: t.title, lines: [t.situation, "Notlar: " + t.points.join("  ·  ")] },
@@ -452,7 +541,13 @@
     { topic: "eine Sprachreise nach Spanien", text: "Ich möchte über meine Sprachreise nach Valencia erzählen. Ich war drei Wochen dort und habe bei einer Gastfamilie gewohnt. Am Anfang war es schwierig, weil die Familie sehr schnell gesprochen hat. Aber nach einer Woche habe ich viel mehr verstanden. Am meisten habe ich nicht im Kurs gelernt, sondern beim Abendessen mit der Familie. Deshalb würde ich jedem empfehlen, bei einer Gastfamilie zu wohnen." },
     { topic: "ein Ehrenamt im Tierheim", text: "Ich erzähle von meinem Ehrenamt im Tierheim. Seit zwei Jahren gehe ich jeden Samstag dorthin und gehe mit den Hunden spazieren. Am Anfang dachte ich, das ist nur ein Hobby. Inzwischen habe ich gemerkt, dass ich dadurch viel ruhiger geworden bin. Außerdem habe ich dort Menschen kennengelernt, die heute gute Freunde sind." },
     { topic: "mein erster Halbmarathon", text: "Ich erzähle von meinem ersten Halbmarathon. Vor zwei Jahren konnte ich kaum fünf Kilometer laufen. Dann habe ich mit einer Laufgruppe trainiert, dreimal pro Woche, auch im Winter. Beim Lauf selbst hatte ich nach fünfzehn Kilometern große Probleme, aber die Zuschauer haben mich angefeuert. Als ich ins Ziel kam, war ich unglaublich stolz. Seitdem weiß ich, dass man mit Geduld fast alles schaffen kann." },
-    { topic: "ein Open-Air-Konzert", text: "Ich möchte von einem Open-Air-Konzert im letzten Sommer erzählen. Meine Lieblingsband hat in einem Park gespielt, und ich war mit meiner Schwester dort. Zuerst hat es stark geregnet und wir waren total nass. Aber dann kam die Sonne raus, und alle haben zusammen gesungen und getanzt. Diese Atmosphäre werde ich nie vergessen. Seitdem gehe ich viel öfter auf Konzerte, statt nur Musik zu Hause zu hören." }
+    { topic: "ein Open-Air-Konzert", text: "Ich möchte von einem Open-Air-Konzert im letzten Sommer erzählen. Meine Lieblingsband hat in einem Park gespielt, und ich war mit meiner Schwester dort. Zuerst hat es stark geregnet und wir waren total nass. Aber dann kam die Sonne raus, und alle haben zusammen gesungen und getanzt. Diese Atmosphäre werde ich nie vergessen. Seitdem gehe ich viel öfter auf Konzerte, statt nur Musik zu Hause zu hören." },
+    { topic: "ein Buch über Auswanderung", text: "Ich möchte über ein Buch sprechen, das mich sehr bewegt hat. Es erzählt die Geschichte einer Familie, die in den Sechzigerjahren nach Deutschland gekommen ist. Besonders beeindruckt hat mich, wie ehrlich die Autorin über Heimweh und Sprachprobleme schreibt. Beim Lesen habe ich oft an meine eigenen ersten Monate hier gedacht. Das Buch hat mir gezeigt, dass viele Schwierigkeiten ganz normal sind und vorbeigehen." },
+    { topic: "ein Praktikum in einem Krankenhaus", text: "Ich erzähle von meinem Praktikum in einem Krankenhaus. Ich war sechs Wochen auf einer Kinderstation. Am Anfang hatte ich große Angst, Fehler zu machen, vor allem wegen der Fachsprache. Aber das Team war sehr geduldig und hat mir alles erklärt. Am meisten hat mich beeindruckt, wie viel Kraft die Familien in schwierigen Situationen haben. Seitdem weiß ich sicher, dass ich im Gesundheitsbereich arbeiten möchte." },
+    { topic: "meine Großmutter", text: "Die wichtigste Person in meinem Leben ist meine Großmutter. Sie hat mit sechzig Jahren noch Englisch gelernt, weil sie mit ihren Enkeln im Ausland sprechen wollte. Von ihr habe ich gelernt, dass man nie zu alt ist, um etwas Neues anzufangen. Wenn ich beim Deutschlernen keine Lust mehr habe, denke ich an sie. Wir telefonieren jede Woche, und sie fragt immer, wie es mit meinem Deutsch vorangeht." },
+    { topic: "ein Fußballspiel im Stadion", text: "Ich möchte von meinem ersten Bundesligaspiel im Stadion erzählen. Ein Kollege hatte Karten für das Derby und hat mich eingeladen. Schon auf dem Weg zum Stadion haben überall Fans gesungen. Die Stimmung im Stadion war unglaublich laut, und als in der letzten Minute das Siegtor fiel, haben wildfremde Menschen mich umarmt. Seitdem verstehe ich, warum Fußball in Deutschland so wichtig ist." },
+    { topic: "eine Reise mit dem Nachtzug", text: "Ich erzähle von einer Reise mit dem Nachtzug von Wien nach Venedig. Ich wollte einmal nicht fliegen, sondern langsam reisen. Im Abteil habe ich ein älteres Ehepaar aus der Schweiz kennengelernt, und wir haben bis spät in die Nacht geredet. Am Morgen bin ich direkt am Wasser in Venedig angekommen. Seitdem versuche ich, öfter mit dem Zug zu reisen, auch wenn es länger dauert." },
+    { topic: "ein Film über Freundschaft", text: "Ich möchte über einen Film sprechen, den ich mehrmals gesehen habe. Es geht um zwei Männer aus völlig unterschiedlichen Welten, die durch Zufall Freunde werden. Der Film ist gleichzeitig lustig und traurig. Mir gefällt besonders, dass er ohne Klischees zeigt, wie Menschen voneinander lernen können. Ich habe ihn auf Deutsch mit Untertiteln geschaut, und das hat meinem Hörverstehen sehr geholfen." }
   ];
 
   const B2_T2 = [
@@ -502,13 +597,17 @@
     { title: "Ein Sprachcafé gründen", situation: "Sie möchten in Ihrer Stadt ein monatliches Sprachcafé gründen, in dem sich Deutschlernende und Muttersprachler treffen.",
       partnerLines: ["Wo könnten wir uns treffen? Ein Café oder lieber die Stadtbibliothek?", "Wie finden wir Muttersprachler, die mitmachen wollen?", "Wie soll ein Abend ablaufen – mit Themen oder ganz frei?", "Brauchen wir Geld für irgendetwas, und wenn ja, woher bekommen wir es?"] },
     { title: "Ein Hochzeitsgeschenk", situation: "Gemeinsame Freunde heiraten in einem Monat. Sie möchten zusammen mit anderen Freunden ein besonderes Geschenk organisieren.",
-      partnerLines: ["Ich fände ein gemeinsames Geldgeschenk für die Hochzeitsreise gut. Oder hast du eine kreativere Idee?", "Wie viele Leute fragen wir, und wie viel soll jeder beitragen?", "Sollen wir bei der Feier auch etwas vorführen, zum Beispiel ein Video?", "Wer sammelt das Geld ein und wer kümmert sich um die Verpackung?"] }
+      partnerLines: ["Ich fände ein gemeinsames Geldgeschenk für die Hochzeitsreise gut. Oder hast du eine kreativere Idee?", "Wie viele Leute fragen wir, und wie viel soll jeder beitragen?", "Sollen wir bei der Feier auch etwas vorführen, zum Beispiel ein Video?", "Wer sammelt das Geld ein und wer kümmert sich um die Verpackung?"] },
+    { title: "Ein Tag der offenen Tür", situation: "Ihre Sprachschule veranstaltet einen Tag der offenen Tür, um neue Teilnehmende zu gewinnen. Sie beide sollen das Programm planen.",
+      partnerLines: ["Ich fände Probestunden für Interessierte gut. Wie siehst du das?", "Sollen auch aktuelle Kursteilnehmende von ihren Erfahrungen erzählen?", "Wie machen wir Werbung, damit möglichst viele Leute kommen?", "Wer übernimmt am Tag selbst welche Aufgabe?"] },
+    { title: "Eine Willkommensmappe für neue Kollegen", situation: "In Ihrer Firma fangen bald mehrere Kolleginnen und Kollegen aus dem Ausland an. Sie beide sollen eine Willkommensmappe und einen ersten Arbeitstag planen.",
+      partnerLines: ["Was gehört deiner Meinung nach unbedingt in die Mappe?", "Sollte jeder neue Kollege eine Patin oder einen Paten bekommen?", "Wie könnten wir den ersten Tag gestalten, damit sich alle willkommen fühlen?", "Und wer kümmert sich um Behördengänge wie die Anmeldung?"] }
   ];
 
   function buildB2Part(part, opts) {
     if (part === 1) {
-      const t = (opts && opts.topic) ? B2_T1.find(x => x.topic === opts.topic) || pick(B2_T1) : pick(B2_T1);
-      const p = pick(B2_PARTNER_T1);
+      const t = (opts && opts.topic) ? B2_T1.find(x => x.topic === opts.topic) || pickFresh("B2-t1", B2_T1) : pickFresh("B2-t1", B2_T1);
+      const p = pickFresh("B2-partner", B2_PARTNER_T1);
       return {
         key: "t1", name: "Teil 1 · Über Erfahrungen sprechen", dur: "ca. 5 Min.",
         card: { title: "Thema: " + t.topic, lines: ["Yaklaşık 1,5 dakika bu konudaki deneyimlerini anlat. Sonra partnerinin sorularını cevapla.", "Partnerin de kendi konusunu anlatacak — dinleyip ona soru soracaksın."] },
@@ -525,7 +624,7 @@
       };
     }
     if (part === 2) {
-      const t = pick(B2_T2);
+      const t = pickFresh("B2-t2", B2_T2);
       return {
         key: "t2", name: "Teil 2 · Diskussion", dur: "ca. 5 Min.",
         card: { title: t.title, lines: [t.text] },
@@ -539,7 +638,7 @@
         ]
       };
     }
-    const t = pick(B2_T3);
+    const t = pickFresh("B2-t3", B2_T3);
     return {
       key: "t3", name: "Teil 3 · Gemeinsam etwas planen", dur: "ca. 5 Min.",
       card: { title: t.title, lines: [t.situation, "Düşünebileceğin noktalar: program, yer ve zaman, ulaşım, yiyecek-içecek, bütçe, görev paylaşımı"] },
@@ -556,6 +655,7 @@
   }
 
   /* ════════════════════════════════ katalog ════════════════════════════════ */
+  window.__TELC_PICKFRESH__ = pickFresh; // C1 konuları da tekrar etmesin (muendlich.html)
   window.__TELC_LEVELS__ = {
     A2: { label: "A2", exam: "telc Deutsch A2 (Start Deutsch 2)", prepSecs: 0, total: "ca. 15 Min.",
           blurb: "Hazırlık süresi yok. Kendini tanıtma, kartlarla günlük konuşma ve birlikte karar verme.",

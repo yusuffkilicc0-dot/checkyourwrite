@@ -1314,33 +1314,70 @@ function updatePlays() {
 }
 
 /* ── Deste (shuffle bag) mantığı ──
-   Rastgele seçim yerine karıştırılmış deste kullanıyoruz: bir seviyedeki tüm
-   cümleler bitmeden hiçbiri tekrar etmez. Deste bitince yeniden karıştırılır
-   (ve yeni destenin ilk cümlesi, eski destenin son cümlesiyle aynı olmaz). */
-const decks = {};
-let lastShown = {};
+   Her seviye için cümle indekslerinden oluşan karıştırılmış bir deste tutulur ve
+   tarayıcıda saklanır. Böylece sayfa yenilense ya da ertesi gün gelinse bile bir
+   seviyedeki TÜM cümleler bitmeden hiçbiri tekrar gelmez. Deste bitince yeniden
+   karıştırılır; yeni destenin ilk cümlesi bir önceki cümleyle aynı olmaz.
+   (Eskiden sort(() => Math.random() - 0.5) kullanılıyordu: bu yanlı bir karıştırma,
+   cümleler orijinal sıraya yakın kalıyordu; deste de her sayfa yüklemesinde sıfırlanıyordu.) */
+const DECK_KEY = 'cyw_game_deck_v2:';
+const decks = {};   // lvl → { n: havuz boyutu, left: [indeksler], last: son gösterilen indeks }
+
+function shuffleInPlace(a) {
+  // Fisher–Yates: her sıralama eşit olasılıklı
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function loadDeck(lvl) {
+  if (decks[lvl]) return decks[lvl];
+  const n = SENTENCES[lvl].length;
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(DECK_KEY + lvl)); } catch (e) { d = null; }
+  if (!d || !Array.isArray(d.left) || typeof d.n !== 'number') {
+    d = { n: n, left: [], last: null };
+  }
+  // Havuz değiştiyse (yeni cümle eklendi/silindi): geçersiz indeksleri at,
+  // yeni eklenen cümleleri kalan desteye rastgele yerlere karıştır.
+  d.left = d.left.filter(i => Number.isInteger(i) && i >= 0 && i < n);
+  if (d.n !== n) {
+    for (let i = d.n; i < n; i++) {
+      d.left.splice(Math.floor(Math.random() * (d.left.length + 1)), 0, i);
+    }
+    d.n = n;
+  }
+  decks[lvl] = d;
+  return d;
+}
+
+function saveDeck(lvl) {
+  try { localStorage.setItem(DECK_KEY + lvl, JSON.stringify(decks[lvl])); } catch (e) { /* gizli sekme vb. */ }
+}
 
 function drawSentence(lvl) {
   const pool = SENTENCES[lvl];
-  if (!decks[lvl] || decks[lvl].length === 0) {
-    // Yeni deste: karıştır
-    decks[lvl] = pool.slice().sort(() => Math.random() - 0.5);
-    // pop() sondan çektiği için, destenin SON elemanı bir öncekiyle aynıysa
-    // (yani aynı cümle üst üste gelecekse) sondaki ikisinin yerini değiştir.
-    const n = decks[lvl].length;
-    if (lastShown[lvl] && n > 1 && decks[lvl][n - 1][0] === lastShown[lvl]) {
-      const t = decks[lvl][n - 1]; decks[lvl][n - 1] = decks[lvl][n - 2]; decks[lvl][n - 2] = t;
+  const d = loadDeck(lvl);
+  if (d.left.length === 0) {
+    d.left = shuffleInPlace(pool.map((_, i) => i));
+    // pop() sondan çeker: destenin son elemanı bir önceki cümleyse yerini değiştir
+    const n = d.left.length;
+    if (d.last !== null && n > 1 && d.left[n - 1] === d.last) {
+      const t = d.left[n - 1]; d.left[n - 1] = d.left[n - 2]; d.left[n - 2] = t;
     }
   }
-  const picked = decks[lvl].pop();
-  lastShown[lvl] = picked[0];
-  return picked;
+  const idx = d.left.pop();
+  d.last = idx;
+  saveDeck(lvl);
+  return pool[idx];
 }
 
 // Destede kaç cümle kaldığını göstermek için
 function deckLeft(lvl) {
   const total = SENTENCES[lvl].length;
-  const left = decks[lvl] ? decks[lvl].length : total;
+  const left = loadDeck(lvl).left.length || total;
   return { left: left, total: total };
 }
 /* ── Makine ışıkları ── */

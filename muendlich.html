@@ -397,7 +397,51 @@ const TOPICS = [
       turns:[ "Trifft das nicht auch auf viele andere gesellschaftliche Debatten zu?",
         "Wie könnte nachhaltiger Konsum für alle Einkommensgruppen zugänglicher werden?",
         "Welche Rolle spielt hier die Politik durch Steuern oder Subventionen?",
-        "Sehen Sie realistische kurzfristige Lösungen?" ] } }
+        "Sehen Sie realistische kurzfristige Lösungen?" ] } },
+  { id:"t9", category:"Gesundheit & Gesellschaft",
+    a:{ title:"Prävention statt Behandlung", prompt:"Gesundheitssysteme geben den Großteil ihres Budgets für die Behandlung von Krankheiten aus. Diskutieren Sie, ob Prävention stärker gefördert werden sollte." },
+    b:{ title:"Psychische Gesundheit von Studierenden", prompt:"Immer mehr Studierende berichten von Stress und psychischen Belastungen. Erörtern Sie Ursachen und mögliche Unterstützungsangebote der Hochschulen." },
+    followUps:[ "Wie viel Verantwortung trägt der Einzelne für die eigene Gesundheit?",
+      "Sollten ungesunde Produkte wie Zucker oder Tabak stärker besteuert werden?",
+      "Welche Rolle können digitale Gesundheitsangebote spielen?" ],
+    discussion:{ statement:"Manche fordern, dass Krankenkassen Versicherte mit gesundem Lebensstil durch niedrigere Beiträge belohnen.",
+      turns:[ "Wäre das nicht ungerecht gegenüber Menschen mit erblichen Vorerkrankungen?",
+        "Wer soll überhaupt kontrollieren, wie gesund jemand lebt?",
+        "Könnten solche Anreize nicht trotzdem viele Menschen motivieren?",
+        "Wo verläuft für Sie die Grenze zwischen Förderung und Bevormundung?" ] } },
+  { id:"t10", category:"Stadt & Wohnen",
+    a:{ title:"Wohnungsnot in Universitätsstädten", prompt:"In vielen Hochschulstädten finden Studierende kaum bezahlbaren Wohnraum. Diskutieren Sie mögliche Lösungen für dieses Problem." },
+    b:{ title:"Mietpreisbremse", prompt:"Gesetzliche Obergrenzen für Mieten sollen Wohnen bezahlbar halten. Bewerten Sie, ob solche Regelungen ihr Ziel erreichen." },
+    followUps:[ "Sollten Hochschulen selbst mehr Wohnheime bauen?",
+      "Welche Rolle spielen Ferienwohnungen und Kurzzeitvermietungen?",
+      "Ist das Leben auf dem Land eine echte Alternative für Studierende?" ],
+    discussion:{ statement:"Manche Experten meinen, nur massiver Neubau könne die Wohnungskrise lösen, nicht staatliche Regulierung.",
+      turns:[ "Aber Neubau dauert Jahre – was hilft den Menschen jetzt?",
+        "Verschärft Neubau nicht die Versiegelung von Flächen und schadet der Umwelt?",
+        "Sollte der Staat selbst als Bauherr auftreten?",
+        "Welche Kombination von Maßnahmen halten Sie für am wirksamsten?" ] } },
+  { id:"t11", category:"Sprache & Kultur",
+    a:{ title:"Englisch als Unterrichtssprache", prompt:"Immer mehr Studiengänge an deutschen Hochschulen werden ausschließlich auf Englisch angeboten. Diskutieren Sie Vor- und Nachteile dieser Entwicklung." },
+    b:{ title:"Mehrsprachigkeit in der Familie", prompt:"Viele Kinder wachsen heute mit zwei oder mehr Sprachen auf. Erörtern Sie Chancen und Herausforderungen mehrsprachiger Erziehung." },
+    followUps:[ "Verliert die deutsche Sprache in Wissenschaft und Wirtschaft an Bedeutung?",
+      "Sollten internationale Studierende trotzdem verpflichtend Deutsch lernen?",
+      "Wie sollten Schulen mit der Mehrsprachigkeit ihrer Schülerinnen und Schüler umgehen?" ],
+    discussion:{ statement:"Einige Kritiker befürchten, dass englischsprachige Studiengänge die Integration internationaler Studierender in Deutschland erschweren.",
+      turns:[ "Ist nicht gerade Englisch ein Grund, warum viele überhaupt nach Deutschland kommen?",
+        "Aber wer nach dem Studium hier arbeiten will, braucht doch Deutsch, oder?",
+        "Könnten Hochschulen beides verbinden, etwa durch begleitende Sprachkurse?",
+        "Welche Verantwortung tragen die Studierenden selbst?" ] } },
+  { id:"t12", category:"Technik & Ethik",
+    a:{ title:"Autonomes Fahren", prompt:"Selbstfahrende Autos sollen den Verkehr sicherer machen. Diskutieren Sie, welche Chancen und Risiken diese Technologie mit sich bringt." },
+    b:{ title:"Datenschutz im digitalen Alltag", prompt:"Viele Dienste sind kostenlos, weil Nutzerinnen und Nutzer mit ihren Daten bezahlen. Nehmen Sie Stellung zu diesem Geschäftsmodell." },
+    followUps:[ "Wer sollte haften, wenn ein selbstfahrendes Auto einen Unfall verursacht?",
+      "Würden Sie persönlich in ein autonomes Fahrzeug steigen?",
+      "Sind Menschen bereit, für digitale Dienste mit Geld statt mit Daten zu bezahlen?" ],
+    discussion:{ statement:"Manche meinen, technischer Fortschritt dürfe nicht durch zu strenge Regeln ausgebremst werden.",
+      turns:[ "Aber braucht es nicht gerade bei neuen Technologien klare Grenzen?",
+        "Verliert Europa durch strenge Regeln nicht den Anschluss an die USA und China?",
+        "Wer sollte über solche Regeln entscheiden – Politik, Unternehmen oder Fachleute?",
+        "Wie lässt sich Innovation mit dem Schutz der Bürger vereinbaren?" ] } }
 ];
 
 const WARMUPS = [
@@ -627,7 +671,8 @@ function go(v){ view = v; stopAnyRecognition(); render(); window.scrollTo({top:0
 function stopAnyRecognition(){ if(recognizer){ recognizer._stop(); recognizer = null; } speechSynthesis && speechSynthesis.cancel && speechSynthesis.cancel(); }
 
 /* ---------- starting flows ---------- */
-function startFull(){ resetFlow("full", pick(TOPICS)); flow.step="pick"; view="flow"; render(); }
+function pickTopic(){ return window.__TELC_PICKFRESH__ ? window.__TELC_PICKFRESH__("C1-topic", TOPICS) : pick(TOPICS); }
+function startFull(){ resetFlow("full", pickTopic()); flow.step="pick"; view="flow"; render(); }
 function startPart(part){
   if(part === "warmup"){
     resetFlow("warmup");
@@ -636,7 +681,7 @@ function startPart(part){
     view = "flow"; render();
     return;
   }
-  resetFlow(part, pick(TOPICS));
+  resetFlow(part, pickTopic());
   flow.step = "pick";
   view = "flow"; render();
 }
