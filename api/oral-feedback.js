@@ -11,6 +11,93 @@ const LIMIT_MESSAGES = {
   pro: 'Bugünkü 50 AI değerlendirme hakkın doldu (adil kullanım sınırı). Hakkın yarın yenilenir.',
 };
 
+/* A2 / B1 / B2 için telc'in resmi Bewertungskriterien'ine göre değerlendirme.
+   (C1 Hochschule kendi istemini kullanır — aşağıda handler içinde.) */
+const LEVEL_SPECS = {
+  A2: {
+    exam: 'telc Deutsch A2 (Start Deutsch 2)',
+    parts: 'Teil 1 Sich vorstellen, Teil 2 Ein Alltagsgespräch führen (Fragen mit Karten stellen und beantworten), Teil 3 Etwas aushandeln (gemeinsam Aktivitäten vereinbaren)',
+    expect: 'simple main clauses and basic connectors (und, aber, weil, dann), everyday vocabulary, present tense and Perfekt, correct W-questions; short answers are normal at A2. The official telc A2 criterion is "Erfüllung der Aufgabenstellung und sprachliche Realisierung" (full points: task fully done and understandable; half: partly done due to language/content gaps; 0: not done/unintelligible).',
+    criteria: [
+      ['Aufgabenerfüllung', 'Türkçe: her bölümde görev yerine getirildi mi? (kendini tanıtma noktaları, kartla doğru soru kurma, anlaşmaya varma)'],
+      ['Wortschatz', 'Türkçe: günlük kelime dağarcığı yeterli mi, doğru kullanılmış mı?'],
+      ['Strukturen & Grammatik', 'Türkçe: basit cümle yapıları, fiil çekimi, soru cümleleri, Perfekt. Öğrencinin cümlesinden örnek ver.'],
+      ['Verständlichkeit & Flüssigkeit', 'Türkçe: anlaşılırlık ve akıcılık (telaffuzu transkriptten tam ölçemezsin, bunu belirt).'],
+      ['Interaktion', 'Türkçe: partnere tepki verme, soru sorma, öneri kabul/ret etme.'],
+    ],
+  },
+  B1: {
+    exam: 'telc Deutsch B1 (Zertifikat Deutsch)',
+    parts: 'Teil 1 Einander kennenlernen, Teil 2 Über ein Thema sprechen (eine Meinung wiedergeben, eigene Meinung und Erfahrungen), Teil 3 Gemeinsam etwas planen',
+    expect: 'connected sentences with common subordinate clauses (weil, dass, wenn, obwohl), giving and justifying opinions, reporting what someone else thinks, past tenses, making and reacting to suggestions. Official telc B1 criteria: Ausdrucksfähigkeit, Aufgabenbewältigung, Formale Richtigkeit, Aussprache und Intonation.',
+    criteria: [
+      ['Ausdrucksfähigkeit', 'Türkçe: fikirlerini ne kadar açık ve çeşitli ifade ediyor; kelime çeşitliliği.'],
+      ['Aufgabenbewältigung', 'Türkçe: her bölümün görevi yerine getirildi mi; partnere tepki, soru, öneri; konuşmayı sürdürme.'],
+      ['Formale Richtigkeit', 'Türkçe: dilbilgisi (yan cümlelerde fiil sonda, çekimler, zamanlar). Öğrencinin cümlelerinden örnek hatalar ver.'],
+      ['Aussprache & Intonation', 'Türkçe: telaffuzu transkriptten tam ölçemezsin; akıcılık ve duraksamalar açısından yorumla ve bunu belirt.'],
+    ],
+  },
+  B2: {
+    exam: 'telc Deutsch B2',
+    parts: 'Teil 1 Über Erfahrungen sprechen (ca. 1,5 Min. Kurzvortrag + Fragen), Teil 2 Diskussion (auf Grundlage eines Textes, Argumente, Kompromiss), Teil 3 Gemeinsam etwas planen',
+    expect: 'some complex structures (Nebensätze, Passiv, Konjunktiv II), a broad vocabulary with varied phrasing, clear argumentation with pros/cons and examples, summarising a text, reacting to counterarguments and proposing compromises. Only simple constructions with basic vocabulary are NOT acceptable at B2. Official telc B2 criteria: Ausdrucksfähigkeit, Aufgabenbewältigung, Formale Richtigkeit, Aussprache und Intonation.',
+    criteria: [
+      ['Ausdrucksfähigkeit', 'Türkçe: kelime çeşitliliği, farklı ifade kalıpları ("Meiner Meinung nach" dışında), argümanların netliği.'],
+      ['Aufgabenbewältigung', 'Türkçe: deneyim anlatımı yapısı, metnin özeti, argüman/karşı argüman, uzlaşma önerisi, planlamaya katkı.'],
+      ['Formale Richtigkeit', 'Türkçe: karmaşık yapılar (Nebensätze, Passiv, Konjunktiv II) ve hata sıklığı. Öğrencinin cümlelerinden örnek ver.'],
+      ['Aussprache & Intonation', 'Türkçe: telaffuzu transkriptten tam ölçemezsin; akıcılık, duraksama, kelime bulma açısından yorumla ve bunu belirt.'],
+    ],
+  },
+};
+
+function buildLevelPrompt(level, modeLabel, topicLabel, t) {
+  const s = LEVEL_SPECS[level];
+  const criteriaJson = s.criteria
+    .map(([name, comment]) => `    {\n      "name": "${name}",\n      "score": <1-5>,\n      "comment": "${comment}"\n    }`)
+    .join(',\n');
+  return `You are an experienced, licensed telc examiner (Prüfer) for ${s.exam}, evaluating a SIMULATED oral exam.
+
+EXAM FORMAT: ${s.parts}.
+In the real exam two candidates talk to each other; here the "Prüfer:" and "Partner:" lines are scripted by the simulation. EVALUATE ONLY the candidate's lines starting with "Ben:". "(yanıt yok)" means the candidate skipped that turn — that counts against task completion.
+
+IMPORTANT: The candidate's lines come from BROWSER SPEECH RECOGNITION. Mentally reconstruct what they most likely said and do NOT penalize obvious transcription artifacts (missing noun capitalization, wrong word boundaries, misheard words). Only evaluate genuine language mistakes.
+
+LEVEL EXPECTATIONS (${level}): ${s.expect}
+Calibrate strictly to ${level} — do not judge an A2/B1 candidate by C1 standards, and do not inflate scores. 60/100 corresponds to the telc pass mark for this level.
+
+SESSION MODE: ${modeLabel}
+${topicLabel ? `TOPICS: ${topicLabel}` : ''}
+
+TRANSCRIPT:
+"""
+${t}
+"""
+
+Reply ONLY with valid JSON, no markdown fences:
+
+{
+  "cleanedNote": "One short Turkish sentence if you had to reconstruct heavily due to transcription noise, else empty string.",
+  "overallScore": <integer 0-100, readiness for the ${level} oral exam>,
+  "overallLabel": "short German label, e.g. 'Sehr gut', 'Gut', 'Bestanden', 'Knapp', 'Noch nicht ${level}'",
+  "summary": "2-3 sentences in Turkish: overall impression, would this pass the ${level} oral exam, main takeaway.",
+  "criteria": [
+${criteriaJson}
+  ],
+  "strengths": ["Türkçe, 2-4 madde: gerçekten iyi yapılanlar (öğrencinin kendi cümlelerinden örnekle)"],
+  "improvements": [
+    {
+      "point": "Türkçe: geliştirilmesi gereken nokta",
+      "example": "Öğrencinin cümlesi → ${level} seviyesinde nasıl söylenmeli (Almanca örnek, seviyeye uygun basitlikte)"
+    }
+  ],
+  "nextFocus": "Türkçe, 1-2 cümle: bir sonraki provada özellikle neye odaklanmalı."
+}
+
+Rules:
+- All "comment", "summary", "strengths", "point", "nextFocus" text in TURKISH. Criterion "name" and "overallLabel" in GERMAN. German example sentences stay in German and match ${level}.
+- If only one Teil was practised, evaluate that Teil and say so briefly; do not penalize missing other parts.`;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST');
@@ -28,7 +115,7 @@ export default async function handler(req, res) {
   const auth = verifyAuth(req);
   if (!auth) return res.status(401).json({ error: 'AI değerlendirmesi için giriş yapman gerekiyor.' });
 
-  const { transcript, mode, topic } = req.body || {};
+  const { transcript, mode, topic, level } = req.body || {};
 
   // Geçersiz istek hak düşmeden reddedilir.
   if (!transcript || typeof transcript !== 'string' || transcript.trim().length < 20) {
@@ -65,9 +152,10 @@ export default async function handler(req, res) {
   const t = transcript.trim().slice(0, 8000); // guvenlik siniri
   const modeLabel = mode || 'Sözlü prova';
   const topicLabel = topic || '';
+  const lvl = ['A2', 'B1', 'B2', 'C1'].includes(level) ? level : 'C1'; // eski istemciler: C1
 
   try {
-    const prompt = `You are an experienced telc C1 Hochschule oral examiner (Prüfer) evaluating a spoken practice session.
+    const prompt = (lvl !== 'C1') ? buildLevelPrompt(lvl, modeLabel, topicLabel, t) : `You are an experienced telc C1 Hochschule oral examiner (Prüfer) evaluating a spoken practice session.
 
 IMPORTANT CONTEXT: This transcript was produced by BROWSER SPEECH RECOGNITION from the student speaking German aloud. Speech-to-text errors are common (wrong word boundaries, missing capitalization on nouns, misheard words). You MUST first mentally reconstruct what the student most likely actually said, ignoring obvious transcription artifacts. Do NOT penalize the student for speech-recognition errors — only evaluate genuine language mistakes (grammar, word choice, structure) that the student clearly made.
 

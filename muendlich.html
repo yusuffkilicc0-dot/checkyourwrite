@@ -1,11 +1,12 @@
-<title>Mündlich Pratik — telc C1 Sözlü Sınav Provası | CheckYourWrite</title>
-<meta name="description" content="telc C1 Hochschule sözlü sınavını mikrofonla prova et: Präsentation, Rückfragen ve Diskussion. AI telc kriterlerine göre puanlar ve Almanca örneklerle geliştirme önerir.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mündlich Pratik — telc A2, B1, B2, C1 Sözlü Sınav Simülasyonu | CheckYourWrite</title>
+<meta name="description" content="telc A2, B1, B2 ve C1 Hochschule sözlü sınavını adım adım simüle et: gerçek bölümler, süreler ve sesli partner. AI seviyene göre telc kriterleriyle puanlar ve Almanca örneklerle geliştirme önerir.">
 <link rel="canonical" href="https://www.checkyourwrite.com/muendlich.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="CheckYourWrite">
 <meta property="og:url" content="https://www.checkyourwrite.com/muendlich.html">
-<meta property="og:title" content="🎤 Mündlich Pratik — telc C1 sözlü sınav provası">
-<meta property="og:description" content="Mikrofonla konuş, AI telc C1 kriterlerine göre değerlendirsin. Ücretsiz hesapla günde 3 değerlendirme.">
+<meta property="og:title" content="🎤 Mündlich Pratik — telc A2–C1 sözlü sınav simülasyonu">
+<meta property="og:description" content="Seviyeni seç, sınavın tamamını sesli partnerle simüle et; AI telc kriterlerine göre değerlendirsin. Ücretsiz hesapla günde 3 değerlendirme.">
 <meta property="og:image" content="https://www.checkyourwrite.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -133,7 +134,12 @@
   .topic-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
   .topic-cat{ color:var(--muted); font-size:12.5px; }
   .option-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
-  @media (max-width:640px){ .option-grid{ grid-template-columns:1fr; } }
+  @media (max-width:640px){
+    .option-grid{ grid-template-columns:1fr; }
+    header.top{ flex-wrap:wrap; gap:10px; }
+    .brand-div, .brand .sub{ display:none; }
+    .grid-stats{ grid-template-columns:repeat(2,1fr); }
+  }
   .option-card{
     text-align:left; cursor:pointer; border:1.5px solid var(--line); background:var(--surface);
     border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px;
@@ -245,6 +251,21 @@
   .imp-point{ font-size:13.5px; color:var(--ink); margin-bottom:6px; }
   .imp-example{ font-size:13px; color:var(--accent); font-family:'JetBrains Mono',monospace; line-height:1.6; background:var(--accent-soft); border-radius:7px; padding:8px 11px; }
   .ai-next{ margin-top:16px; padding:12px 15px; background:var(--accent-soft); border:1px solid rgba(255,178,36,.2); border-radius:9px; font-size:13.5px; color:var(--ink); line-height:1.55; }
+  /* ── seviye seçici + A2/B1/B2 sınav simülasyonu ── */
+  .level-tabs{ display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 6px; }
+  .level-tab{ color:var(--muted); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:7px 16px; cursor:pointer; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; }
+  .level-tab small{ font-weight:500; font-size:11px; opacity:.8; }
+  .level-tab:hover{ border-color:var(--line-strong); color:var(--ink); }
+  .level-tab.active{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent); }
+  .task-card{ border:1px dashed var(--line-strong); border-radius:12px; padding:14px 16px; background:rgba(148,163,197,0.04); display:flex; flex-direction:column; gap:6px; }
+  .task-card-head{ display:flex; justify-content:space-between; gap:10px; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+  .task-line{ font-size:14px; color:var(--ink); line-height:1.5; }
+  .task-details summary{ cursor:pointer; color:var(--muted); font-size:13px; margin-bottom:8px; }
+  .bubble{ border-radius:12px; padding:12px 15px; border:1px solid var(--line); }
+  .bubble-pruefer{ background:rgba(124,92,255,0.10); border-color:rgba(124,92,255,0.35); }
+  .bubble-partner{ background:var(--accent-soft); border-color:rgba(255,178,36,0.35); }
+  .bubble-who{ font-size:12px; color:var(--muted); font-weight:600; }
+  .turn-task{ font-size:13.5px; color:var(--ink); }
 </style>
 
 <!-- Giriş yapmamış ziyaretçiler için giriş ekranı -->
@@ -253,7 +274,7 @@
     <div style="font-size:52px; margin-bottom:18px;">🎤</div>
     <h1 style="font-family:'Space Grotesk',sans-serif; font-size:26px; color:#E8ECF6; margin-bottom:12px;">Mündlich Pratik</h1>
     <p style="color:#8B94AB; font-size:15px; line-height:1.6; margin-bottom:10px;">
-      telc C1 Hochschule sözlü sınavını mikrofonla prova et, AI'dan telc kriterlerine göre geri bildirim al.
+      telc A2, B1, B2 ve C1 Hochschule sözlü sınavlarını mikrofonla, adım adım simüle et, AI'dan telc kriterlerine göre geri bildirim al.
     </p>
     <p style="color:#8B94AB; font-size:14px; line-height:1.6; margin-bottom:26px;">
       Ücretsiz hesapla günde <strong style="color:#FFB224;">3 AI değerlendirmesi</strong>. Premium ile günde 10, Pro ile günde 50.
@@ -269,7 +290,7 @@
       <div class="brand-div"></div>
       <div>
         <div class="name">🎤 Mündlich Pratik</div>
-        <div class="sub">telc C1 Hochschule &middot; mündliche Prüfung</div>
+        <div class="sub">telc A2 &middot; B1 &middot; B2 &middot; C1 Hochschule &middot; mündliche Prüfung</div>
       </div>
     </div>
     <nav class="tabs" id="tabs">
@@ -406,6 +427,7 @@ window.__TELC_TOPICS__ = TOPICS;
 window.__TELC_WARMUPS__ = WARMUPS;
 })();
 </script>
+<script src="/muendlich-levels.js"></script>
 
 <script>
 (function(){
@@ -427,6 +449,7 @@ const CURRENT_EMAIL = (localStorage.getItem("checkyourwrite_current_email") || "
 
 const TOPICS = window.__TELC_TOPICS__;
 const WARMUPS = window.__TELC_WARMUPS__;
+const LEVELS = window.__TELC_LEVELS__ || {}; // A2 / B1 / B2 (muendlich-levels.js)
 
 /* pristine snapshot of the authored document, captured before any render
    touches the DOM — this is the template a publish is built from, so a
@@ -444,6 +467,7 @@ if(!state){
 }
 if(!state || !Array.isArray(state.sessions)) state = { sessions: [], prefs:{ quickPrep:false } };
 if(!state.prefs) state.prefs = { quickPrep:false };
+if(!state.prefs.level) state.prefs.level = "B1";
 
 /* Kalıcı kayıt: şimdilik localStorage. (3. adımda MongoDB'ye bağlanacak.) */
 async function persistState(){
@@ -714,12 +738,124 @@ function mountFlow(){
   if(flow.step === "prep"){ mountPrep(); }
   else if(flow.step === "speak" && (flow.itemPhase||"recording") === "recording"){ mountSpeak(); }
   else if((flow.step==="rueckfragen"||flow.step==="diskussion"||flow.step==="warmup") && flow.itemPhase === "recording"){ mountQARecording(); }
+  else if(flow.step === "lvl-prep"){ mountLvlPrep(); }
+  else if(flow.step === "lvl-turn" && flow.itemPhase === "recording"){ mountQARecording(); }
+}
+
+/* ---------- A2 / B1 / B2 sınav simülasyonu (veri: muendlich-levels.js) ----------
+   Akış: (hazırlık) → her bölümün sıraları (turn) → sonuç.
+   Partner/sınav görevlisinin repliklerini uygulama sesli okur; kullanıcı her sırada
+   cevap verir, soru sorar ya da kısa bir anlatım yapar. */
+function startLevel(level, partNums){
+  const L = LEVELS[level];
+  if(!L) return;
+  resetFlow("lvl");
+  flow.level = level;
+  flow.lvlParts = partNums.map(n => L.build(n));
+  flow.lvlFull = partNums.length === L.parts.length;
+  flow.lvlLog = flow.lvlParts.map(() => []); // bölüm → [{ answer }]
+  flow.partIdx = 0;
+  flow.turnIdx = 0;
+  flow.prepSecs = lvlPrepSecs(L, flow.lvlFull);
+  flow.step = flow.prepSecs > 0 ? "lvl-prep" : "lvl-turn";
+  flow.itemPhase = "prompt";
+  view = "flow";
+  render();
+  lvlAutoSpeak();
+}
+function lvlPrepSecs(L, full){
+  if(!L.prepSecs) return 0;                    // A2: hazırlık yok
+  if(full) return state.prefs.quickPrep ? 300 : L.prepSecs;
+  return state.prefs.quickPrep ? 120 : 300;    // tek bölüm pratiği: kısa hazırlık
+}
+function lvlPart(){ return flow.lvlParts[flow.partIdx]; }
+function lvlTurn(){ const p = lvlPart(); return p ? p.turns[flow.turnIdx] : null; }
+function lvlIsLastTurn(){
+  return flow.partIdx === flow.lvlParts.length - 1 && flow.turnIdx === lvlPart().turns.length - 1;
+}
+function lvlModeKey(){
+  return flow.level + (flow.lvlFull ? "-full" : "-" + flow.lvlParts.map(p => p.key).join("+"));
+}
+function lvlModeLabel(){
+  const L = LEVELS[flow.level];
+  return flow.lvlFull ? L.label + " · Tam Sınav" : L.label + " · " + flow.lvlParts.map(p => p.name).join(", ");
+}
+function lvlTopics(){ return flow.lvlParts.map(p => p.topic).join(" / "); }
+function lvlBegin(){
+  if(activeTimer){ activeTimer.stop(); activeTimer = null; }
+  flow.step = "lvl-turn";
+  flow.itemPhase = "prompt";
+  render();
+  lvlAutoSpeak();
+}
+function lvlAdvance(){
+  flow.turnIdx++;
+  flow.itemPhase = "prompt";
+  flow.reviewText = "";
+  if(flow.turnIdx >= lvlPart().turns.length){
+    flow.partIdx++;
+    flow.turnIdx = 0;
+    if(flow.partIdx >= flow.lvlParts.length) flow.step = "result";
+  }
+  render();
+  lvlAutoSpeak();
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+function lvlConfirm(){
+  const v = document.getElementById("review-text");
+  flow.lvlLog[flow.partIdx][flow.turnIdx] = { answer: v ? v.value : (flow.reviewText || "") };
+  const t = lvlTurn();
+  if(t.reply){                       // soru sorulduysa partner cevaplar
+    flow.itemPhase = "reply";
+    render();
+    speak(t.reply);
+  } else {
+    lvlAdvance();
+  }
+}
+/* Sınav görevlisi/partner repliğini otomatik seslendir (tıklamadan sonra çağrıldığı için tarayıcı izin verir) */
+function lvlAutoSpeak(){
+  if(!flow || flow.step !== "lvl-turn" || flow.itemPhase !== "prompt") return;
+  const t = lvlTurn();
+  if(t && t.say) speak(t.say);
+}
+function mountLvlPrep(){
+  activeTimer = makeCountdown(flow.prepSecs, (remaining)=>{
+    const el = document.getElementById("timer-val");
+    if(el) el.textContent = fmtTime(remaining);
+    const chip = document.getElementById("timer-chip");
+    if(chip){ chip.classList.toggle("warn", remaining<=60 && remaining>15); chip.classList.toggle("over", remaining<=15); }
+  }, ()=>{ lvlBegin(); });
 }
 
 /* ---------- transcript build ---------- */
 function buildTranscriptText(){
   const lines = [];
-  lines.push("telc C1 Hochschule – Sözlü Sınav Provası Transkripti");
+  if(flow.kind === "lvl"){
+    const L = LEVELS[flow.level];
+    lines.push(L.exam + " – Sözlü Sınav Simülasyonu Transkripti");
+    lines.push("Tarih: " + new Date().toLocaleString("tr-TR"));
+    lines.push("Mod: " + lvlModeLabel());
+    lines.push("Not: Sadece \"Ben:\" satırları adayın konuşmasıdır; Prüfer/Partner satırları simülasyonun replikleridir.");
+    flow.lvlParts.forEach((p, pi)=>{
+      lines.push("");
+      lines.push("--- " + p.name + " (" + p.topic + ") ---");
+      p.turns.forEach((t, ti)=>{
+        const log = flow.lvlLog[pi][ti];
+        if(t.say) lines.push(t.who + ": " + t.say);
+        if(t.kind !== "listen"){
+          if(!t.say) lines.push("[Görev: " + t.task + "]");
+          lines.push("Ben: " + ((log && log.answer && log.answer.trim()) || "(yanıt yok)"));
+          if(t.reply) lines.push("Partner: " + t.reply);
+        }
+      });
+    });
+    lines.push("");
+    lines.push("Öz değerlendirme (1-5): Aussprache "+flow.ratings.aussprache+", Wortschatz "+flow.ratings.wortschatz+", Grammatik "+flow.ratings.grammatik+", Aufbau "+flow.ratings.aufbau+", Interaktion "+flow.ratings.interaktion);
+    if(flow.notes) lines.push("Notlarım: " + flow.notes);
+    return lines.join("\n");
+  }
+  lines.push(flow.kind === "warmup" ? "Günlük Isınma – Sözlü Pratik Transkripti" : "telc C1 Hochschule – Sözlü Sınav Provası Transkripti");
   lines.push("Tarih: " + new Date().toLocaleString("tr-TR"));
   if(flow.kind === "warmup"){
     lines.push(""); lines.push("Mod: Günlük Isınma (Alltag)"); lines.push("");
@@ -794,12 +930,15 @@ async function saveSession(){
   try{ await saveSessionInner(); } finally { saving = false; }
 }
 async function saveSessionInner(){
+  const isLvl = flow.kind === "lvl";
+  const modeLabels = { full:"Tam Sınav Simülasyonu", praesentation:"Sadece Präsentation", rueckfragen:"Sadece Rückfragen", diskussion:"Sadece Diskussion", warmup:"Günlük Isınma" };
   const rec = {
     id: "s"+Date.now(),
     date: new Date().toISOString(),
-    mode: flow.kind,
-    topicCategory: flow.kind === "warmup" ? "Günlük Isınma" : flow.topic.category,
-    topicTitle: flow.kind === "warmup" ? null : chosenOptionData().title,
+    mode: isLvl ? lvlModeKey() : flow.kind,
+    modeLabel: isLvl ? lvlModeLabel() : (modeLabels[flow.kind] || flow.kind),
+    topicCategory: isLvl ? LEVELS[flow.level].exam : (flow.kind === "warmup" ? "Günlük Isınma" : flow.topic.category),
+    topicTitle: isLvl ? lvlTopics() : (flow.kind === "warmup" ? null : chosenOptionData().title),
     timing: flow.timing,
     ratings: flow.ratings,
     notes: flow.notes,
@@ -811,15 +950,14 @@ async function saveSessionInner(){
 
   // MongoDB'ye kaydet (hesaba bağlı kalıcı geçmiş)
   const token = localStorage.getItem("checkyourwrite_jwt_token");
-  const modeLabels = { full:"Tam Sınav Simülasyonu", praesentation:"Sadece Präsentation", rueckfragen:"Sadece Rückfragen", diskussion:"Sadece Diskussion", warmup:"Günlük Isınma" };
   if(token){
     try{
       const res = await fetch("/api/oral-sessions", {
         method:"POST",
         headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+token },
         body: JSON.stringify({
-          mode: flow.kind,
-          mode_label: modeLabels[flow.kind] || flow.kind,
+          mode: rec.mode,
+          mode_label: rec.modeLabel,
           topic: rec.topicTitle || rec.topicCategory,
           ai_score: rec.aiScore,
           ai_label: rec.aiLabel,
@@ -858,6 +996,7 @@ async function loadOralSessionsFromServer(){
       id: s._id,
       date: s.created_at,
       mode: s.mode,
+      modeLabel: s.mode_label || null,
       topicCategory: s.topic,
       topicTitle: s.topic,
       ratings: s.self_ratings || {},
@@ -906,6 +1045,9 @@ function refreshQuotaUi(){
 /* Başlık satırları hariç, kullanıcının gerçekten konuştuğu metnin uzunluğu */
 function spokenChars(){
   if(!flow) return 0;
+  if(flow.kind === "lvl"){
+    return flow.lvlLog.flat().map(l => (l && l.answer) || "").join(" ").trim().length;
+  }
   const parts = flow.kind === "warmup"
     ? flow.warmupAnswers
     : [flow.transcript.praesentation].concat(flow.transcript.rueckfragen, flow.transcript.diskussion);
@@ -939,14 +1081,16 @@ async function getAiFeedback(){
   const modeLabel = ({
     full:"Tam Sınav Simülasyonu", praesentation:"Sadece Präsentation",
     rueckfragen:"Sadece Rückfragen", diskussion:"Sadece Diskussion", warmup:"Günlük Isınma"
-  })[flow && flow.kind] || "Sözlü prova";
-  const topicLabel = (flow && flow.topic) ? (flow.topic.category || "") : "";
+  })[flow && flow.kind] || (flow && flow.kind === "lvl" ? lvlModeLabel() : "Sözlü prova");
+  const topicLabel = (flow && flow.kind === "lvl") ? lvlTopics() : ((flow && flow.topic) ? (flow.topic.category || "") : "");
+  // Değerlendirme ölçütleri seviyeye göre: lvl akışında sınavın seviyesi, C1 modlarında C1, ısınmada seçili seviye
+  const level = (flow && flow.kind === "lvl") ? flow.level : ((flow && flow.kind === "warmup") ? state.prefs.level : "C1");
 
   try{
     const res = await fetch("/api/oral-feedback", {
       method:"POST",
       headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+token },
-      body: JSON.stringify({ transcript:text, mode:modeLabel, topic:topicLabel })
+      body: JSON.stringify({ transcript:text, mode:modeLabel, topic:topicLabel, level })
     });
     const data = await res.json();
     if(data.usage){ oralUsage = data.usage; }
@@ -1025,6 +1169,19 @@ function renderStepper(){
     diskussion: ["pick","diskussion","result"],
     warmup: ["warmup","result"]
   };
+  if(flow.kind === "lvl"){
+    const pills = (flow.prepSecs > 0 ? ["Vorbereitung"] : [])
+      .concat(flow.lvlParts.map(p => p.name.split(" · ")[0]))
+      .concat(["Ergebnis"]);
+    const offset = flow.prepSecs > 0 ? 1 : 0;
+    const cur = flow.step === "lvl-prep" ? 0
+      : flow.step === "lvl-turn" ? offset + flow.partIdx
+      : pills.length - 1;
+    return '<div class="stepper">' + pills.map((s,i)=>{
+      const cls = i===cur ? "active" : (i<cur ? "done" : "");
+      return '<div class="step-pill '+cls+'">'+esc(s)+'</div>';
+    }).join("") + '</div>';
+  }
   const labels = { pick:"Thema", prep:"Vorbereitung", speak:"Präsentation", rueckfragen:"Rückfragen", diskussion:"Diskussion", warmup:"Fragen", result:"Ergebnis" };
   const seq = stepsByKind[flow.kind] || [];
   const curIdx = seq.indexOf(flow.step);
@@ -1049,6 +1206,41 @@ function renderHome(){
       <div class="card">
         <div class="eyebrow">Bugün ne çalışalım?</div>
         <div class="quota-slot">${quotaHtml()}</div>
+        <div class="level-tabs" role="tablist" aria-label="Sınav seviyesi">
+          ${["A2","B1","B2","C1"].map(l => `<button class="level-tab${state.prefs.level===l?" active":""}" data-action="set-level" data-level="${l}" role="tab" aria-selected="${state.prefs.level===l}">${l}${l==="C1"?" <small>Hochschule</small>":""}</button>`).join("")}
+        </div>
+        ${state.prefs.level === "C1" ? renderC1Grid() : renderLevelGrid(state.prefs.level)}
+      </div>` + renderHomeRest();
+}
+/* A2 / B1 / B2: tam sınav + tek tek bölümler */
+function renderLevelGrid(level){
+  const L = LEVELS[level];
+  if(!L) return "";
+  const icons = ["👋", "💬", "🤝"];
+  return `
+        <p class="hint" style="margin:4px 0 12px;"><strong style="color:var(--ink);">${esc(L.exam)}</strong> · ${esc(L.total)} · ${esc(L.blurb)}</p>
+        <div class="mode-grid">
+          <button class="mode-card primary" data-action="start-lvl" data-parts="${L.parts.join(",")}">
+            <div class="icon">🎓</div>
+            <h3>Tam Sınav Simülasyonu</h3>
+            <p>${L.partNames.map(esc).join(" → ")}. Sınavın tamamı, gerçek sırası ve süreleriyle${L.prepSecs ? ", 20 dk hazırlık dahil" : ""}.</p>
+          </button>
+          ${L.parts.map((n,i)=>`
+          <button class="mode-card" data-action="start-lvl" data-parts="${n}">
+            <div class="icon">${icons[i] || "🗣️"}</div>
+            <h3>Teil ${n} · ${esc(L.partNames[i])}</h3>
+            <p>Sadece bu bölümü çalış.</p>
+          </button>`).join("")}
+          <button class="mode-card" data-action="start-part" data-part="warmup">
+            <div class="icon">☕</div>
+            <h3>Günlük Isınma</h3>
+            <p>Sınav formatı yok, sadece gündelik 3 soruyla ağzını Almancaya alıştır.</p>
+          </button>
+        </div>`;
+}
+/* C1 Hochschule: mevcut modlar (değişmedi) */
+function renderC1Grid(){
+  return `
         <div class="mode-grid">
           <button class="mode-card primary" data-action="start-full">
             <div class="icon">🎓</div>
@@ -1075,14 +1267,16 @@ function renderHome(){
             <h3>Günlük Isınma</h3>
             <p>Sınav formatı yok, sadece gündelik 3 soruyla ağzını Almancaya alıştır.</p>
           </button>
-        </div>
-      </div>
-
+        </div>`;
+}
+/* Ana sayfanın alt kısmı: ayarlar + not (tüm seviyeler için ortak) */
+function renderHomeRest(){
+  return `
       <div class="card">
         <div class="settings-row">
           <div>
             <div style="font-weight:600;font-size:14px;">Hızlı pratik modu</div>
-            <div class="hint">Kapalıyken hazırlık süresi gerçek sınav gibi 20 dakikadır. Açarsan 5 dakikaya iner.</div>
+            <div class="hint">Kapalıyken hazırlık süresi gerçek sınav gibi 20 dakikadır (B1, B2, C1; A2'de hazırlık yok). Açarsan 5 dakikaya iner.</div>
           </div>
           <label class="switch">
             <input type="checkbox" id="quickprep-toggle" ${state.prefs.quickPrep? "checked":""}>
@@ -1090,7 +1284,7 @@ function renderHome(){
           </label>
         </div>
         <hr class="divider">
-        <p class="footnote">Prova yapmak sınırsız ve ücretsiz. Prova bitince "AI Geri Bildirimi Al" ile konuşmanı telc C1 kriterlerine göre değerlendirtebilirsin; günlük hak sadece bu değerlendirmeden düşer (ücretsiz hesapta 3, Premium'da 10, Pro'da 50). Konuşma tanıma için Chrome veya Edge önerilir.</p>
+        <p class="footnote">Prova yapmak sınırsız ve ücretsiz. Prova bitince "AI Geri Bildirimi Al" ile konuşmanı seçtiğin seviyenin telc kriterlerine göre değerlendirtebilirsin; günlük hak sadece bu değerlendirmeden düşer (ücretsiz hesapta 3, Premium'da 10, Pro'da 50). Konuşma tanıma için Chrome veya Edge önerilir.</p>
       </div>
     </div>`;
 }
@@ -1102,10 +1296,10 @@ function renderHistory(){
   const modeLabels = { full:"Tam Sınav", praesentation:"Präsentation", rueckfragen:"Rückfragen", diskussion:"Diskussion", warmup:"Isınma" };
   const rows = sessions.map(s=>{
     const score = (typeof s.aiScore === "number") ? s.aiScore : "—";
-    const pillClass = s.mode === "full" ? "mode-full" : (s.mode === "warmup" ? "mode-warmup" : "");
+    const pillClass = (s.mode === "full" || /-full$/.test(s.mode||"")) ? "mode-full" : (s.mode === "warmup" ? "mode-warmup" : "");
     return `<tr>
       <td class="mono" style="white-space:nowrap;">${esc(fmtDate(s.date))}</td>
-      <td><span class="pill ${pillClass}">${esc(modeLabels[s.mode]||s.mode)}</span></td>
+      <td><span class="pill ${pillClass}">${esc(s.modeLabel || modeLabels[s.mode] || s.mode)}</span></td>
       <td>${esc(s.topicTitle || s.topicCategory || "-")}</td>
       <td class="mono">${score}</td>
     </tr>`;
@@ -1133,8 +1327,104 @@ function renderFlow(){
     case "diskussion":
     case "warmup": return renderQAStep();
     case "result": return renderResult();
+    case "lvl-prep": return renderLvlPrep();
+    case "lvl-turn": return renderLvlTurn();
     default: return renderHome();
   }
+}
+function renderTaskCard(p){
+  return `
+    <div class="task-card">
+      <div class="task-card-head"><span>${esc(p.name)}</span><span class="mono">${esc(p.dur)}</span></div>
+      <div class="de-text" style="font-weight:600;">${esc(p.card.title)}</div>
+      ${p.card.lines.map(l => `<div class="task-line">${esc(l)}</div>`).join("")}
+    </div>`;
+}
+function renderLvlPrep(){
+  const L = LEVELS[flow.level];
+  return `
+    <div class="card stack">
+      ${renderStepper()}
+      <div class="eyebrow">Vorbereitungszeit · ${esc(L.exam)}</div>
+      <p class="hint">Gerçek sınavdaki gibi görev kağıtlarını incele ve notlar al. Sınavda notlarına bakabilirsin ama okumamalısın. Süre dolunca sınav otomatik başlar.</p>
+      <div class="timer-row">
+        <div class="timer-chip" id="timer-chip"><span id="timer-val">${fmtTime(flow.prepSecs)}</span></div>
+        <button class="btn btn-accent" data-action="lvl-begin">Sınava Başla →</button>
+      </div>
+      ${flow.lvlParts.map(renderTaskCard).join("")}
+      <div>
+        <label class="field-label">Notların (değerlendirilmez, sadece senin için)</label>
+        <textarea id="prep-notes" rows="5" placeholder="Stichpunkte…">${esc(flow.prepNotes||"")}</textarea>
+      </div>
+      <button class="back-link" data-action="cancel-flow">← Ana sayfaya dön</button>
+    </div>`;
+}
+function renderLvlTurn(){
+  const L = LEVELS[flow.level];
+  const p = lvlPart();
+  const t = lvlTurn();
+  const phase = flow.itemPhase || "prompt";
+  const who = t.who === "Partner" ? "Partner" : "Prüfer";
+  const bubble = t.say ? `
+      <div class="bubble ${who === "Partner" ? "bubble-partner" : "bubble-pruefer"}">
+        <div class="bubble-who">${who === "Partner" ? "🧑 Partner" : "🎓 Prüfer"}</div>
+        <p class="de-text" style="margin:4px 0 0;">${esc(t.say)}</p>
+      </div>` : "";
+  const actionVerb = t.kind === "ask" ? "🎤 Soruyu Sor" : (t.kind === "monologue" ? "🎤 Anlatmaya Başla" : "🎤 Cevaba Başla");
+  const nextLabel = (lvlIsLastTurn() && !t.reply) ? "Bitir ve Sonucu Gör →" : "Sonraki →";
+  let body = "";
+  if(t.kind === "listen"){
+    body = `
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn btn-ghost" data-action="lvl-listen">🔊 Tekrar Dinle</button>
+        <button class="btn btn-accent" data-action="lvl-next">${lvlIsLastTurn() ? "Bitir ve Sonucu Gör →" : "Devam →"}</button>
+      </div>`;
+  } else if(phase === "prompt"){
+    body = `
+      <div class="btn-row" style="margin-top:14px;">
+        ${t.say ? '<button class="btn btn-ghost" data-action="lvl-listen">🔊 Tekrar Dinle</button>' : ""}
+        <button class="btn btn-accent" data-action="lvl-start-mic">${actionVerb}</button>
+      </div>`;
+  } else if(phase === "recording"){
+    body = `
+      <div class="timer-row" style="margin-top:14px;">
+        <div class="timer-chip" id="timer-chip"><span class="rec-dot"></span><span id="timer-val">00:00</span></div>
+        <button class="btn btn-danger" data-action="lvl-stop-mic">■ Bitir</button>
+      </div>
+      ${t.target ? `<div class="hint" style="margin-top:6px;">Önerilen süre: ~${t.target} sn</div>` : ""}
+      <div class="transcript-box" id="live-transcript" style="margin-top:12px;"></div>`;
+  } else if(phase === "review"){
+    body = `
+      <label class="field-label" style="margin-top:14px;display:block;">${t.kind === "ask" ? "Sorun" : "Cevabın"} (düzenleyebilirsin)</label>
+      <textarea id="review-text" rows="4">${esc(flow.reviewText||"")}</textarea>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn btn-ghost" data-action="lvl-redo">↺ Tekrar Kaydet</button>
+        <button class="btn btn-accent" data-action="lvl-confirm">${t.reply ? "Gönder →" : nextLabel}</button>
+      </div>`;
+  } else if(phase === "reply"){
+    body = `
+      <div class="bubble bubble-partner" style="margin-top:14px;">
+        <div class="bubble-who">🧑 Partner</div>
+        <p class="de-text" style="margin:4px 0 0;">${esc(t.reply)}</p>
+      </div>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn btn-ghost" data-action="lvl-listen-reply">🔊 Tekrar Dinle</button>
+        <button class="btn btn-accent" data-action="lvl-next">${lvlIsLastTurn() ? "Bitir ve Sonucu Gör →" : "Devam →"}</button>
+      </div>`;
+  }
+  return `
+    <div class="card stack">
+      ${renderStepper()}
+      <div class="eyebrow">${esc(L.exam)} · ${esc(p.name)} <span class="mono" style="opacity:.7;">· ${flow.turnIdx+1}/${p.turns.length}</span></div>
+      <details class="task-details"${flow.turnIdx === 0 ? " open" : ""}>
+        <summary>📄 Görev kağıdı</summary>
+        ${renderTaskCard(p)}
+      </details>
+      ${bubble}
+      <div class="turn-task">👉 ${esc(t.task)}</div>
+      ${body}
+      <button class="back-link" data-action="cancel-flow">← Ana sayfaya dön</button>
+    </div>`;
 }
 function renderPick(){
   const t = flow.topic;
@@ -1330,6 +1620,21 @@ document.getElementById("app").addEventListener("click", (e)=>{
   else if(action === "save-session"){ saveSession(); }
   else if(action === "copy-transcript"){ copyTranscript(); }
   else if(action === "get-ai-feedback"){ getAiFeedback(); }
+  // ── seviye seçimi + A2/B1/B2 sınav akışı ──
+  else if(action === "set-level"){ state.prefs.level = el.dataset.level; persistState(); render(); }
+  else if(action === "start-lvl"){ startLevel(state.prefs.level, el.dataset.parts.split(",").map(Number)); }
+  else if(action === "lvl-begin"){ lvlBegin(); }
+  else if(action === "lvl-listen"){ const t = lvlTurn(); if(t && t.say) speak(t.say); }
+  else if(action === "lvl-listen-reply"){ const t = lvlTurn(); if(t && t.reply) speak(t.reply); }
+  else if(action === "lvl-start-mic"){
+    // Mikrofon açılmadan önce okunan replik durdurulsun, yoksa konuşma tanıma onu da yazar
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    flow.itemPhase = "recording"; render();
+  }
+  else if(action === "lvl-stop-mic"){ if(activeTimer){ activeTimer.stop(); activeTimer=null; } flow.reviewText = stopRecording(); flow.itemPhase = "review"; render(); }
+  else if(action === "lvl-redo"){ flow.itemPhase = "prompt"; flow.reviewText = ""; render(); }
+  else if(action === "lvl-confirm"){ lvlConfirm(); }
+  else if(action === "lvl-next"){ lvlAdvance(); }
 });
 document.getElementById("app").addEventListener("input", (e)=>{
   if(e.target.id === "prep-notes"){ flow.prepNotes = e.target.value; }
