@@ -1,5 +1,13 @@
-<title>Sözlü Sınav Provası</title>
-<meta name="robots" content="noindex, nofollow">
+<title>Mündlich Pratik — telc C1 Sözlü Sınav Provası | CheckYourWrite</title>
+<meta name="description" content="telc C1 Hochschule sözlü sınavını mikrofonla prova et: Präsentation, Rückfragen ve Diskussion. AI telc kriterlerine göre puanlar ve Almanca örneklerle geliştirme önerir.">
+<link rel="canonical" href="https://www.checkyourwrite.com/muendlich.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CheckYourWrite">
+<meta property="og:url" content="https://www.checkyourwrite.com/muendlich.html">
+<meta property="og:title" content="🎤 Mündlich Pratik — telc C1 sözlü sınav provası">
+<meta property="og:description" content="Mikrofonla konuş, AI telc C1 kriterlerine göre değerlendirsin. Ücretsiz hesapla günde 3 değerlendirme.">
+<meta property="og:image" content="https://www.checkyourwrite.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -238,16 +246,18 @@
   .ai-next{ margin-top:16px; padding:12px 15px; background:var(--accent-soft); border:1px solid rgba(255,178,36,.2); border-radius:9px; font-size:13.5px; color:var(--ink); line-height:1.55; }
 </style>
 
-<!-- Admin olmayan ziyaretçiler için "geliştirme aşamasında" ekranı -->
-<div id="dev-gate" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; text-align:center;">
-  <div style="max-width:440px;">
-    <div style="font-size:52px; margin-bottom:18px;">🚧</div>
+<!-- Giriş yapmamış ziyaretçiler için giriş ekranı -->
+<div id="login-gate" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; text-align:center;">
+  <div style="max-width:460px;">
+    <div style="font-size:52px; margin-bottom:18px;">🎤</div>
     <h1 style="font-family:'Space Grotesk',sans-serif; font-size:26px; color:#E8ECF6; margin-bottom:12px;">Mündlich Pratik</h1>
-    <p style="color:#8B94AB; font-size:15px; line-height:1.6; margin-bottom:26px;">
-      Bu özellik şu anda <strong style="color:#FFB224;">geliştirme aşamasında</strong>.<br>
-      Çok yakında sözlü sınav pratiği burada olacak! 🎤
+    <p style="color:#8B94AB; font-size:15px; line-height:1.6; margin-bottom:10px;">
+      telc C1 Hochschule sözlü sınavını mikrofonla prova et, AI'dan telc kriterlerine göre geri bildirim al.
     </p>
-    <a href="/index.html" style="display:inline-block; padding:12px 24px; background:linear-gradient(135deg,#FFB224,#FF8A3D); color:#14100A; text-decoration:none; border-radius:11px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;">← Ana Sayfaya Dön</a>
+    <p style="color:#8B94AB; font-size:14px; line-height:1.6; margin-bottom:26px;">
+      Ücretsiz hesapla günde <strong style="color:#FFB224;">3 AI değerlendirmesi</strong>. Premium ile günde 10, Pro ile sınırsız.
+    </p>
+    <a href="/?login=1&next=muendlich" style="display:inline-block; padding:12px 24px; background:linear-gradient(135deg,#FFB224,#FF8A3D); color:#14100A; text-decoration:none; border-radius:11px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;">Giriş yap / Ücretsiz hesap aç →</a>
   </div>
 </div>
 
@@ -399,20 +409,18 @@ window.__TELC_WARMUPS__ = WARMUPS;
 <script>
 (function(){
 "use strict";
-/* ---------- ADMIN KAPISI ---------- */
-/* Bu sayfa şimdilik sadece admin (site sahibi) tarafından kullanılabilir.
-   Diğer ziyaretçiler "geliştirme aşamasında" ekranı görür. */
-const ADMIN_EMAILS = ["yusuffkilicc0@gmail.com"];
-(function adminGate(){
-  const email = (localStorage.getItem("checkyourwrite_current_email") || "").trim().toLowerCase();
-  const isAdmin = ADMIN_EMAILS.includes(email);
-  if(!isAdmin){
+/* ---------- GİRİŞ KAPISI ---------- */
+/* Sayfa herkese açık ama hesap gerektirir (günlük AI hakkı hesaba bağlı).
+   Yetki ve limit asıl olarak sunucuda kontrol edilir; bu sadece arayüz. */
+const CURRENT_EMAIL = (localStorage.getItem("checkyourwrite_current_email") || "").trim().toLowerCase();
+(function loginGate(){
+  if(!localStorage.getItem("checkyourwrite_jwt_token")){
     const shell = document.getElementById("shell");
-    const gate = document.getElementById("dev-gate");
+    const gate = document.getElementById("login-gate");
     if(shell) shell.style.display = "none";
     if(gate) gate.style.display = "flex";
     // Uygulamanın geri kalanını hiç başlatmadan çık
-    throw new Error("__DEV_GATE__"); // IIFE'yi durdurur, konsola zararsız
+    throw new Error("__LOGIN_GATE__"); // IIFE'yi durdurur, konsola zararsız
   }
 })();
 
@@ -425,7 +433,8 @@ const WARMUPS = window.__TELC_WARMUPS__;
 const PRISTINE_HTML = document.documentElement.outerHTML;
 
 /* ---------- persisted state ---------- */
-const LS_KEY = "checkyourwrite_muendlich_state";
+// Hesaba özel anahtar: aynı tarayıcıda başka hesabın provaları görünmesin
+const LS_KEY = "checkyourwrite_muendlich_state:" + CURRENT_EMAIL;
 let state = null;
 // Önce localStorage'dan yükle, yoksa gömülü başlangıç state'ini kullan
 try{ state = JSON.parse(localStorage.getItem(LS_KEY)); }catch(e){ state = null; }
@@ -584,6 +593,8 @@ function resetFlow(kind, topic){
     ratings: { aussprache:3, wortschatz:3, grammatik:3, aufbau:3, interaktion:3 },
     notes: ""
   };
+  // Önceki provanın AI sonucu yeni provaya taşınmasın
+  lastAiFeedback = null;
 }
 
 /* ---------- navigation ---------- */
@@ -772,7 +783,16 @@ function computeStats(){
 }
 
 /* ---------- session save / export ---------- */
+let saving = false;
 async function saveSession(){
+  // Çift tıklamada aynı prova iki kez kaydedilmesin
+  if(saving || !flow) return;
+  saving = true;
+  const saveBtn = document.querySelector('[data-action="save-session"]');
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = "Kaydediliyor…"; }
+  try{ await saveSessionInner(); } finally { saving = false; }
+}
+async function saveSessionInner(){
   const rec = {
     id: "s"+Date.now(),
     date: new Date().toISOString(),
@@ -830,6 +850,7 @@ async function loadOralSessionsFromServer(){
     const res = await fetch("/api/oral-sessions", { headers:{ "Authorization":"Bearer "+token } });
     if(!res.ok) return;
     const data = await res.json();
+    if(data.usage){ oralUsage = data.usage; refreshQuotaUi(); }
     if(!data.success || !Array.isArray(data.sessions)) return;
     // Sunucu kayıtlarını yerel formata çevir
     state.sessions = data.sessions.map(s=>({
@@ -859,6 +880,37 @@ function copyTranscript(){
   }
 }
 
+/* ---------- günlük AI hakkı (sunucudan gelir; limit sunucuda uygulanır) ---------- */
+let oralUsage = null; // { plan, limit (null = sınırsız), used, remaining }
+function quotaHtml(){
+  if(!oralUsage) return "";
+  if(oralUsage.limit === null){
+    return '<div class="hint quota-line">🤖 AI değerlendirme: <strong>sınırsız</strong></div>';
+  }
+  const out = oralUsage.remaining <= 0;
+  const upsell = out
+    ? (oralUsage.plan === "premium"
+        ? ' · <a href="/dashboard.html" style="color:var(--accent);">Pro ile sınırsız →</a>'
+        : ' · <a href="/dashboard.html" style="color:var(--accent);">Premium ile günde 10, Pro ile sınırsız →</a>')
+    : "";
+  return '<div class="hint quota-line">🤖 Bugün kalan AI değerlendirme: <strong'+(out?' style="color:var(--danger);"':'')+'>'+
+    oralUsage.remaining+'/'+oralUsage.limit+'</strong>'+upsell+'</div>';
+}
+function refreshQuotaUi(){
+  document.querySelectorAll(".quota-slot").forEach(el => { el.innerHTML = quotaHtml(); });
+  const btn = document.querySelector('[data-action="get-ai-feedback"]');
+  if(btn && oralUsage && oralUsage.limit !== null && oralUsage.remaining <= 0) btn.disabled = true;
+}
+
+/* Başlık satırları hariç, kullanıcının gerçekten konuştuğu metnin uzunluğu */
+function spokenChars(){
+  if(!flow) return 0;
+  const parts = flow.kind === "warmup"
+    ? flow.warmupAnswers
+    : [flow.transcript.praesentation].concat(flow.transcript.rueckfragen, flow.transcript.diskussion);
+  return parts.filter(Boolean).join(" ").trim().length;
+}
+
 /* ---------- AI geri bildirimi (api/oral-feedback) ---------- */
 let lastAiFeedback = null;
 async function getAiFeedback(){
@@ -872,11 +924,13 @@ async function getAiFeedback(){
     return;
   }
 
-  const text = buildTranscriptText();
-  if(!text || text.trim().length < 20){
-    toast("Değerlendirilecek konuşma çok kısa.");
+  // Transkriptte her zaman başlık satırları olduğu için asıl konuşmaya bakıyoruz;
+  // boş bir prova için istek gönderilip hak harcanmasın.
+  if(spokenChars() < 20){
+    toast("Değerlendirilecek konuşma çok kısa. Önce birkaç cümle konuş.");
     return;
   }
+  const text = buildTranscriptText();
 
   if(btn){ btn.disabled = true; }
   slot.innerHTML = '<div class="ai-loading"><span class="spinner-sm"></span> AI konuşmanı değerlendiriyor… (birkaç saniye)</div>';
@@ -894,15 +948,23 @@ async function getAiFeedback(){
       body: JSON.stringify({ transcript:text, mode:modeLabel, topic:topicLabel })
     });
     const data = await res.json();
-    if(data.error){ slot.innerHTML = ""; toast(data.error); if(btn){ btn.disabled = false; } return; }
+    if(data.usage){ oralUsage = data.usage; }
+    if(data.error){
+      slot.innerHTML = "";
+      toast(data.error);
+      if(btn){ btn.disabled = false; }
+      refreshQuotaUi();
+      return;
+    }
     lastAiFeedback = data;
     slot.innerHTML = renderAiFeedback(data);
     slot.scrollIntoView({ behavior:"smooth", block:"nearest" });
+    if(btn){ btn.disabled = false; btn.textContent = "🤖 Yeniden Değerlendir"; }
+    refreshQuotaUi();
   }catch(e){
     slot.innerHTML = "";
     toast("Bir hata oluştu, tekrar dene.");
-  }finally{
-    if(btn){ btn.disabled = false; btn.textContent = "🤖 Yeniden Değerlendir"; }
+    if(btn){ btn.disabled = false; }
   }
 }
 
@@ -985,6 +1047,7 @@ function renderHome(){
 
       <div class="card">
         <div class="eyebrow">Bugün ne çalışalım?</div>
+        <div class="quota-slot">${quotaHtml()}</div>
         <div class="mode-grid">
           <button class="mode-card primary" data-action="start-full">
             <div class="icon">🎓</div>
@@ -1026,7 +1089,7 @@ function renderHome(){
           </label>
         </div>
         <hr class="divider">
-        <p class="footnote">Bu sayfa konuşmanı kaydedip senin cümlelerinle pratik yaptırır; dilbilgisi, kelime seçimi ve C1 seviyesine uygunluk hakkında geri bildirimi bir prova bitince "Transkripti Kopyala" ile alıp bu Claude sohbetine yapıştırarak alırsın.</p>
+        <p class="footnote">Prova yapmak sınırsız ve ücretsiz. Prova bitince "AI Geri Bildirimi Al" ile konuşmanı telc C1 kriterlerine göre değerlendirtebilirsin; günlük hak sadece bu değerlendirmeden düşer (ücretsiz hesapta 3, Premium'da 10, Pro'da sınırsız). Konuşma tanıma için Chrome veya Edge önerilir.</p>
       </div>
     </div>`;
 }
@@ -1219,8 +1282,9 @@ function renderResult(){
         <label class="field-label">Notlarım</label>
         <textarea id="result-notes" rows="3" placeholder="Neyi zor buldun, hangi kelime aklına gelmedi…">${esc(flow.notes||"")}</textarea>
       </div>
+      <div class="quota-slot">${quotaHtml()}</div>
       <div class="btn-row">
-        <button class="btn btn-accent" data-action="get-ai-feedback">🤖 AI Geri Bildirimi Al</button>
+        <button class="btn btn-accent" data-action="get-ai-feedback"${oralUsage && oralUsage.limit !== null && oralUsage.remaining <= 0 ? " disabled" : ""}>🤖 AI Geri Bildirimi Al</button>
         <button class="btn btn-ghost" data-action="save-session">💾 Oturumu Kaydet</button>
         <button class="btn btn-ghost" data-action="copy-transcript">📋 Transkripti Kopyala</button>
         <button class="btn btn-ghost" data-action="go-home">Ana Sayfa</button>

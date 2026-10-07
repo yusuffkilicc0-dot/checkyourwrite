@@ -1678,6 +1678,7 @@ renderHistoryStrip();
         <li>Sınırsız yazı düzeltme</li>
         <li>Eşanlamlı kelime önerileri</li>
         <li>Telaffuz (ses ile dinle)</li>
+        <li>Mündlich Pratik: günde 10 AI değerlendirmesi</li>
         <li>Hata geçmişi</li>
       </ul>
       <button class="plan-cta">Premium'u Seç</button>
@@ -1693,6 +1694,7 @@ renderHistoryStrip();
         <li>İlerleme takibi (grafik)</li>
         <li>Hata öğrenme kartları</li>
         <li>Kelime listesi (PDF)</li>
+        <li>Mündlich Pratik: sınırsız AI değerlendirmesi</li>
       </ul>
       <button class="plan-cta">Pro'yu Seç</button>
     </div>
@@ -1859,15 +1861,20 @@ function askForEmail() {
   openEmailModal();
 }
 
-// Mündlich Pratik: şimdilik sadece admin erişebilir
-const MUENDLICH_ADMINS = ['yusuffkilicc0@gmail.com'];
+// Mündlich Pratik: herkese açık ama hesap gerektirir (günlük AI hakkı hesaba bağlı)
 function openMuendlich() {
-  const email = (localStorage.getItem('checkyourwrite_current_email') || '').trim().toLowerCase();
-  if (MUENDLICH_ADMINS.includes(email)) {
+  if (localStorage.getItem('checkyourwrite_jwt_token')) {
     window.open('/muendlich.html', '_blank');
   } else {
-    showToast('🚧 Mündlich Pratik geliştirme aşamasında, çok yakında!', 'info');
+    showToast('🎤 Mündlich Pratik için giriş yap — ücretsiz hesapla günde 3 AI değerlendirmesi.', 'info');
+    openEmailModal();
   }
+}
+
+// /?login=1 ile gelinirse (ör. Mündlich sayfasından) giriş penceresini aç
+if (new URLSearchParams(location.search).get('login') === '1' && !localStorage.getItem('checkyourwrite_jwt_token')) {
+  if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', () => openEmailModal());
+  else openEmailModal();
 }
 
 // Çıkış yap
@@ -2041,7 +2048,12 @@ async function verifyCode() {
       showToast('Giriş başarılı! Hoş geldin 🎉', 'success');
       
       // Toast görünsün, sonra arayüzü giriş durumuna göre yenile
-      setTimeout(() => location.reload(), 1200);
+      // (Mündlich sayfasından giriş için gelindiyse oraya geri dön)
+      const next = new URLSearchParams(location.search).get('next');
+      setTimeout(() => {
+        if (next === 'muendlich') location.href = '/muendlich.html';
+        else location.reload();
+      }, 1200);
     } else {
       showToast(data.message || 'Kod doğrulanamadı.', 'error');
       // Kod artık geçersizse (çok fazla deneme / süre doldu) kullanıcıyı

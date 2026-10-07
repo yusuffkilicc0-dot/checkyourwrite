@@ -33,6 +33,12 @@ const userSchema = new mongoose.Schema({
     default: 0,
   },
   last_login: Date,
+  // Mündlich Pratik günlük AI değerlendirme sayacı (bkz. api/_lib/oralQuota.js)
+  oral_usage_date: String, // 'YYYY-MM-DD'
+  oral_usage_count: {
+    type: Number,
+    default: 0,
+  },
   // Sunucu tarafli gunluk kullanim takibi (free plan limiti icin)
   usage_date: String, // 'YYYY-MM-DD'
   usage_count: {

@@ -1,9 +1,14 @@
 import { connectDB } from './_lib/db.js';
 import { User } from './_lib/models.js';
 import { verifyAuth } from './_lib/auth.js';
+import { consumeOral, refundOral } from './_lib/oralQuota.js';
 
 const ALLOWED_ORIGIN = 'https://www.checkyourwrite.com';
-const ADMIN_EMAILS = ['yusuffkilicc0@gmail.com'];
+
+const LIMIT_MESSAGES = {
+  free: 'Bugünkü 3 ücretsiz AI değerlendirme hakkın doldu. Premium ile günde 10, Pro ile sınırsız değerlendirme alabilirsin.',
+  premium: 'Bugünkü 10 AI değerlendirme hakkın doldu. Pro ile sınırsız değerlendirme alabilirsin.',
+};
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
@@ -19,25 +24,41 @@ export default async function handler(req, res) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'Sunucu hatasi: API anahtari bulunamadi.' });
 
-  // Mundlich Pratik su an sadece admin'e acik.
   const auth = verifyAuth(req);
-  if (!auth) return res.status(401).json({ error: 'Giris gerekli.' });
-  try {
-    await connectDB();
-    const user = await User.findById(auth.userId);
-    const email = (user?.email || '').toLowerCase();
-    if (!ADMIN_EMAILS.includes(email)) {
-      return res.status(403).json({ error: 'Bu ozellik su an gelistirme asamasinda.' });
-    }
-  } catch (e) {
-    console.error('oral-feedback auth hatasi:', e);
-    return res.status(500).json({ error: 'Sunucu hatasi.' });
-  }
+  if (!auth) return res.status(401).json({ error: 'AI değerlendirmesi için giriş yapman gerekiyor.' });
 
   const { transcript, mode, topic } = req.body || {};
 
+  // Geçersiz istek hak düşmeden reddedilir.
   if (!transcript || typeof transcript !== 'string' || transcript.trim().length < 20) {
-    return res.status(400).json({ error: 'Degerlendirilecek konusma cok kisa. Once bir prova yapip konusman gerekiyor.' });
+    return res.status(400).json({ error: 'Değerlendirilecek konuşma çok kısa. Önce bir prova yapıp konuşman gerekiyor.' });
+  }
+
+  // ── Günlük hak (ücretsiz 3 / Premium 10 / Pro sınırsız) ──
+  let user, usage;
+  try {
+    await connectDB();
+    user = await User.findById(auth.userId);
+    if (!user) return res.status(401).json({ error: 'Oturum geçersiz, lütfen tekrar giriş yap.' });
+    const q = await consumeOral(user);
+    if (!q.ok) {
+      return res.status(429).json({
+        error: LIMIT_MESSAGES[q.usage.plan] || LIMIT_MESSAGES.free,
+        limitReached: true,
+        usage: q.usage,
+      });
+    }
+    usage = q.usage;
+  } catch (e) {
+    console.error('oral-feedback kota hatasi:', e);
+    return res.status(500).json({ error: 'Sunucu hatası, lütfen tekrar dene.' });
+  }
+
+  // Değerlendirme başarısız olursa düşülen hak yanıt GÖNDERİLMEDEN iade edilir
+  // (Vercel yanıttan sonra fonksiyonu dondurabilir, finally güvenilir değil).
+  async function fail(message) {
+    try { await refundOral(user); } catch (e) { console.error('oral-feedback iade hatasi:', e); }
+    return res.status(500).json({ error: message + ' (Hakkın düşülmedi.)' });
   }
 
   const t = transcript.trim().slice(0, 8000); // guvenlik siniri
@@ -124,22 +145,22 @@ Rules:
     const data = await response.json();
     if (data.error) {
       console.error('Anthropic hatasi:', data.error);
-      return res.status(500).json({ error: 'Degerlendirme sirasinda hata olustu. Birkac saniye sonra tekrar dene.' });
+      return fail('Değerlendirme sırasında hata oluştu. Birkaç saniye sonra tekrar dene.');
     }
 
-    let raw = data.content[0].text.trim();
+    let raw = (data.content && data.content[0] && data.content[0].text || '').trim();
     raw = raw.replace(/^```json\n?/, '').replace(/^```\n?/, '').replace(/\n?```$/, '').trim();
 
     let result;
     try {
       result = JSON.parse(raw);
     } catch {
-      return res.status(500).json({ error: 'Degerlendirme okunamadi, tekrar dene.' });
+      return fail('Değerlendirme okunamadı, tekrar dene.');
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json({ ...result, usage });
   } catch (e) {
     console.error('oral-feedback hatasi:', e);
-    return res.status(500).json({ error: 'Sunucu hatasi olustu. Birkac saniye sonra tekrar dene.' });
+    return fail('Sunucu hatası oluştu. Birkaç saniye sonra tekrar dene.');
   }
 }
